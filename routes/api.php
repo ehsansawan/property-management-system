@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+//    return $request->user();
+   // $user=\App\Models\User::findOrFail(1);
+   // return $user->properties()->with('propertyable')->get();
+});
 
-})->middleware('auth:sanctum');
+//)->middleware('auth:sanctum');
+
 Route::controller(AuthController::class)->prefix('user')
     ->name('user.')
     ->group(function () {
