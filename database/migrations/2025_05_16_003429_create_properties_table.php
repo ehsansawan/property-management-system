@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('location_id')->constrained('locations');
             $table->decimal('area');
-            $table->decimal('price')->nullable();
+            $table->decimal('price')->nullable(); // we should delete it from here
             $table->string('name');
             $table->string('title')->nullable();
             $table->text('description')->nullable();

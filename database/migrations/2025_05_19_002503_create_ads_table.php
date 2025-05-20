@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('is_Active');
+            // we have to add a column proiority to give it for the premium user ads
             $table->timestamps();
         });
     }

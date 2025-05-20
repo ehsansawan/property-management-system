@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('ad_id')->constrained('ads');
             $table->foreignId('property_id')->constrained('properties');
+            // we have to add a price column for the property
             $table->timestamps();
         });
     }
