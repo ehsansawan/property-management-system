@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Responses\Response;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,4 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
+        $exceptions->renderable(function (\Illuminate\Validation\ValidationException $e,$request) {
+            return Response::Validation(
+                $e->errors(),'Validation Error.');
+        });
     })->create();

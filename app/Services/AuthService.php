@@ -3,6 +3,7 @@
 namespace App\Services;
 
 
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -33,6 +34,22 @@ class AuthService
             'password'=>Hash::make($request['password']),
             'phone_number'=>$request['phone_number'],
             'fcm_token'=>$request['fcm_token']??null,
+        ]);
+
+        if(!$user)
+        {
+            $message="something went wrong,try again later";
+            $code=500;
+            return ["user"=>$user,"message"=>$message,"code"=>$code];
+        }
+
+        Profile::query()->create([
+            "user_id"=>$user->id,
+            'first_name'=>$request['first_name']??null,
+            'last_name'=>$request['last_name']??null,
+            'image_url'=>null,
+            'gender'=>null,
+            'phone_number'=>$request['phone_number'],
         ]);
 
         $message='user registered successfully';

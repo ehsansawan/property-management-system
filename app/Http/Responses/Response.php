@@ -34,6 +34,6 @@ class Response
             'status'=>0,
             'data'=>$data,
             'message'=>$message,
-        ]);
+        ],$code);
     }
 }

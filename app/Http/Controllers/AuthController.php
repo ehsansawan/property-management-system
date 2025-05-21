@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Responses\Response;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +25,7 @@ public function register(RegisterRequest $request): JsonResponse
     $data=[];
     try{
         $data=$this->authService->register($request->validated());
-        return  Response::Success($data['user'],$data['message']);
+        return  Response::Success($data['user'],$data['message'],$data['code']);
     }
     catch (Throwable $th){
         $message=$th->getMessage();
@@ -37,7 +37,7 @@ public function login(LoginRequest $request): JsonResponse
     $data=[];
     try{
         $data=$this->authService->login($request->validated());
-        return  Response::Success($data['user'],$data['message']);
+        return  Response::Success($data['user'],$data['message'],$data['code']);
     }
     catch (Throwable $th){
         $message=$th->getMessage();

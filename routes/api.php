@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\UserController;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,8 +15,8 @@ Route::get('/user', function (Request $request) {
 
 //)->middleware('auth:sanctum');
 
-Route::controller(AuthController::class)->prefix('user')
-    ->name('user.')
+Route::controller(AuthController::class)->prefix('auth')
+    ->name('auth.')
     ->group(function () {
 
         Route::post('/register', 'register')->name('register');
@@ -24,3 +25,17 @@ Route::controller(AuthController::class)->prefix('user')
         Route::middleware('auth:api')->post('/refresh', 'refresh')->name('refresh');
         Route::middleware('auth:api')->post('/me', 'me')->name('me');
     });
+
+
+Route::controller(UserController::class)->prefix('user')
+    ->name('user.')
+    ->group(function () {
+        Route::get('/getUsers', 'get_users')->name('getAllUsers');
+        Route::get('/getUser/{id}', 'show')->name('show');
+        Route::post('/create', 'create')->name('createUser');
+        Route::post('update/{id}', 'update')->name('update');
+        Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
+
+
+
