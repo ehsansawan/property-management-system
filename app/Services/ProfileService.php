@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Profile;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ProfileService
 {
@@ -18,7 +18,16 @@ class ProfileService
 
     public function show($id):array
     {
-        $profile=Profile::query()->find($id);
+        $user=User::query()->find($id);
+
+        if(!$user){
+            $message='user not found';
+            $code=404;
+            return ['profile'=>null,'message'=>$message,'code'=>$code];
+        }
+
+        $profile=$user->profile;
+            //Profile::query()->where('user_id',$id)->first();
 
         if(!$profile)
         {
@@ -32,10 +41,21 @@ class ProfileService
         return["profile"=>$profile,"message"=>$message,"code"=>$code];
 
     }
-
     public function create($request):array
     {
+        $user=auth('api')->user();
+        $profile=$user->profile;
+       // $profile= Profile::query()->where('user_id',auth('api')->id())->first();
+
+        if($profile)
+        {
+            $message="you have already created a profile";
+            $code=500;
+            return["profile"=>$profile,"message"=>$message,"code"=>$code];
+        }
+
         $data=collect($request);
+
         $profile=Profile::query()->create(
             [
                 "user_id"=>auth('api')->id(),
@@ -61,7 +81,17 @@ class ProfileService
     public function update($request,$id):array
     {
         $data=collect($request);
-        $profile=Profile::query()->find($id);
+        $user=User::query()->find($id);
+
+        if(!$user)
+        {
+            $message="user not found";
+            $code=404;
+            return["profile"=>null,"message"=>$message,"code"=>$code];
+        }
+
+        $profile=$user->profile;
+        //$profile=Profile::query()->where('user_id',$id)->first();
 
         if(!$profile)
         {
@@ -99,7 +129,18 @@ class ProfileService
     }
     public function delete($id):array
     {
-        $profile=Profile::query()->find($id);
+
+        $user=User::query()->find($id);
+
+        if(!$user)
+        {
+            $message="user not found";
+            $code=404;
+            return["profile"=>null,"message"=>$message,"code"=>$code];
+        }
+
+        $profile=$user->profile;
+        //$profile=Profile::query()->where('user_id',$id)->first();
         if(!$profile)
         {
             $message="profile not found";

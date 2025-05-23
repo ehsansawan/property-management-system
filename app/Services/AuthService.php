@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Models\Profile;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +44,10 @@ class AuthService
             return ["user"=>$user,"message"=>$message,"code"=>$code];
         }
 
+        // for email verification
+        //this function send email the $request['email']
+        event(new Registered($user));
+
         Profile::query()->create([
             "user_id"=>$user->id,
             'first_name'=>$request['first_name']??null,
@@ -75,6 +80,7 @@ class AuthService
             $code=401;
         }
 
+
         else
         {
             $user = Auth('api')->user();
@@ -82,7 +88,9 @@ class AuthService
             $user['token_type']=  'Bearer';
             $message = 'User logged in successfully';
             $code=200;
+            event(new Registered($user));
         }
+
 
         return ['user'=>$user,'message'=>$message,'code'=>$code];
 

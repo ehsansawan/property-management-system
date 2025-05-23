@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
@@ -22,4 +23,14 @@ return Application::configure(basePath: dirname(__DIR__))
             return Response::Validation(
                 $e->errors(),'Validation Error.');
         });
+
+        $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e,$request) {
+           return Response::Error($e->getMessage(),'Authentication Error.',401);
+        });
+
+
+
+
+
+
     })->create();
