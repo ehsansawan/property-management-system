@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\VerifiedEmail;
@@ -63,10 +64,9 @@ Route::controller(AuthController::class)->prefix('auth')
         Route::middleware('auth:api')->post('/me', 'me')->name('me');
     });
 
-Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function () {
+Route::middleware([JwtMiddleware::class, VerifiedEmail::class])->group(function () {
 
     // User
-
     Route::controller(UserController::class)->prefix('user')
         ->name('user.')
         ->group(function () {
@@ -76,7 +76,8 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function (
             Route::post('update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
-//Profile
+
+    //Profile
     Route::controller(ProfileController::class)->prefix('profile')
         ->name('profile.')
         ->group(function () {
@@ -85,10 +86,15 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function (
             Route::post('/update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
-
-
 });
 
+Route::middleware(JwtMiddleware::class)->controller(ReviewController::class)->group(function () {
+    Route::get('/reviews', 'index'); // جلب جميع المراجعات
+    Route::post('/reviews', 'store'); // إنشاء مراجعة جديدة
+    Route::get('/reviews/{id}', 'show'); // عرض مراجعة معينة
+    Route::put('/reviews/{id}', 'update'); // تحديث مراجعة
+    Route::delete('/reviews/{id}', 'destroy'); // حذف مراجعة
+});
 
 
 

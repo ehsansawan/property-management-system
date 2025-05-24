@@ -9,7 +9,8 @@ class Review extends Model
 {
     //
     use HasFactory;
-    protected $fillable=[];
+    protected $fillable=['rating','comment'];
+
 
     public function property()
     {
