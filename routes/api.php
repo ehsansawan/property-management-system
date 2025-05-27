@@ -57,8 +57,6 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 
 
-
-
 Route::controller(AuthController::class)->prefix('auth')
     ->name('auth.')
     ->group(function () {
@@ -77,9 +75,9 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function (
     Route::controller(UserController::class)->prefix('user')
         ->name('user.')
         ->group(function () {
-            Route::get('/getUsers', 'get_users')->name('getAllUsers');
-            Route::get('/show/{id}', 'show')->name('show');
+            Route::get('/getUsers', 'get_users')->name('getUsers');
             Route::post('/create', 'create')->name('create');
+            Route::get('/show/{id}', 'show')->name('show');
             Route::post('update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
@@ -88,11 +86,18 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function (
         ->name('profile.')
         ->group(function () {
             Route::post('/create', 'create')->name('create');
-            Route::get('/show/{id}', 'show')->name('show');
-            Route::post('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::get('/show/{user_id}', 'show')->name('show');
+            Route::post('/update/{user_id}', 'update')->name('update');
+            Route::delete('/delete/{user_id}', 'delete')->name('delete');
         });
-
+Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
+->name('property.')
+    ->group(function () {
+       Route::get('/getUserProperties/{id}', 'getUserProperties')->name('getUserProperties');
+       Route::post('/create', 'create')->name('create');
+       Route::post('/update/{id}', 'update')->name('update');
+       Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
 
 });
 

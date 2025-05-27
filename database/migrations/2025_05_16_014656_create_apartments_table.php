@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('apartments', function (Blueprint $table) {
             $table->id();
          //   $table->foreignId('property_id')->constrained('properties');
-            $table->smallInteger('floor');
-            $table->smallInteger('room');
-            $table->smallInteger('bedroom');
-            $table->smallInteger('bathroom');
-            $table->boolean('has_elevator');
-            $table->boolean('has_garage');
-            $table->boolean('furnished');
-            $table->string('furnished_type')->nullable();// deluxe ,super deluxe , normal;
+            $table->smallInteger('floor')->nullable();
+            $table->smallInteger('rooms')->nullable();
+            $table->smallInteger('bedrooms')->nullable();
+            $table->smallInteger('bathrooms')->nullable();
+            $table->boolean('has_elevator')->default(false);
+            $table->boolean('has_alternative_power')->default(false);
+            $table->boolean('has_garage')->default(false);
+            $table->boolean('furnished')->default(false);
+            $table->string('furniture_type')->nullable();// deluxe ,super deluxe , normal;
 
 
             $table->timestamps();

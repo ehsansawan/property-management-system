@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Property;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProfileRequest extends FormRequest
+class UpdateOfficeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -23,11 +23,13 @@ class ProfileRequest extends FormRequest
     {
         return [
             //
-            'first_name' => 'string|max:255',
-            'last_name' => 'string|max:255',
-            'phone_number' => 'required|regex:/^09\d{8}$/',//|unique:users,phone_number
-            'image_url' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'gender' => 'nullable|string|in:male,female',
+            'Office.floor'=>'integer',
+            'Office.rooms'=>'integer',
+            'Office.bathrooms'=>'integer',
+            'Office.meeting_rooms'=>'integer',
+            'Office.has_parking'=>'boolean',
+            'Office.furnished'=>'boolean',
+            'Office.furnished_type'=>'string'
         ];
     }
 }

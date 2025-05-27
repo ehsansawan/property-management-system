@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -112,4 +113,22 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasMany(Ad::class);
     }
 
+    public function apartments()
+    {
+        return $this->properties()->where('property_type', \App\Models\Apartment::class);
+    }
+    public function lands()
+    {
+        return $this->properties()->where('property_type', \App\Models\Land::class);
+    }
+
+    public function offices()
+    {
+        return $this->properties()->where('property_type', \App\Models\Office::class);
+    }
+
+    public function shops()
+    {
+        return $this->properties()->where('property_type', \App\Models\Shop::class);
+    }
 }

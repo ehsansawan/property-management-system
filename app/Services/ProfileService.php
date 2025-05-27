@@ -16,9 +16,9 @@ class ProfileService
     }
 
 
-    public function show($id):array
+    public function show($user_id):array
     {
-        $user=User::query()->find($id);
+        $user=User::query()->find($user_id);
 
         if(!$user){
             $message='user not found';
@@ -78,10 +78,10 @@ class ProfileService
         return["profile"=>$profile,"message"=>$message,"code"=>$code];
 
     }
-    public function update($request,$id):array
+    public function update($request,$user_id):array
     {
         $data=collect($request);
-        $user=User::query()->find($id);
+        $user=User::query()->find($user_id);
 
         if(!$user)
         {
@@ -100,26 +100,36 @@ class ProfileService
             return["profile"=>$profile,"message"=>$message,"code"=>$code];
         }
 
-        if(filled($data->get('first_name')))
-        {
-            $profile->first_name=$data->get('first_name');
+//        if(filled($data->get('first_name')))
+//        {
+//            $profile->first_name=$data->get('first_name');
+//        }
+//        if(filled($data->get('last_name')))
+//        {
+//            $profile->last_name=$data->get('last_name');
+//        }
+//        if(filled($data->get('phone_number')))
+//        {
+//            $profile->phone_number=$data->get('phone_number');
+//        }
+//        if(filled($data->get('image_url')))
+//        {
+//            $profile->image_url=$data->get('image_url');
+//        }
+//        if(filled($data->get('gender')))
+//        {
+//            $profile->gender=$data->get('gender');
+//        }
+
+        $fields = ['first_name', 'last_name', 'phone_number', 'image_url', 'gender'];
+
+        foreach ($fields as $field) {
+            if (filled($data->get($field))) {
+                $profile->{$field} = $data->get($field);
+            }
         }
-        if(filled($data->get('last_name')))
-        {
-            $profile->last_name=$data->get('last_name');
-        }
-        if(filled($data->get('phone_number')))
-        {
-            $profile->phone_number=$data->get('phone_number');
-        }
-        if(filled($data->get('image_url')))
-        {
-            $profile->image_url=$data->get('image_url');
-        }
-        if(filled($data->get('gender')))
-        {
-            $profile->gender=$data->get('gender');
-        }
+
+
         $profile->save();
         $message="profile updated successfully";
         $code=200;
@@ -127,10 +137,10 @@ class ProfileService
         return["profile"=>$profile,"message"=>$message,"code"=>$code];
 
     }
-    public function delete($id):array
+    public function delete($user_id):array
     {
 
-        $user=User::query()->find($id);
+        $user=User::query()->find($user_id);
 
         if(!$user)
         {

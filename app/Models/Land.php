@@ -9,7 +9,7 @@ class Land extends Model
 {
     //
     use HasFactory;
-    protected $fillable=[];
+    protected $fillable=['type','street','corner'];
 
     public function property()
     {

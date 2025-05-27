@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileRequest;
+use App\Http\Requests\Profle\CreateProfileRequest;
+use App\Http\Requests\Profle\UpdateProfileRequest;
 use App\Http\Responses\Response;
 use App\Services\ProfileService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Throwable;
 
 class ProfileController extends Controller
@@ -18,12 +18,12 @@ class ProfileController extends Controller
         $this->profileService = $profileService;
     }
 
-    public function show($id):JsonResponse
+    public function show($user_id):JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->profileService->show($id);
+            $data=$this->profileService->show($user_id);
             return Response::Success($data['profile'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
@@ -32,8 +32,7 @@ class ProfileController extends Controller
         }
 
     }
-
-    public function create(ProfileRequest $request):JsonResponse
+    public function create(CreateProfileRequest $request):JsonResponse
     {
         $data=[];
 
@@ -46,12 +45,12 @@ class ProfileController extends Controller
             return Response::Error($data,$message);
         }
     }
-    public function update(ProfileRequest $request,$id):JsonResponse
+    public function update(UpdateProfileRequest $request, $user_id):JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->profileService->update($request->validated(),$id);
+            $data=$this->profileService->update($request->validated(),$user_id);
             return Response::Success($data['profile'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
@@ -59,12 +58,12 @@ class ProfileController extends Controller
             return Response::Error($data,$message);
         }
     }
-    public function delete($id):JsonResponse
+    public function delete($user_id):JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->profileService->delete($id);
+            $data=$this->profileService->delete($user_id);
             return Response::Success($data['profile'],$data['message'],$data['code']);
         }
         catch (Throwable $th){

@@ -9,7 +9,7 @@ class Shop extends Model
 {
     //
     use HasFactory;
-    protected $fillable=[];
+    protected $fillable=['floor','has_warehouse','type'];
 
     public function property()
     {
