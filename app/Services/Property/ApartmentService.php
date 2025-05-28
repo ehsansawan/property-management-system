@@ -2,6 +2,10 @@
 
 namespace App\Services\Property;
 
+use App\Models\Apartment;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 class ApartmentService
 {
 
@@ -9,8 +13,84 @@ class ApartmentService
     {
 
     }
-    public function getApartmentsList($id)
+    public function getApartmentsList($user_id)
     {
+       $user=User::query()->find($user_id);
+
+//       $apartments=$user->properties()->where('property_type',\App\Models\Apartment::class)->
+//       with('propertyable')->get();
+
+
+        $apartments=$user->apartments()->with('propertyable')->get();
+       // with for loading apartments data without it, it will put only the property data
+
+
+       $message="apartments retrieved successfully";
+       $code=200;
+       return ['apartments'=>$apartments,'message'=>$message,'code'=>$code];
+    }
+    public function getApartment($id)
+    {
+        $apartment=Apartment::query()->with('property')->find($id);
+
+
+        $message="apartment retrieved successfully";
+        $code=200;
+        return ['apartment'=>$apartment,'message'=>$message,'code'=>$code];
 
     }
+    public function create($request)
+    {
+        $data=collect($request->get('Apartment'));
+
+            $apartment=Apartment::query()->create(
+                [
+                    'floor'=>$data->get('floor'),
+                    'rooms'=>$data->get('rooms'),
+                    'bedrooms'=>$data->get('bedrooms'),
+                    'bathrooms'=>$data->get('bathrooms'),
+                    'has_garage'=>$data->get('has_garage'),
+                    'has_elevator'=>$data->get('has_elevator'),
+                    'has_alternative_power'=>$data->get('has_alternative_power'),
+                    'furnished'=>$data->get('furnished'),
+                    'furnished_type'=>$data->get('furnished_type'),
+                ]
+            );
+            $message="apartment created successfully";
+            $code=201;
+            return ['apartment'=>$apartment,'message'=>$message,'code'=>$code];
+    }
+    public function update($request,$id)
+    {
+       $data=collect($request->get('Apartment'));
+       $apartment=Apartment::query()->find($id);
+
+
+        $fields = [  'floor','rooms','bedrooms','bathrooms','has_elevator','has_garage','furnished',
+            'furniture_type','has_alternative_power'];
+
+        foreach ($fields as $field) {
+            if (filled($data->get($field))) {
+                $apartment->{$field} = $data->get($field);
+            }
+        }
+
+        $apartment->save();
+
+        $message="apartment updated successfully";
+        $code=200;
+        return ['apartment'=>$apartment,'message'=>$message,'code'=>$code];
+
+    }
+    public function delete($id)
+    {
+        $apartment=Apartment::query()->find($id);
+
+        $apartment->delete();
+        $message="apartment deleted successfully";
+        $code=200;
+
+    }
+
+
 }

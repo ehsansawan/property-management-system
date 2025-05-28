@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Apartment extends Model
 {
     use HasFactory;
-    protected $fillable=[];
+    protected $fillable=[
+        'floor','rooms','bedrooms','bathrooms','has_elevator','has_garage','furnished','furniture_type','has_alternative_power'
+    ];
 
     public function property()
     {

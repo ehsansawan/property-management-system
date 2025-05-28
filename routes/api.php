@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
@@ -28,6 +29,7 @@ Route::get('/user', function (Request $request) {
 //    return \App\Http\Responses\Response::Success(true,'Email is verified');
 //})->middleware(['auth:api','signed'])->name('verification.verify');
 
+
 Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     $user = User::findOrFail($request->route('id'));
 
@@ -44,13 +46,16 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
     //this two line is instead of $request->fullfill() because it redirect to route login
 
     return response()->json(['message' => 'Email verified successfully'], 200);
-})->middleware(['signed'])->name('verification.verify');
+})
+    ->middleware(['signed'])->name('verification.verify');
 
 // resend verification email
 Route::post('/email/verification-notification', function (Request $request) {
    $request->user()->sendEmailVerificationNotification();
    return \App\Http\Responses\Response::Success(true,'Verification link sent!');
-})->middleware(['auth:api','throttle:6,1'])->name('verification.send');
+})
+    ->middleware(['auth:api','throttle:6,1'])->name('verification.send');
+
 
 
 Route::controller(AuthController::class)->prefix('auth')
@@ -70,9 +75,9 @@ Route::middleware([JwtMiddleware::class, VerifiedEmail::class])->group(function 
     Route::controller(UserController::class)->prefix('user')
         ->name('user.')
         ->group(function () {
-            Route::get('/getUsers', 'get_users')->name('getAllUsers');
-            Route::get('/show/{id}', 'show')->name('show');
+            Route::get('/getUsers', 'get_users')->name('getUsers');
             Route::post('/create', 'create')->name('create');
+            Route::get('/show/{id}', 'show')->name('show');
             Route::post('update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
@@ -82,9 +87,9 @@ Route::middleware([JwtMiddleware::class, VerifiedEmail::class])->group(function 
         ->name('profile.')
         ->group(function () {
             Route::post('/create', 'create')->name('create');
-            Route::get('/show/{id}', 'show')->name('show');
-            Route::post('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::get('/show/{user_id}', 'show')->name('show');
+            Route::post('/update/{user_id}', 'update')->name('update');
+            Route::delete('/delete/{user_id}', 'delete')->name('delete');
         });
 });
 
@@ -99,9 +104,19 @@ Route::middleware(JwtMiddleware::class)
     Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy');
     Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy');
     Route::get('/property/{property_id}/reviews', 'property_index') ->name('property.index');
-});
+});    
+
+
+Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
+->name('property.')
+    ->group(function () {
+       Route::get('/getUserProperties/{id}', 'getUserProperties')->name('getUserProperties');
+       Route::post('/create', 'create')->name('create');
+       Route::post('/update/{id}', 'update')->name('update');
+       Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
 
 
 
 
-~
+

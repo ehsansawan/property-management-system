@@ -9,7 +9,7 @@ class Office extends Model
 {
     //
     use HasFactory;
-    protected $fillable=[];
+    protected $fillable=['floor','rooms','bathrooms','meeting_rooms','has_parking','furnished'];
 
     public function property()
     {

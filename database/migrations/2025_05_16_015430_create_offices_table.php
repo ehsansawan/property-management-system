@@ -17,9 +17,10 @@ return new class extends Migration
             $table->smallInteger('floor');
             $table->smallInteger('rooms');
             $table->smallInteger('bathrooms');
-            $table->smallInteger('meeting_rooms');
-            $table->boolean('has_parking');
+            $table->smallInteger('meeting_rooms')->default(0);
+            $table->boolean('has_parking')->default(false);
             $table->boolean('furnished');
+            $table->string('furnished_type')->nullable();
 
             $table->timestamps();
         });

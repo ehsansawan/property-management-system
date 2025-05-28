@@ -2,15 +2,28 @@
 
 namespace App\Services\Property;
 
+use App\Http\Responses\Response;
+use App\Models\Property;
 use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Support\Facades\DB;
 
 class PropertyService
 {
-    public function __construct()
+    protected ApartmentService $apartmentService;
+    protected LandService $landService;
+    protected OfficeService $officeService;
+    protected ShopService $shopService;
+    public function __construct(ApartmentService $apartmentService, LandService $landService,
+                                OfficeService $officeService, ShopService $shopService
+    )
     {
-
+         $this->apartmentService = $apartmentService;
+         $this->landService = $landService;
+         $this->officeService = $officeService;
+         $this->shopService = $shopService;
     }
-    public function getPropertiesList($id)
+    public function getUserProperties($id)
     {
         $user=User::query()->find($id);
         if(!$user)
@@ -19,8 +32,214 @@ class PropertyService
             $code=404;
             return ['properties'=>null,'message'=>$message,'code'=>$code];
         }
-        $properties=$user->properties;
+        $properties=$user->properties()->with('propertyable')->get();
+
+        $properties= $properties->map(function ($property) {
+            $prop = $property->toArray();
+            $prop['type'] = class_basename($property->propertyable_type);
+            return $prop;
+        });
+        // for returning a good formatting for the front_end
 
         return['properties'=>$properties,'message'=>'properties retrieved successfully','code'=>200];
     }
+
+    public function getAllProperties($request)
+    {
+
+    }
+
+    public function getPropertyById($id)
+    {
+
+    }
+    public function create($request)
+    {
+        $data=collect($request);
+        DB::beginTransaction();
+        try{
+            switch ($data->get('type'))
+            {
+                case 'Apartment':
+                   $apartment= $this->apartmentService->create($data);
+                    $propertyable=$apartment['apartment'];
+                    break;
+                case 'Land':
+                    $land= $this->landService->create($data);
+                    $propertyable=$land['land'];
+                    break;
+                case 'Office':
+                    $office= $this->officeService->create($data);
+                    $propertyable=$office['office'];
+                    break;
+               case 'Shop':
+                   $shop= $this->shopService->create($data);
+                   $propertyable=$shop['shop'];
+                   break;
+           }
+
+           $data=collect($request['property']);
+
+           $property=$propertyable->property()->create(
+               [
+                   'user_id'=>$data->get('user_id'),
+                   'location_id'=>$data->get('location_id'),
+                   'area'=>$data->get('area'),
+                   //'price'=>$data->get('price'),
+                   'name'=>$data->get('name'),
+                   'title'=>$data->get('title'),
+                    'description'=>$data->get('description'),
+                ]
+            );
+           $property['type']=$request['type'];
+           $property['propertable']=$propertyable;
+            DB::commit();
+          return['property'=>$property,'message'=>'property created successfully','code'=>201];
+        }
+        catch (\Exception $e)
+        {
+            DB::rollBack();
+            $message=$e->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+    public function update($request,$id)
+    {
+        $data=collect($request);
+        $propertyable_id=Property::query()->where('id',$id)->value('propertyable_id');
+        $propertyable_type=Property::query()->where('id',$id)->value('propertyable_type');
+
+        if(!$propertyable_id)
+        {
+            $message="Property not found";
+            $code=404;
+            return ['property'=>null,'message'=>$message,'code'=>$code];
+        }
+        if($data->get('type')!=class_basename($propertyable_type))
+        {
+
+            $message="Property type is not compatible with the type u send";
+            $code=404;
+            return ['property'=>null,'message'=>$message,'code'=>$code];
+        }
+        DB::beginTransaction();
+        try{
+            switch ($data->get('type'))
+            {
+                case 'Apartment':
+                    $apartment= $this->apartmentService->update($data,$propertyable_id);
+                    $propertyable=$apartment['apartment'];
+                    break;
+                case 'Land':
+                    $land= $this->landService->update($data,$propertyable_id);
+                    $propertyable=$land['land'];
+                    break;
+                case 'Office':
+                    $office= $this->officeService->update($data,$propertyable_id);
+                    $propertyable=$office['office'];
+                    break;
+                case 'Shop':
+                    $shop= $this->shopService->update($data,$propertyable_id);
+                    $propertyable=$shop['shop'];
+                    break;
+            }
+
+            $property=Property::query()->find($id);
+
+            $fields = ['area','name','title','description','price'];
+
+            foreach ($fields as $field) {
+                if (filled($data->get('property')[$field])) {
+
+                    $property->{$field} = $data->get('property')[$field];
+
+                }
+            }
+
+
+            $property->save();
+            $property['type']=$request['type'];
+            $property['propertable']=$propertyable;
+            $message="Property updated successfully";
+            $code=200;
+
+            DB::commit();
+            return['property'=>$property,'message'=>$message,'code'=>$code];
+        }
+        catch (\Exception $e)
+        {
+            DB::rollBack();
+            $message=$e->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+    public function delete($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $property = Property::find($id);
+            if(!$property)
+            {
+                $message="property not found";
+                $code=404;
+                return ['property'=>null,'message'=>$message,'code'=>$code];
+            }
+
+            $propertyable = $property->propertyable;
+
+            $propertyable->delete();
+            $property->delete();
+
+            DB::commit();
+
+            return [
+                'property' => $property,
+                'message' => 'Property deleted successfully',
+                'code' => 200
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Response::Error(null, $e->getMessage());
+        }
+    }
+
+//    public function delete($request,$id)
+//    {
+//
+//        $propertyable_id=Property::query()->where('id',$id)->value('property_id');
+//        //value = pluck()->first();
+//        DB::beginTransaction();
+//        try{
+//            switch ($request->get('type'))
+//            {
+//                case 'Apartment':
+//                    $apartment= $this->apartmentService->delete($propertyable_id);
+//                    break;
+//                case 'Land':
+//                    $land= $this->landService->delete($propertyable_id);
+//                    break;
+//                case 'Office':
+//                    $office= $this->officeService->delete($propertyable_id);;
+//                    break;
+//                case 'Shop':
+//                    $shop= $this->shopService->delete($propertyable_id);;
+//                    break;
+//            }
+//
+//            $property=Property::query()->find($id);
+//            $property->delete();
+//
+//            DB::commit();
+//            $message="property deleted successfully";
+//            $code=200;
+//            return['property'=>$property,'message'=>$message,'code'=>$code];
+//        }
+//        catch (\Exception $e)
+//        {
+//            DB::rollBack();
+//            $message=$e->getMessage();
+//            return Response::Error(null,$message);
+//        }
+//    }
 }
