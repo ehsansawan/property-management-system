@@ -2,45 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Review;
+use Throwable;
+use App\Services\ReviewService;
 use App\Http\Responses\Response;
-use Illuminate\Http\Request;
+use App\Http\Requests\Review\CreateReviewRequest;
+use App\Http\Requests\Review\UpdateReviewRequest;
 
 
 class ReviewController extends Controller
 {
+
+    protected ReviewService $service; 
+
+    public function __construct(ReviewService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-        $reviews = Review::all();
-        return Response::Success($reviews,'All reviews returned successfully',200);
-        
+        $data=[];
+        try 
+        {
+            $data=$this->service->index();
+            return Response::Success($data['reviews'], $data['message'], $data['code']);
+        }
+        catch (Throwable $th)
+        {
+            $message = $th->getMessage();
+            return Response::Error($data, $message);
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created review by a specific user in storage.
      */
-    public function store(Request $request)
+    public function user_store(CreateReviewRequest $request)
     {
-        //
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'property_id' => 'required|exists:properties,id',
-            'rating' => 'required|numeric|between:0,5',
-            'comment' => 'required|string|max:65535',
-        ]);
-
-        $review = Review::create([
-            'comment' => $request->input('comment'),
-            'rating' => $request->input('rating'),
-            'user_id' => $request->input('user_id'),
-            'property_id' => $request->input('property_id'),
-        ]);
-
-        return Response::Success($review,'Review created successfully',201);
+        $data = [];
+        try
+        {
+            $data = $this->service->user_store($request->validated());
+            return Response::Success($data['review'], $data['message'], $data['code']);
+        } 
+        catch (Throwable $th) 
+        {
+            $message = $th->getMessage();
+            return Response::Error($data, $message);
+        }
     }
 
     /**
@@ -48,38 +60,36 @@ class ReviewController extends Controller
      */
     public function show(string $id)
     {
-        //
-        $review = Review::find($id);
-
-        if (!$review) {
-            return Response::Error([], 'Review not found', 404);
+        $data = [];
+        try 
+        {
+            $data=$this->service->show($id);
+            return Response::Success($data['review'], $data['message'], $data['code']);
         }
-
-        return Response::Success($review,'Review returned successfully',200);
+        catch (Throwable $th)
+        {
+            $message=$th->getMessage();
+            return Response::Error($data, $message);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function user_update(UpdateReviewRequest $request, string $id)
     {
-        //
-        $review = Review::find($id);
-
-        if (!$review) {
-            return Response::Error([], 'Review not found', 404);
+        $data = [];
+        try
+        {
+            $data = $this->service->user_update($request->validated(), $id);
+            return Response::Success($data['review'], $data['message'], $data['code']);
         }
-
-        $request->validate([
-            'rating' => 'required|numeric|between:0,5',
-            'comment' => 'required|string|max:65535',
-        ]);
-
-        $review->update([
-            'comment' => $request->input('comment'),
-            'rating' => $request->input('rating'),
-        ]);
-        return Response::Success($review,'Review updated successfully',200);
+        catch (Throwable $th)
+        {
+            $message=$th->getMessage();
+            return Response::Error($data, $message);
+        }
+        
     }
 
     /**
@@ -87,15 +97,42 @@ class ReviewController extends Controller
      */
     public function destroy(string $id)
     {
-        //
-        $review = Review::find($id);
-
-        if (!$review) {
-            return Response::Error([], 'Review not found', 404);
+        $data=[];
+        try 
+        {
+            $data = $this->service->destroy($id);
+            return Response::Success($data['review'], $data['message'], $data['code']);
         }
+        catch (Throwable $th)
+        {
+            $message=$th->getMessage();
+            return Response::Error($data, $message);
+        }
+    }
 
-        $review->delete();
+    public function client_destroy(string $id)
+    {
+        $data = [];
+        try {
+            $data = $this->service->client_destroy($id);
+            return Response::Success($data['review'], $data['message'], $data['code']);
+        }
+        catch (Throwable $th) {
+            $message=$th->getMessage();
+            return Response::Error($data, $message);
+        }
+    }
 
-        return Response::Success([],'Review deleted successfully',200);
+    public function property_index(string $property_id)
+    {
+        $data = [];
+        try {
+            $data = $this->service->property_index($property_id);
+            return Response::Success($data['reviews'], $data['message'], $data['code']);
+        }
+        catch (Throwable $th) {
+            $message=$th->getMessage();
+            return Response::Error($data, $message);
+        }
     }
 }

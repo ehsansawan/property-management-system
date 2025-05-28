@@ -88,15 +88,20 @@ Route::middleware([JwtMiddleware::class, VerifiedEmail::class])->group(function 
         });
 });
 
-Route::middleware(JwtMiddleware::class)->controller(ReviewController::class)->group(function () {
-    Route::get('/reviews', 'index'); // جلب جميع المراجعات
-    Route::post('/reviews', 'store'); // إنشاء مراجعة جديدة
-    Route::get('/reviews/{id}', 'show'); // عرض مراجعة معينة
-    Route::put('/reviews/{id}', 'update'); // تحديث مراجعة
-    Route::delete('/reviews/{id}', 'destroy'); // حذف مراجعة
+Route::middleware(JwtMiddleware::class)
+     ->controller(ReviewController::class)
+                                                                    ->name('reviews.')
+     ->group(function () {                                          
+    Route::get('/reviews', 'index')                                 ->name('index');
+    Route::post('/reviews', 'user_store')                           ->name('store');
+    Route::get('/reviews/{id}', 'show')                             ->name('show');
+    Route::put('/reviews/{id}', 'user_update')                      ->name('update');
+    Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy');
+    Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy');
+    Route::get('/property/{property_id}/reviews', 'property_index') ->name('property.index');
 });
 
 
 
 
-
+~
