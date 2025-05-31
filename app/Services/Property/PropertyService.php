@@ -23,6 +23,20 @@ class PropertyService
          $this->officeService = $officeService;
          $this->shopService = $shopService;
     }
+
+    public function getProperty($id)
+    {
+        $property=Property::query()->with('propertyable')->find($id);
+        if(!$property)
+        {
+            $message="Property not found";
+            $code=404;
+            return ['property'=>null,'message'=>$message,'code'=>$code];
+        }
+        $property['type']=class_basename($property->propertyable_type);
+        return ['property'=>$property,'message'=>'property retrieved successfully','code'=>200];
+
+    }
     public function getUserProperties($id)
     {
         $user=User::query()->find($id);

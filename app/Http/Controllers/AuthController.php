@@ -20,7 +20,7 @@ public function __construct(AuthService $authService)
 $this->authService=$authService;
 }
 
-public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
 {
     $data=[];
     try{
@@ -32,7 +32,7 @@ public function register(RegisterRequest $request): JsonResponse
         return Response::Error($data,$message);
     }
 }
-public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
 {
     $data=[];
     try{
@@ -44,7 +44,6 @@ public function login(LoginRequest $request): JsonResponse
         return Response::Error($data,$message);
     }
 }
-
     public function logout():JsonResponse
     {
         $data=[];
@@ -59,7 +58,6 @@ public function login(LoginRequest $request): JsonResponse
         }
 
     }
-
     public function refresh(Request $request):JsonResponse
     {
         $data=[];
@@ -73,5 +71,46 @@ public function login(LoginRequest $request): JsonResponse
         }
 
     }
+    public function forgetPassword(Request $request):JsonResponse
+    {
+        $data=[];
+
+        try {
+            $data=$this->authService->forgetPassword($request);
+            return Response::Success($data['info'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+
+    }
+    public function checkCode(Request $request):JsonResponse
+    {
+        $data=[];
+
+        try {
+            $data=$this->authService->checkCode($request);
+            return Response::Success($data['info'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+    public function resetPassword(Request $request):JsonResponse
+    {
+        $data=[];
+
+        try {
+            $data=$this->authService->resetPassword($request);
+            return Response::Success($data['info'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+
 
 }
