@@ -61,12 +61,14 @@ Route::post('/email/verification-notification', function (Request $request) {
 Route::controller(AuthController::class)->prefix('auth')
     ->name('auth.')
     ->group(function () {
-
         Route::post('/register', 'register')->name('register');
         Route::post('/login', 'login')->name('login');
         Route::middleware('auth:api')->post('/logout', 'logout')->name('logout');
         Route::middleware('auth:api')->post('/refresh', 'refresh')->name('refresh');
         Route::middleware('auth:api')->post('/me', 'me')->name('me');
+        Route::post('/forgetPassword','forgetPassword')->name('forgetPassword');
+        Route::post('/resetPassword','resetPassword')->name('resetPassword');
+        Route::post('/checkCode','checkCode')->name('checkCode');
     });
 
 Route::middleware([JwtMiddleware::class, VerifiedEmail::class])->group(function () {
@@ -110,6 +112,7 @@ Route::middleware(JwtMiddleware::class)
 Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
 ->name('property.')
     ->group(function () {
+        Route::get('/getProperty/{id}','getProperty')->name('getProperty');
        Route::get('/getUserProperties/{id}', 'getUserProperties')->name('getUserProperties');
        Route::post('/create', 'create')->name('create');
        Route::post('/update/{id}', 'update')->name('update');

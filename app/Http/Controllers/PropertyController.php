@@ -18,6 +18,21 @@ class PropertyController extends Controller
     {
         $this->propertyService = $propertyService;
     }
+
+    public function getProperty($id)
+    {
+        $data=[];
+
+        try {
+            $data=$this->propertyService->getProperty($id);
+            return Response::Success($data['property'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+
+    }
     public function getUserProperties($user_id):JsonResponse
     {
         $data=[];
