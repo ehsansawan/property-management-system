@@ -30,7 +30,8 @@ class CreatePropertyRequest extends FormRequest
             'property.name'        => 'string',
             'property.description' => 'string',
             'property.price'       => 'numeric',
-          //  'property.title'       => 'string',
+            'property.image'       => 'sometimes|array',
+            'property.image.*'     => ['file'=>'mimes:jpeg,jpg,png,webp', 'max:4096'],
         ];
 
         switch ($this->get('type'))

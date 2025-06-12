@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Profle\CreateProfileRequest;
-use App\Http\Requests\Profle\UpdateProfileRequest;
+use App\Http\Requests\Profile\CreateProfileRequest;
+use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Http\Responses\Response;
 use App\Services\ProfileService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Throwable;
 
 class ProfileController extends Controller
@@ -18,12 +19,12 @@ class ProfileController extends Controller
         $this->profileService = $profileService;
     }
 
-    public function show($user_id):JsonResponse
+    public function show(Request $request):JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->profileService->show($user_id);
+            $data=$this->profileService->show($request);
             return Response::Success($data['profile'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
@@ -45,12 +46,12 @@ class ProfileController extends Controller
             return Response::Error($data,$message);
         }
     }
-    public function update(UpdateProfileRequest $request, $user_id):JsonResponse
+    public function update(UpdateProfileRequest $request):JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->profileService->update($request->validated(),$user_id);
+            $data=$this->profileService->update($request->validated());
             return Response::Success($data['profile'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
@@ -58,12 +59,12 @@ class ProfileController extends Controller
             return Response::Error($data,$message);
         }
     }
-    public function delete($user_id):JsonResponse
+    public function delete(Request $request):JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->profileService->delete($user_id);
+            $data=$this->profileService->delete($request);
             return Response::Success($data['profile'],$data['message'],$data['code']);
         }
         catch (Throwable $th){

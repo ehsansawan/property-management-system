@@ -89,9 +89,9 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function (
         ->name('profile.')
         ->group(function () {
             Route::post('/create', 'create')->name('create');
-            Route::get('/show/{user_id}', 'show')->name('show');
-            Route::post('/update/{user_id}', 'update')->name('update');
-            Route::delete('/delete/{user_id}', 'delete')->name('delete');
+            Route::get('/show', 'show')->name('show');
+            Route::post('/update', 'update')->name('update');
+            Route::delete('/delete', 'delete')->name('delete');
         });
 Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
 ->name('property.')

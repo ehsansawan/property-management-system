@@ -3,14 +3,17 @@
 namespace App\Services\Property;
 
 use App\Http\Responses\Response;
+use App\Models\Image;
 use App\Models\Property;
 use App\Models\User;
 use App\Services\UserService;
+use App\Traits\PictureTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PropertyService
 {
+    use PictureTrait;
     protected ApartmentService $apartmentService;
     protected LandService $landService;
     protected OfficeService $officeService;
@@ -27,7 +30,7 @@ class PropertyService
 
     public function getProperty($id)
     {
-        $property=Property::query()->with('propertyable')->find($id);
+        $property=Property::query()->with('propertyable','images')->find($id);
         if(!$property)
         {
             $message="Property not found";
@@ -52,7 +55,7 @@ class PropertyService
             $code=404;
             return ['properties'=>null,'message'=>$message,'code'=>$code];
         }
-        $properties=$user->properties()->with('propertyable')->get();
+        $properties=$user->properties()->with('propertyable','images')->get();
 
         $properties= $properties->map(function ($property) {
             $prop = $property->toArray();
@@ -108,6 +111,20 @@ class PropertyService
             );
            $property['type']=$request['type'];
            $property['propertable']=$propertyable;
+
+           $images=$data->get('image',[]);
+
+               foreach ($images as $image)
+               {
+                   $file_url=$this->StorePicture($image,'uploads/properties');
+                   Image::query()->create([
+                       'property_id'=>$property->id,
+                       'image_url'=>$file_url,
+                   ]);
+               }
+
+          $property['images']=$property->images;
+
             DB::commit();
           return['property'=>$property,'message'=>'property created successfully','code'=>201];
         }
@@ -159,6 +176,7 @@ class PropertyService
                     break;
             }
 
+
             $property=Property::query()->find($id);
 
             $fields = ['area','name','description','price'];
@@ -167,12 +185,31 @@ class PropertyService
                 if (filled($data->get('property')[$field])) {
 
                     $property->{$field} = $data->get('property')[$field];
-
                 }
             }
 
+            $images_to_delete=$data->get('property')['image_to_delete']??[];
+
+            foreach ($images_to_delete as $image) {
+                $image=Image::query()->find($image);
+                $this->DestroyPicture($image);
+                $image->delete();
+            }
+
+            $images=$data->get('property')['image']??[];
+
+                foreach ($images as $image)
+                {
+                    $file_url=$this->StorePicture($image,'uploads/properties');
+                    Image::query()->create([
+                        'property_id'=>$property->id,
+                        'image_url'=>$file_url,
+                    ]);
+                }
+
 
             $property->save();
+            $property['images']=$property->images;
             $property['type']=$request['type'];
             $property['propertable']=$propertyable;
             $message="Property updated successfully";
@@ -204,7 +241,16 @@ class PropertyService
             $propertyable = $property->propertyable;
 
             $propertyable->delete();
+
+            $file_urls=$property->images->pluck('image_url')->toArray();
+
+            foreach ($file_urls as $file_url)
+            {
+                $this->DestroyPicture($file_url);
+            }
+
             $property->delete();
+
 
             DB::commit();
 

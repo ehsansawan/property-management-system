@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Profle;
+namespace App\Http\Requests\Profile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -28,6 +28,7 @@ class UpdateProfileRequest extends FormRequest
             'phone_number' => 'regex:/^09\d{8}$/',//|unique:users,phone_number
             'image_url' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'gender' => 'nullable|string|in:male,female',
+            'user_id'=> 'integer|exists:users,id',
         ];
     }
 }
