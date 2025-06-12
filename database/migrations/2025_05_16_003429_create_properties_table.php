@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('location_id')->constrained('locations');
             $table->decimal('area',15,2)->nullable();
-            //$table->decimal('price')->nullable(); // we should delete it from here
+            $table->decimal('price')->nullable(); // we should delete it from here
             $table->string('name')->nullable();
-            $table->string('title')->nullable();
+            //$table->string('title')->nullable();
             $table->text('description')->nullable();
            // $table->string('status')->default('active');
            // $table->string('type')->nullable();

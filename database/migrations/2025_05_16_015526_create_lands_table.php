@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('lands', function (Blueprint $table) {
             $table->id();
           //  $table->foreignId('property_id')->constrained('properties');
-            $table->string('type');
-            $table->string('street');
-            $table->text('corner');
+            $table->enum('type',['industrial','agricultural','commercial','residential'])->nullable();//(تجاري , سكني , زراعي ,صناعي)
+            $table->boolean('is_inside_master_plan')->default(false);// داخل مخطط تنظيمي
+            $table->boolean('is_serviced')->default(false);
+            $table->enum('slope', ['flat', 'sloped', 'mountainous'])->nullable();//['مستوية','منحدرة','جبلية']
             $table->timestamps();
         });
     }

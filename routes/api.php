@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -96,11 +97,40 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
 ->name('property.')
     ->group(function () {
         Route::get('/getProperty/{id}','getProperty')->name('getProperty');
-       Route::get('/getUserProperties/{id}', 'getUserProperties')->name('getUserProperties');
+       Route::get('/getUserProperties', 'getUserProperties')->name('getUserProperties');
+       Route::post('/create', 'create')->name('create');
+       Route::post('/getAttributes','getAttributes')->name('getAttributes');
+       Route::post('/update/{id}', 'update')->name('update');
+       Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
+
+Route::controller(LocationController::class)->prefix('location')
+    ->name('location.')
+    ->group(function () {
+       Route::get('/index', 'index')->name('index');
        Route::post('/create', 'create')->name('create');
        Route::post('/update/{id}', 'update')->name('update');
        Route::delete('/delete/{id}', 'delete')->name('delete');
     });
+
+Route::controller(\App\Http\Controllers\GovernorateController::class)->prefix('governorate')
+    ->name('governorate.')
+    ->group(function () {
+        Route::get('/index', 'index')->name('index');
+        Route::post('/create', 'create')->name('create');
+        Route::post('/update/{id}', 'update')->name('update');
+        Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
+
+Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
+    ->name('city.')
+    ->group(function () {
+       Route::get('getCitiesByGovernorate/{id}', 'getCitiesByGovernorate')->name('getCitiesByGovernorate');
+       Route::post('/create', 'create')->name('create');
+       Route::post('/update/{id}', 'update')->name('update');
+       Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
+
 
 });
 

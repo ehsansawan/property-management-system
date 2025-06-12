@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
-           // $table->foreignId('property_id')->constrained('properties');
+
             $table->smallInteger('floor');
-            $table->string('type');
+            $table->enum('type', ['retail', 'grocery', 'pharmacy', 'bookstore', 'restaurant', 'salon', 'other']);
             $table->boolean('has_warehouse')->default(false);
+            $table->boolean('has_bathroom')->default(false);
+            $table->boolean('has_ac')->default(false);
+           // $table->boolean('is_ready')->default(false);
             $table->timestamps();
         });
     }

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Property;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOfficeRequest extends FormRequest
+class CreateSuggestedLocationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,13 +23,9 @@ class UpdateOfficeRequest extends FormRequest
     {
         return [
             //
-            'data.floor'=>'integer',
-            'data.rooms'=>'integer',
-            'data.bathrooms'=>'integer',
-            'data.meeting_rooms'=>'integer',
-            'data.has_parking'=>'boolean',
-            'data.furnished'=>'boolean',
-            'data.furnished_type'=>'string'
+            'user_id' => 'exists:users,id',
+            'governorate_id' => 'required|exists:governorates,id',
+            'description'=>'required|string',
         ];
     }
 }

@@ -29,7 +29,7 @@ class UpdatePropertyRequest extends FormRequest
             'property.name'=>'string',
             'property.description'=>'string',
             'property.price'=>'numeric',
-            'property.title'=>'string',
+            //'property.title'=>'string',
         ];
         switch ($this->input('type'))
         {

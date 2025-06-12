@@ -23,15 +23,15 @@ class CreateApartmentRequest extends FormRequest
     {
         return [
             //
-            'Apartment.floor'=>'integer|required',
-            'Apartment.rooms'=>'integer|required',
-            'Apartment.bathrooms'=>'integer|required',
-            'Apartment.bedrooms'=>'integer|required',
-            'Apartment.has_elevator'=>'boolean',
-            'Apartment.has_alternative_power'=>'boolean',
-            'Apartment.has_garage'=>'boolean',
-            'Apartment.furnished'=>'boolean',
-            'Apartment.furnished_type'=>'string|required',
+            'data.floor'=>'integer|required',
+            'data.rooms'=>'integer|required',
+            'data.bathrooms'=>'integer|required',
+            'data.bedrooms'=>'integer|required',
+            'data.has_elevator'=>'boolean',
+            'data.has_alternative_power'=>'boolean',
+            'data.has_garage'=>'boolean',
+            'data.furnished'=>'boolean',
+            'data.furnished_type'=>'string|required',
         ];
     }
 }

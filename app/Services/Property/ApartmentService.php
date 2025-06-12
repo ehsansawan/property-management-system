@@ -41,7 +41,7 @@ class ApartmentService
     }
     public function create($request)
     {
-        $data=collect($request->get('Apartment'));
+        $data=collect($request->get('data'));
 
             $apartment=Apartment::query()->create(
                 [
@@ -62,7 +62,7 @@ class ApartmentService
     }
     public function update($request,$id)
     {
-       $data=collect($request->get('Apartment'));
+       $data=collect($request->get('data'));
        $apartment=Apartment::query()->find($id);
 
 
@@ -89,8 +89,26 @@ class ApartmentService
         $apartment->delete();
         $message="apartment deleted successfully";
         $code=200;
-
+          return ['apartment'=>$apartment,'message'=>$message,'code'=>$code];
     }
+    public function getAttributes()
+    {
+        $attributes=[
+            'floor'=>'integer|required',
+            'rooms'=>'integer|required',
+            'bathrooms'=>'integer|required',
+            'bedrooms'=>'integer|required',
+            'has_elevator'=>'boolean',
+            'has_alternative_power'=>'boolean',
+            'has_garage'=>'boolean',
+            'furnished'=>'boolean',
+            'furnished_type'=>'string|required',
+        ];
+
+        return ['attributes'=>$attributes];
+    }
+
+
 
 
 }

@@ -23,9 +23,11 @@ class UpdateShopRequest extends FormRequest
     {
         return [
             //
-            'Shop.floor'=>'integer',
-            'Shop.type'=>'string',
-            'Shop.has_warehouse'=>'boolean',
+            'data.floor'=>'integer',
+            'data.type'=>'string|in:retail,grocery,pharmacy,bookstore,restaurant,salon,other',
+            'data.has_warehouse'=>'boolean',
+            'data.has_bathroom'=>'boolean',
+            'data.has_ac'=>'boolean',
         ];
     }
 }

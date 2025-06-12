@@ -23,9 +23,10 @@ class CreateLandRequest extends FormRequest
     {
         return [
             //
-            'Land.type'=>'required|string',
-            'Land.street'=>'required|string',
-            'Land.corner'=>'required|string|max:1000',
+            'data.type'=>'required|string|in:industrial,agricultural,commercial,residential',
+            'data.is_inside_master_plan'=>'boolean',
+            'data.is_serviced'=>'boolean',
+            'data.slope'=>'nullable|string|in:flat,sloped,mountainous'
         ];
     }
 }

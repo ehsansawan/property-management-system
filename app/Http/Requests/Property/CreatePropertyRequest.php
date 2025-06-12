@@ -24,13 +24,13 @@ class CreatePropertyRequest extends FormRequest
         $rules = [
             //
             'type' => 'required|string|in:Apartment,Land,Office,Shop',
-            'property.user_id'     => 'required|integer|exists:users,id',
+            'property.user_id'     => 'integer|exists:users,id',
             'property.location_id' => 'required|integer|exists:locations,id',
             'property.area'        => 'numeric',
             'property.name'        => 'string',
             'property.description' => 'string',
             'property.price'       => 'numeric',
-            'property.title'       => 'string',
+          //  'property.title'       => 'string',
         ];
 
         switch ($this->get('type'))

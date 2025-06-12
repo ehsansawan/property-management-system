@@ -9,7 +9,7 @@ class Land extends Model
 {
     //
     use HasFactory;
-    protected $fillable=['type','street','corner'];
+    protected $fillable=['type','slope','is_serviced','is_inside_master_plan'];
 
     public function property()
     {

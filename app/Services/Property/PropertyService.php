@@ -7,6 +7,7 @@ use App\Models\Property;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PropertyService
 {
@@ -37,9 +38,14 @@ class PropertyService
         return ['property'=>$property,'message'=>'property retrieved successfully','code'=>200];
 
     }
-    public function getUserProperties($id)
+    public function getUserProperties($request)
     {
-        $user=User::query()->find($id);
+        $user_id=$request['user_id']??null;
+
+        if(!$user_id)
+            $user_id=auth('api')->id();
+
+        $user=User::query()->find($user_id);
         if(!$user)
         {
             $message="User not found";
@@ -56,16 +62,6 @@ class PropertyService
         // for returning a good formatting for the front_end
 
         return['properties'=>$properties,'message'=>'properties retrieved successfully','code'=>200];
-    }
-
-    public function getAllProperties($request)
-    {
-
-    }
-
-    public function getPropertyById($id)
-    {
-
     }
     public function create($request)
     {
@@ -94,14 +90,19 @@ class PropertyService
 
            $data=collect($request['property']);
 
+            $user_id=$data->get('user_id');
+            if(!$user_id)
+                $user_id=auth('api')->id();
+
+
            $property=$propertyable->property()->create(
                [
-                   'user_id'=>$data->get('user_id'),
+                   'user_id'=>$user_id,
                    'location_id'=>$data->get('location_id'),
                    'area'=>$data->get('area'),
-                   //'price'=>$data->get('price'),
+                   'price'=>$data->get('price'),
                    'name'=>$data->get('name'),
-                   'title'=>$data->get('title'),
+                   //'title'=>$data->get('title'),
                     'description'=>$data->get('description'),
                 ]
             );
@@ -160,7 +161,7 @@ class PropertyService
 
             $property=Property::query()->find($id);
 
-            $fields = ['area','name','title','description','price'];
+            $fields = ['area','name','description','price'];
 
             foreach ($fields as $field) {
                 if (filled($data->get('property')[$field])) {
@@ -256,4 +257,44 @@ class PropertyService
 //            return Response::Error(null,$message);
 //        }
 //    }
+  public function getAttributes($request)
+  {
+
+      $valid=Validator::make($request->all(),['type'=>'required|string|in:Apartment,Land,Office,Shop']);
+
+      if($valid->fails())
+      {
+          return ['attributes'=>null,'message'=>$valid->errors()->first(),'code'=>422];
+      }
+
+      switch ($request->get('type'))
+            {
+                case 'Apartment':
+                   $data=$this->apartmentService->getAttributes();
+                    break;
+                case 'Land':
+                   $data=$this->landService->getAttributes();
+                    break;
+                case 'Office':
+                    $data=$this->officeService->getAttributes();
+                    break;
+                case 'Shop':
+                    $data=$this->shopService->getAttributes();
+                    break;
+            }
+
+      $data['property']=[
+          'user_id'     => 'integer|exists:users,id',
+          'location_id' => 'required|integer|exists:locations,id',
+          'area'        => 'numeric',
+          'name'        => 'string',
+          'description' => 'string',
+      ];
+      $data['type']=$request->get('type');
+      $message='data retired successfully';
+      $code=200;
+      return ['attributes'=>$data,'message'=>$message,'code'=>$code];
+
+  }
+
 }
