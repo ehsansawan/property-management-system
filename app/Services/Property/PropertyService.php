@@ -335,6 +335,10 @@ class PropertyService
           'area'        => 'numeric',
           'name'        => 'string',
           'description' => 'string',
+          'property.image'       => 'sometimes|array',
+          'property.image.*'     => ['file'=>'mimes:jpeg,jpg,png,webp', 'max:4096'],
+          'property.image_to_delete'=>'sometimes|array',
+          'property.image_to_delete.*'=>'integer|exists:images,id',
       ];
       $data['type']=$request->get('type');
       $message='data retired successfully';

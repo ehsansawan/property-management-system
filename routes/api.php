@@ -57,7 +57,7 @@ Route::post('/email/verification-notification', function (Request $request) {
     ->middleware(['auth:api','throttle:6,1'])->name('verification.send');
 
 
-
+//auth
 Route::controller(AuthController::class)->prefix('auth')
     ->name('auth.')
     ->group(function () {
@@ -73,9 +73,8 @@ Route::controller(AuthController::class)->prefix('auth')
 
 Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function () {
 
-    // User
-
-    Route::controller(UserController::class)->prefix('user')
+// User
+Route::controller(UserController::class)->prefix('user')
         ->name('user.')
         ->group(function () {
             Route::get('/getUsers', 'get_users')->name('getUsers');
@@ -85,7 +84,7 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function (
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
 //Profile
-    Route::controller(ProfileController::class)->prefix('profile')
+Route::controller(ProfileController::class)->prefix('profile')
         ->name('profile.')
         ->group(function () {
             Route::post('/create', 'create')->name('create');
@@ -93,6 +92,7 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function (
             Route::post('/update', 'update')->name('update');
             Route::delete('/delete', 'delete')->name('delete');
         });
+//property
 Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
 ->name('property.')
     ->group(function () {
@@ -103,7 +103,7 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
        Route::post('/update/{id}', 'update')->name('update');
        Route::delete('/delete/{id}', 'delete')->name('delete');
     });
-
+//location
 Route::controller(LocationController::class)->prefix('location')
     ->name('location.')
     ->group(function () {
@@ -112,7 +112,7 @@ Route::controller(LocationController::class)->prefix('location')
        Route::post('/update/{id}', 'update')->name('update');
        Route::delete('/delete/{id}', 'delete')->name('delete');
     });
-
+//governorate
 Route::controller(\App\Http\Controllers\GovernorateController::class)->prefix('governorate')
     ->name('governorate.')
     ->group(function () {
@@ -121,7 +121,7 @@ Route::controller(\App\Http\Controllers\GovernorateController::class)->prefix('g
         Route::post('/update/{id}', 'update')->name('update');
         Route::delete('/delete/{id}', 'delete')->name('delete');
     });
-
+//city
 Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
     ->name('city.')
     ->group(function () {
@@ -130,8 +130,18 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
        Route::post('/update/{id}', 'update')->name('update');
        Route::delete('/delete/{id}', 'delete')->name('delete');
     });
-
-
+//suggested location
+ Route::controller(\App\Http\Controllers\SuggestedLocationController::class)->prefix('suggested-location')
+     ->name('suggested-location.')
+     ->group(function () {
+        Route::get('/index', 'index')->name('index');
+        Route::post('/suggestedLocationsByGovernorate','suggestedLocationsByGovernorate')->name('suggestedLocationsByGovernorate');
+        Route::post('/userSuggestedLocations','userSuggestedLocations')->name('userSuggestedLocations');
+         Route::post('/create', 'create')->name('create');
+         Route::post('/update/{id}', 'update')->name('update');
+        Route::get('/show/{id}', 'show')->name('show');
+        Route::delete('/delete/{id}', 'delete')->name('delete');
+     });
 });
 
 

@@ -18,8 +18,9 @@ public function index()
 {
 
 }
-public function userSuggestedLocations($user_id)
+public function userSuggestedLocations($request)
 {
+$user_id=$request['user_id']??auth('api')->id();
 $user=User::query()->find($user_id);
 if(!$user)
 {
@@ -28,36 +29,51 @@ if(!$user)
     return ['locations'=>null,'message'=>$message,'code'=>$code];
 }
 
-$locations=$user->suggestedLocations()->get();
+$locations=$user->suggestedLocations()->with('governorate')->orderBy('governorate_id')->get();
 $message='user suggested locations list';
 $code=200;
 return ['locations'=>$locations,'message'=>$message,'code'=>$code];
 
 }
-public function suggestedLocationsByGovernorate($governorate_id)
+public function suggestedLocationsByGovernorate($request)
 {
-    $governorate=Governorate::query()->find($governorate_id);
+    $governorate=Governorate::query()->find($request['governorate_id']??null);
     if(!$governorate)
     {
-        $message="User not found";
+        $message="governorate not found";
         $code=404;
         return ['locations'=>null,'message'=>$message,'code'=>$code];
     }
 
-    $locations=$governorate->suggestedLocations()->get();
+    $locations=$governorate->suggestedLocations()->with('user')->orderBy('user_id')->get();
     $message='governorate suggested locations list';
     $code=200;
     return ['locations'=>$locations,'message'=>$message,'code'=>$code];
 }
-
+public function show($id)
+{
+    $location=SuggestedLocation::query()->find($id);
+    if(!$location)
+    {
+        $message="the id not found";
+        $code=404;
+        return ['location'=>null,'message'=>$message,'code'=>$code];
+    }
+    $location=$location->with('user','governorate')->orderBy('user_id')->get();
+    $message=' suggested location retrieved successfully';
+    $code=200;
+    return ['location'=>$location,'message'=>$message,'code'=>$code];
+}
 public function create($request)
 {
  $user_id=$request['user_id']??auth('api')->id();
 
+
  $location=SuggestedLocation::query()->create([
      'user_id'=>$user_id,
      'governorate_id'=>$request['governorate_id'],
-     'description'=>$request['description'],
+     'city_name'=>$request['city_name'],
+    // 'description'=>$request['description'],
  ]);
 
  $message='Suggested location created successfully';
@@ -66,14 +82,14 @@ public function create($request)
  return ['location'=>$location,'message'=>$message,'code'=>$code];
 
 }
-
 public function update($request,$id)
 {
 $user_id=$request['user_id']??auth('api')->id();
 
 $valid=Validator::make($request->all(),[
     'governorate_id'=>'exists:governorates,id',
-    'description'=>'string',
+    'city_name'=>'required',
+  //  'description'=>'string',
 ]);
 
 
@@ -88,7 +104,7 @@ if(!$location)
 
 
 $location->Governorate_id=$request['governorate_id']??$location->Governorate_id;
-$location->description=$request['description']??$location->description;
+$location->city_name=$request['city_name']??$location->description;
 
 $location->save();
 $message='Suggested location updated successfully';
@@ -96,7 +112,6 @@ $code=200;
 return ['location'=>$location,'message'=>$message,'code'=>$code];
 
 }
-
 public function delete($id)
 {
 $location=SuggestedLocation::query()->find($id);
@@ -104,7 +119,7 @@ if(!$location)
 {
     $message="suggested location not found";
     $code=404;
-    return ['locations'=>null,'message'=>$message,'code'=>$code];
+    return ['location'=>null,'message'=>$message,'code'=>$code];
 }
 $location->delete();
 $message='Suggested location deleted successfully';

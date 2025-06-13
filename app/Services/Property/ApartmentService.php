@@ -43,16 +43,17 @@ class ApartmentService
     {
         $data=collect($request->get('data'));
 
+
             $apartment=Apartment::query()->create(
                 [
                     'floor'=>$data->get('floor'),
                     'rooms'=>$data->get('rooms'),
                     'bedrooms'=>$data->get('bedrooms'),
                     'bathrooms'=>$data->get('bathrooms'),
-                    'has_garage'=>$data->get('has_garage'),
-                    'has_elevator'=>$data->get('has_elevator'),
-                    'has_alternative_power'=>$data->get('has_alternative_power'),
-                    'furnished'=>$data->get('furnished'),
+                    'has_garage'=>$data->get('has_garage')??false,
+                    'has_elevator'=>$data->get('has_elevator')??false,
+                    'has_alternative_power'=>$data->get('has_alternative_power')??false,
+                    'furnished'=>$data->get('furnished')??false,
                     'furnished_type'=>$data->get('furnished_type'),
                 ]
             );
@@ -102,7 +103,7 @@ class ApartmentService
             'has_alternative_power'=>'boolean',
             'has_garage'=>'boolean',
             'furnished'=>'boolean',
-            'furnished_type'=>'string|required',
+            'furnished_type'=>'string',
         ];
 
         return ['attributes'=>$attributes];

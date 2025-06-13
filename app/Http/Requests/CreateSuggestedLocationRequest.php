@@ -25,7 +25,8 @@ class CreateSuggestedLocationRequest extends FormRequest
             //
             'user_id' => 'exists:users,id',
             'governorate_id' => 'required|exists:governorates,id',
-            'description'=>'required|string',
+            'city_name'=>'required|string',
+            //'description'=>'required|string',
         ];
     }
 }

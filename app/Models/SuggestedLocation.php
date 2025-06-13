@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class SuggestedLocation extends Model
 {
     //
-    protected $table = 'suggested_location';
+    protected $fillable = ['user_id','governorate_id','city_name'];
+    protected $table = 'suggested_locations';
 
     public function user()
     {

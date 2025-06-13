@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('governorate_id')->constrained('governorates')->onDelete('cascade');
             $table->string('city_name');
-            $table->text('description');
+           // $table->text('description');
             $table->timestamps();
         });
     }
