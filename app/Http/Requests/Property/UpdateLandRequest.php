@@ -23,9 +23,10 @@ class UpdateLandRequest extends FormRequest
     {
         return [
             //
-            'Land.type'=>'string',
-            'Land.street'=>'string',
-            'Land.corner'=>'string|max:1000',
+            'data.type'=>'string|in:industrial,agricultural,commercial,residential',
+            'data.is_inside_master_plan'=>'boolean',
+            'data.is_serviced'=>'boolean',
+            'data.slope'=>'nullable|string|in:flat,sloped,mountainous'
         ];
     }
 }

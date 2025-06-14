@@ -33,13 +33,14 @@ class LandService
     }
     public function create($request)
     {
-        $data=collect($request->get('Land'));
+        $data=collect($request->get('data'));
 
 
         $land=Land::query()->create([
             'type'=>$data->get('type'),
-            'street'=>$data->get('street'),
-            'corner'=>$data->get('corner'),
+            'is_inside_master_plan'=>$data->get('is_inside_master_plan'),
+            'slope'=>$data->get('slope'),
+            'is_serviced'=>$data->get('is_serviced'),
         ]);
 
 
@@ -50,11 +51,11 @@ class LandService
     }
     public function update($request,$id)
     {
-        $data=collect($request->get('Land'));
+        $data=collect($request->get('data'));
         $land=Land::query()->find($id);
 
 
-        $fields = ['type','street','corner'];
+        $fields = ['type','is_serviced','slope','is_inside_master_plan'];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {
@@ -75,7 +76,20 @@ class LandService
         $code=200;
         return ['land'=>$land,'message'=>$message,'code'=>$code];
     }
+    public function getAttributes()
+    {
+        $attributes=
+            [
+                'type'=>'required|string|in:industrial,agricultural,commercial,residential',
+                'is_inside_master_plan'=>'boolean',
+                'is_serviced'=>'boolean',
+                'slope'=>'nullable|string|in:flat,sloped,mountainous'
+            ];
 
+
+        return ['attributes'=>$attributes];
+
+    }
 
 
 }

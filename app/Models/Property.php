@@ -45,4 +45,9 @@ class Property extends Model
         return $this->morphTo();
     }
 
+    public function images()
+    {
+        return $this->hasMany(Image::class);
+    }
+
 }

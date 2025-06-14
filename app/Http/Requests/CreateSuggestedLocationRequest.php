@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Profle;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProfileRequest extends FormRequest
+class CreateSuggestedLocationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +23,10 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             //
-            'first_name' => 'string|max:255',
-            'last_name' => 'string|max:255',
-            'phone_number' => 'regex:/^09\d{8}$/',//|unique:users,phone_number
-            'image_url' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'gender' => 'nullable|string|in:male,female',
+            'user_id' => 'exists:users,id',
+            'governorate_id' => 'required|exists:governorates,id',
+            'city_name'=>'required|string',
+            //'description'=>'required|string',
         ];
     }
 }

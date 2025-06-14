@@ -23,15 +23,15 @@ class UpdateApartmentRequest extends FormRequest
     {
         return [
             //
-            'Apartment.floor'=>'integer',
-            'Apartment.rooms'=>'integer',
-            'Apartment.bathrooms'=>'integer',
-            'Apartment.bedrooms'=>'integer',
-            'Apartment.has_elevator'=>'boolean',
-            'Apartment.has_alternative_power'=>'boolean',
-            'Apartment.has_garage'=>'boolean',
-            'Apartment.furnished'=>'boolean',
-            'Apartment.furnished_type'=>'string|required',
+            'data.floor'=>'integer',
+            'data.rooms'=>'integer',
+            'data.bathrooms'=>'integer',
+            'data.bedrooms'=>'integer',
+            'data.has_elevator'=>'boolean',
+            'data.has_alternative_power'=>'boolean',
+            'data.has_garage'=>'boolean',
+            'data.furnished'=>'boolean',
+            'data.furnished_type'=>'string|required',
         ];
     }
 }

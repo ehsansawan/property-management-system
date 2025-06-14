@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Models\Profile;
 use App\Models\User;
+use App\Traits\PictureTrait;
 
 class ProfileService
 {
+    use PictureTrait;
     /**
      * Create a new class instance.
      */
@@ -16,8 +18,9 @@ class ProfileService
     }
 
 
-    public function show($user_id):array
+    public function show($request):array
     {
+        $user_id=$request['user_id']??auth('api')->id();
         $user=User::query()->find($user_id);
 
         if(!$user){
@@ -54,7 +57,10 @@ class ProfileService
             return["profile"=>$profile,"message"=>$message,"code"=>$code];
         }
 
+
         $data=collect($request);
+        if($data->get('image_url')!=null)
+        $file_url=$this->StorePicture($data->get('image_url'),'uploads\Profile');
 
         $profile=Profile::query()->create(
             [
@@ -62,7 +68,7 @@ class ProfileService
                 "first_name"=>$data->get('first_name'),
                 "last_name"=>$data->get('last_name'),
                 "phone_number"=>$data->get('phone_number'),
-                "image_url"=>$data->get('image_url'),
+                "image_url"=>$file_url??null,
                 "gender"=>$data->get('gender'),
             ]
         );
@@ -78,9 +84,14 @@ class ProfileService
         return["profile"=>$profile,"message"=>$message,"code"=>$code];
 
     }
-    public function update($request,$user_id):array
+    public function update($request):array
     {
+
         $data=collect($request);
+
+
+        $user_id=$request['user_id']??auth('api')->id();
+
         $user=User::query()->find($user_id);
 
         if(!$user)
@@ -89,6 +100,8 @@ class ProfileService
             $code=404;
             return["profile"=>null,"message"=>$message,"code"=>$code];
         }
+
+
 
         $profile=$user->profile;
         //$profile=Profile::query()->where('user_id',$id)->first();
@@ -100,28 +113,8 @@ class ProfileService
             return["profile"=>$profile,"message"=>$message,"code"=>$code];
         }
 
-//        if(filled($data->get('first_name')))
-//        {
-//            $profile->first_name=$data->get('first_name');
-//        }
-//        if(filled($data->get('last_name')))
-//        {
-//            $profile->last_name=$data->get('last_name');
-//        }
-//        if(filled($data->get('phone_number')))
-//        {
-//            $profile->phone_number=$data->get('phone_number');
-//        }
-//        if(filled($data->get('image_url')))
-//        {
-//            $profile->image_url=$data->get('image_url');
-//        }
-//        if(filled($data->get('gender')))
-//        {
-//            $profile->gender=$data->get('gender');
-//        }
 
-        $fields = ['first_name', 'last_name', 'phone_number', 'image_url', 'gender'];
+        $fields = ['first_name', 'last_name', 'phone_number', 'gender'];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {
@@ -129,6 +122,13 @@ class ProfileService
             }
         }
 
+        if($data->get('image_url')!= null)
+        {
+            $file_url=$this->StorePicture($data->get('image_url'),'uploads/Profile');
+            $this->destroyPicture($profile->image_url);
+        }
+
+       $profile->image_url=$file_url??$profile->image_url;
 
         $profile->save();
         $message="profile updated successfully";
@@ -137,9 +137,10 @@ class ProfileService
         return["profile"=>$profile,"message"=>$message,"code"=>$code];
 
     }
-    public function delete($user_id):array
+    public function delete($request):array
     {
 
+        $user_id=$request['user_id']??auth('api')->id();
         $user=User::query()->find($user_id);
 
         if(!$user)
@@ -158,6 +159,7 @@ class ProfileService
             return["profile"=>$profile,"message"=>$message,"code"=>$code];
         }
 
+        $this->destroyPicture($profile->image_url);
         $profile->delete();
         $message="profile deleted successfully";
         $code=200;

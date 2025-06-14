@@ -23,9 +23,12 @@ class CreateShopRequest extends FormRequest
     {
         return [
             //
-            'Shop.floor'=>'required|integer',
-            'Shop.type'=>'required|string',
-            'Shop.has_warehouse'=>'boolean',
+            'data.floor'=>'required|integer',
+            'data.type'=>'required|string|in:retail,grocery,pharmacy,bookstore,restaurant,salon,other',
+            'data.has_warehouse'=>'boolean',
+            'data.has_bathroom'=>'boolean',
+            'data.has_ac'=>'boolean',
+           // 'data.is_ready'=>'boolean',
         ];
     }
 }

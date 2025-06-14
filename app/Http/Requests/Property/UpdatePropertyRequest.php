@@ -29,7 +29,11 @@ class UpdatePropertyRequest extends FormRequest
             'property.name'=>'string',
             'property.description'=>'string',
             'property.price'=>'numeric',
-            'property.title'=>'string',
+            'property.image'       => 'sometimes|array',
+            'property.image.*'     => ['file'=>'mimes:jpeg,jpg,png,webp', 'max:4096'],
+            'property.image_to_delete'=>'sometimes|array',
+            'property.image_to_delete.*'=>'integer|exists:images,id',
+            //'property.title'=>'string',
         ];
         switch ($this->input('type'))
         {

@@ -28,10 +28,9 @@ class OfficeService
         $code=200;
         return ['office'=>$office,'message'=>$message,'code'=>$code];
     }
-
     public function create($request)
     {
-        $data=collect($request->get('Office'));
+        $data=collect($request->get('data'));
 
         $office=Office::query()->create([
             'floor'=>$data->get('floor'),
@@ -45,11 +44,10 @@ class OfficeService
         $code=201;
         return ['office'=>$office,'message'=>$message,'code'=>$code];
     }
-
     public function update($request,$id)
     {
         $office=Office::query()->find($id);
-        $data=collect($request->get('Office'));
+        $data=collect($request->get('data'));
         $fields = [ 'floor','rooms','bathrooms','meeting_rooms','has_parking','furnished'];
 
         foreach ($fields as $field) {
@@ -63,7 +61,6 @@ class OfficeService
         $code=200;
         return ['office'=>$office,'message'=>$message,'code'=>$code];
     }
-
     public function delete($id)
     {
         $office=Office::query()->find($id);
@@ -71,5 +68,19 @@ class OfficeService
         $message='office deleted successfully';
         $code=200;
         return ['office'=>$office,'message'=>$message,'code'=>$code];
+    }
+    public function getAttributes()
+    {
+        $attributes=[
+            'floor'=>'required|integer',
+            'rooms'=>'required|integer',
+            'bathrooms'=>'required|integer',
+            'meeting_rooms'=>'integer',
+            'has_parking'=>'boolean',
+            'furnished'=>'required|boolean',
+            'furnished_type'=>'string'
+        ];
+
+        return ['attributes'=>$attributes];
     }
 }

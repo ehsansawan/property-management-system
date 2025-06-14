@@ -29,13 +29,15 @@ class ShopService
     }
     public function create($request)
     {
-        $data=collect($request->get('Shop'));
+        $data=collect($request->get('data'));
 
         $shop=Shop::query()->create(
             [
                 'floor'=>$data->get('floor'),
                 'type'=>$data->get('type'),
                 'has_warehouse'=>$data->get('has_warehouse'),
+                'has_bathroom'=>$data->get('has_bathroom'),
+                'has_ac'=>$data->get('has_ac'),
             ]
         );
         $message='shop created successfully';
@@ -44,10 +46,10 @@ class ShopService
     }
     public function update($request,$id)
     {
-        $data=collect($request->get('Shop'));
+        $data=collect($request->get('data'));
         $shop=Shop::query()->find($id);
 
-        $fields = [  'floor','type','has_warehouse'];
+        $fields = [  'floor','type','has_warehouse','has_bathroom','has_ac'];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {
@@ -68,4 +70,17 @@ class ShopService
         $message='shop deleted successfully';
         $code=200;
     }
+    public function getAttributes()
+    {
+        $attributes=[
+            'floor'=>'required|integer',
+            'type'=>'required|string|in:retail,grocery,pharmacy,bookstore,restaurant,salon,other',
+            'has_warehouse'=>'boolean',
+            'has_bathroom'=>'boolean',
+            'has_ac'=>'boolean',
+        ];
+
+        return ['attributes'=>$attributes];
+    }
+
 }

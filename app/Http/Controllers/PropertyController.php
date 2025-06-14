@@ -33,12 +33,12 @@ class PropertyController extends Controller
         }
 
     }
-    public function getUserProperties($user_id):JsonResponse
+    public function getUserProperties(Request $request):JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->propertyService->getUserProperties($user_id);
+            $data=$this->propertyService->getUserProperties($request);
             return Response::Success($data['properties'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
@@ -61,7 +61,6 @@ class PropertyController extends Controller
             return Response::Error($data,$message);
         }
     }
-
     public function update(UpdatePropertyRequest $request,$id):JsonResponse
     {
         $data=[];
@@ -75,7 +74,6 @@ class PropertyController extends Controller
             return Response::Error($data,$message);
         }
     }
-
     public function delete($id):JsonResponse
     {
         $data=[];
@@ -88,6 +86,20 @@ class PropertyController extends Controller
             $message=$th->getMessage();
             return Response::Error($data,$message);
         }
+    }
+    public function getAttributes(Request $request):JsonResponse
+    {
+        $data=[];
+
+        try {
+            $data=$this->propertyService->getAttributes($request);
+            return Response::Success($data['attributes'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+
     }
 
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Container\Attributes\Auth;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -59,7 +60,7 @@ Route::post('/email/verification-notification', function (Request $request) {
     ->middleware(['auth:api','throttle:6,1'])->name('verification.send');
 
 
-
+//auth
 Route::controller(AuthController::class)->prefix('auth')
     ->name('auth.')
     ->group(function () {
@@ -91,11 +92,89 @@ Route::middleware([JwtMiddleware::class, VerifiedEmail::class])->group(function 
         ->name('profile.')
         ->group(function () {
             Route::post('/create', 'create')->name('create');
-            Route::get('/show/{user_id}', 'show')->name('show');
-            Route::post('/update/{user_id}', 'update')->name('update');
-            Route::delete('/delete/{user_id}', 'delete')->name('delete');
+            Route::get('/show', 'show')->name('show');
+            Route::post('/update', 'update')->name('update');
+            Route::delete('/delete', 'delete')->name('delete');
         });
 });
+
+//property
+Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
+->name('property.')
+    ->group(function () {
+        Route::get('/getProperty/{id}','getProperty')->name('getProperty');
+       Route::get('/getUserProperties', 'getUserProperties')->name('getUserProperties');
+       Route::post('/create', 'create')->name('create');
+       Route::post('/getAttributes','getAttributes')->name('getAttributes');
+       Route::post('/update/{id}', 'update')->name('update');
+       Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
+//location
+Route::controller(LocationController::class)->prefix('location')
+    ->name('location.')
+    ->group(function () {
+       Route::get('/index', 'index')->name('index');
+       Route::post('/create', 'create')->name('create');
+       Route::post('/update/{id}', 'update')->name('update');
+       Route::delete('/delete/{id}', 'delete')->name('delete');
+});
+
+//governorate
+Route::controller(\App\Http\Controllers\GovernorateController::class)->prefix('governorate')
+    ->name('governorate.')
+    ->group(function () {
+        Route::get('/index', 'index')->name('index');
+        Route::post('/create', 'create')->name('create');
+        Route::post('/update/{id}', 'update')->name('update');
+        Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
+//city
+Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
+    ->name('city.')
+    ->group(function () {
+       Route::get('getCitiesByGovernorate/{id}', 'getCitiesByGovernorate')->name('getCitiesByGovernorate');
+       Route::post('/create', 'create')->name('create');
+       Route::post('/update/{id}', 'update')->name('update');
+       Route::delete('/delete/{id}', 'delete')->name('delete');
+    });
+//suggested location
+ Route::controller(\App\Http\Controllers\SuggestedLocationController::class)->prefix('suggested-location')
+     ->name('suggested-location.')
+     ->group(function () {
+        Route::get('/index', 'index')->name('index');
+        Route::post('/suggestedLocationsByGovernorate','suggestedLocationsByGovernorate')->name('suggestedLocationsByGovernorate');
+        Route::post('/userSuggestedLocations','userSuggestedLocations')->name('userSuggestedLocations');
+         Route::post('/create', 'create')->name('create');
+         Route::post('/update/{id}', 'update')->name('update');
+        Route::get('/show/{id}', 'show')->name('show');
+        Route::delete('/delete/{id}', 'delete')->name('delete');
+});
+
+
+/*********************************************************************
+ *                           yahia routes                            *
+ *********************************************************************/
+
+
+Route::middleware(JwtMiddleware::class)
+    ->controller(SubscriptionController::class)                     ->prefix('subscriptions')
+                                                                    ->name('subscriptions.')
+    ->group(function () {
+    
+    Route::get('/activated/admin', 'allActiveSub')                  ->name('allActiveSub');
+    Route::get('/admin', 'index')                                   ->name('index.admin');
+    Route::put('/deactivate/{id}/admin', 'deactivate')              ->name('deactivate.admin');
+    Route::get('/{id}/admin', 'show')                               ->name('show.admin');
+    Route::delete('/{id}/admin', 'destroy')                         ->name('destroy.admin');
+
+    Route::get('/active/client', 'userActiveSub')                   ->name('activeSub.client');
+    Route::put('/deactivate/client', 'userDeactivate')              ->name('deactivate.client');
+    Route::get('/client', 'userIndex')                              ->name('index.client');
+    Route::get('/{id}/client', 'userShow')                          ->name('show.client');
+    Route::post('/client', 'userCreate')                            ->name('store.client');
+    Route::get('/time_remaining/{id}/client', 'time_remaining')     ->name('timeRemaining.client');
+});
+
 
 Route::middleware(JwtMiddleware::class)
      ->controller(ReviewController::class)
@@ -125,36 +204,6 @@ Route::middleware(JwtMiddleware::class)
     Route::delete('/plans/{id}', 'destroy')                         ->name('destroy');
 });
 
-
-Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
-->name('property.')
-    ->group(function () {
-        Route::get('/getProperty/{id}','getProperty')->name('getProperty');
-       Route::get('/getUserProperties/{id}', 'getUserProperties')->name('getUserProperties');
-       Route::post('/create', 'create')->name('create');
-       Route::post('/update/{id}', 'update')->name('update');
-       Route::delete('/delete/{id}', 'delete')->name('delete');
-});
-
-
-Route::middleware(JwtMiddleware::class)
-     ->controller(SubscriptionController::class)                    ->prefix('subscriptions')
-                                                                    ->name('subscriptions.')
-     ->group(function () {
-        
-    Route::get('/activated/admin', 'allActiveSub')                  ->name('allActiveSub');
-    Route::get('/admin', 'index')                                   ->name('index.admin');
-    Route::put('/deactivate/{id}/admin', 'deactivate')              ->name('deactivate.admin');
-    Route::get('/{id}/admin', 'show')                               ->name('show.admin');
-    Route::delete('/{id}/admin', 'destroy')                         ->name('destroy.admin');
-
-    Route::get('/active/client', 'userActiveSub')                   ->name('activeSub.client');
-    Route::put('/deactivate/client', 'userDeactivate')              ->name('deactivate.client');
-    Route::get('/client', 'userIndex')                              ->name('index.client');
-    Route::get('/{id}/client', 'userShow')                          ->name('show.client');
-    Route::post('/client', 'userCreate')                            ->name('store.client');
-    Route::get('/time_remaining/{id}/client', 'time_remaining')     ->name('timeRemaining.client');
-});
-
+/*****************************  end here  ****************************/
 
 

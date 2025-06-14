@@ -23,13 +23,13 @@ class CreateOfficeRequest extends FormRequest
     {
         return [
             //
-            'Office.floor'=>'required|integer',
-            'Office.rooms'=>'required|integer',
-            'Office.bathrooms'=>'required|integer',
-            'Office.meeting_rooms'=>'integer',
-            'Office.has_parking'=>'boolean',
-            'Office.furnished'=>'required|boolean',
-            'Office.furnished_type'=>'string'
+            'data.floor'=>'required|integer',
+            'data.rooms'=>'required|integer',
+            'data.bathrooms'=>'required|integer',
+            'data.meeting_rooms'=>'integer',
+            'data.has_parking'=>'boolean',
+            'data.furnished'=>'required|boolean',
+            'data.furnished_type'=>'string'
         ];
     }
 }

@@ -131,4 +131,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->properties()->where('property_type', \App\Models\Shop::class);
     }
+    public function suggestedLocations()
+    {
+        return $this->hasMany(SuggestedLocation::class);
+    }
 }
