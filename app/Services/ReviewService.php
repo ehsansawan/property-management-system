@@ -50,9 +50,9 @@ class ReviewService
     {
         $review = Review::find($id);
 
-        if (!$review) {
-            $message = 'review not found';
-            $code = 404;
+        if (!$review) 
+        {
+            $message = 'review not found';    $code = 404;
             return ['review' => null, 'message' => $message, 'code' => $code];
         }
 
@@ -80,8 +80,8 @@ class ReviewService
         }
 
         $updateData = array_filter([
-        'comment' => $request->input('comment'),
-        'rating' => $request->input('rating')
+            'comment' => $request->input('comment'),
+            'rating' => $request->input('rating')
         ], function($value) {return $value !== null;});
 
         $review->update($updateData);

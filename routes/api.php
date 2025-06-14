@@ -1,19 +1,21 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Models\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\UserController;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\VerifiedEmail;
-use App\Models\User;
-use Illuminate\Auth\Events\Verified;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\UserController;
 use Illuminate\Container\Attributes\Auth;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
 //    return $request->user();
@@ -98,7 +100,8 @@ Route::middleware([JwtMiddleware::class, VerifiedEmail::class])->group(function 
 Route::middleware(JwtMiddleware::class)
      ->controller(ReviewController::class)
                                                                     ->name('reviews.')
-     ->group(function () {                                          
+     ->group(function () {    
+
     Route::get('/reviews', 'index')                                 ->name('index');
     Route::post('/reviews', 'user_store')                           ->name('store');
     Route::get('/reviews/{id}', 'show')                             ->name('show');
@@ -106,7 +109,21 @@ Route::middleware(JwtMiddleware::class)
     Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy');
     Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy');
     Route::get('/property/{property_id}/reviews', 'property_index') ->name('property.index');
-});    
+});   
+
+Route::middleware(JwtMiddleware::class)
+     ->controller(PlanController::class)
+                                                                    ->name('plans.')
+     ->group(function () {
+        
+    Route::get('/plans/yearly_plans', 'getYearlyPlans')             ->name('yearlyPlans');
+    Route::get('/plans/monthly_plans', 'getMonthlyPlans')           ->name('monthlyPlans');
+    Route::get('/plans', 'index')                                   ->name('index');
+    Route::post('/plans', 'store')                                  ->name('store');
+    Route::get('/plans/{id}', 'show')                               ->name('show');
+    Route::put('/plans/{id}', 'update')                             ->name('update');
+    Route::delete('/plans/{id}', 'destroy')                         ->name('destroy');
+});
 
 
 Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
@@ -117,9 +134,27 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
        Route::post('/create', 'create')->name('create');
        Route::post('/update/{id}', 'update')->name('update');
        Route::delete('/delete/{id}', 'delete')->name('delete');
-    });
+});
 
 
+Route::middleware(JwtMiddleware::class)
+     ->controller(SubscriptionController::class)                    ->prefix('subscriptions')
+                                                                    ->name('subscriptions.')
+     ->group(function () {
+        
+    Route::get('/activated/admin', 'allActiveSub')                  ->name('allActiveSub');
+    Route::get('/admin', 'index')                                   ->name('index.admin');
+    Route::put('/deactivate/{id}/admin', 'deactivate')              ->name('deactivate.admin');
+    Route::get('/{id}/admin', 'show')                               ->name('show.admin');
+    Route::delete('/{id}/admin', 'destroy')                         ->name('destroy.admin');
+
+    Route::get('/active/client', 'userActiveSub')                   ->name('activeSub.client');
+    Route::put('/deactivate/client', 'userDeactivate')              ->name('deactivate.client');
+    Route::get('/client', 'userIndex')                              ->name('index.client');
+    Route::get('/{id}/client', 'userShow')                          ->name('show.client');
+    Route::post('/client', 'userCreate')                            ->name('store.client');
+    Route::get('/time_remaining/{id}/client', 'time_remaining')     ->name('timeRemaining.client');
+});
 
 
 
