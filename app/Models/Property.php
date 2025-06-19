@@ -9,6 +9,7 @@ class Property extends Model
 {
     use HasFactory;
     protected $fillable=['user_id','location_id','area','name','title','description','price'];
+    protected $casts=['location_id'=>'integer','area'=>'integer','price'=>'float'];
 
     public function user()
     {

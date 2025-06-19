@@ -14,6 +14,19 @@ class CityService
     {
         //
     }
+    public function show($id)
+    {
+        $city=City::query()->find($id);
+        if(!$city){
+            $message="City not found";
+            $code=404;
+            return ['city'=>null,'message'=>$message,'code'=>$code];
+        }
+
+        $message='city retrieved successfully';
+        $code=200;
+         return ['city'=>$city,'message'=>$message,'code'=>$code];
+    }
     public function getCitiesByGovernorate($governorate_id)
     {
 

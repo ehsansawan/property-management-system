@@ -10,6 +10,8 @@ class City extends Model
     //
     use HasFactory;
     protected $fillable=['name','governorate_id'];
+   // protected $casts=['governorate_id'=>'integer'];
+
     protected $table='cities';
 
     public function locations(){

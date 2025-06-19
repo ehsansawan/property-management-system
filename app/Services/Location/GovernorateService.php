@@ -14,12 +14,28 @@ class GovernorateService
     {
         //
     }
+
     public function index()
     {
         $governorates=Governorate::all();
         $message="Governorate List";
         $code=200;
         return['governorates'=>$governorates,'message'=>$message,'code'=>$code];
+    }
+    public function getCitiesByGovernorate($id)
+    {
+
+        $governorate = Governorate::query()->find($id);
+
+        if(!$governorate){
+            $message='not_found';
+            $code=404;
+            return ['cities'=>null,'message'=>$message,'code'=>$code];
+        }
+        $cities = $governorate->cities;
+        $message='cities retrieved successfully';
+        $code=200;
+        return ['cities'=>$cities,'message'=>$message,'code'=>$code];
     }
     public function create($request)
     {

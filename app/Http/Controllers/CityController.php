@@ -15,6 +15,19 @@ class CityController extends Controller
     {
         $this->cityService = $cityService;
     }
+    public function show($id)
+    {
+        $data=[];
+
+        try {
+            $data=$this->cityService->show($id);
+            return Response::Success($data['city'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
     public function getCitiesByGovernorate($governorate_id)
     {
 

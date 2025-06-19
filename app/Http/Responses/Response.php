@@ -17,15 +17,22 @@ class Response
 
     }
 
-    public static function Error($data ,  $message ,$code=500 ):JsonResponse
+    public static function Error($data, $message, $code = 500): JsonResponse
     {
 
-        return response()->json([
-            'status'=>0,
-            'data'=>$data,
-            'message'=>$message,
-        ],$code);
+        if (!is_array($data)) {
+            if (is_null($data)) {
+                $data = [];
+            } else {
+                $data= ['erorr'=>[$data]];
+            }
+        }
 
+        return response()->json([
+            'status' => 0,
+            'data' => $data,
+            'message' => $message,
+        ], $code);
     }
 
     public static function Validation($data , $message ,$code=422 ):JsonResponse

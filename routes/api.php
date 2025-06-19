@@ -132,7 +132,8 @@ Route::controller(\App\Http\Controllers\GovernorateController::class)->prefix('g
 Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
     ->name('city.')
     ->group(function () {
-       Route::get('getCitiesByGovernorate/{id}', 'getCitiesByGovernorate')->name('getCitiesByGovernorate');
+       Route::get('show/{id}', 'show')->name('show');
+       Route::get('getCitiesByGovernorate/{governorate_id}', 'getCitiesByGovernorate')->name('getCitiesByGovernorate');
        Route::post('/create', 'create')->name('create');
        Route::post('/update/{id}', 'update')->name('update');
        Route::delete('/delete/{id}', 'delete')->name('delete');
