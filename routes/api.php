@@ -13,6 +13,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Container\Attributes\Auth;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\SubscriptionController;
@@ -203,6 +204,18 @@ Route::middleware(JwtMiddleware::class)
     Route::get('/plans/{id}', 'show')                               ->name('show');
     Route::put('/plans/{id}', 'update')                             ->name('update');
     Route::delete('/plans/{id}', 'destroy')                         ->name('destroy');
+});
+
+Route::middleware(JwtMiddleware::class)
+     ->controller(FavoriteController::class)
+                                                                    ->prefix('favorites')
+                                                                    ->name('favorite.')
+     ->group(function () {
+        
+    Route::get('/', 'index')                                        ->name('index');
+    Route::post('/{id}', 'add')                                     ->name('add');
+    Route::delete('/{id}', 'remove')                                ->name('remove');
+    Route::get('/{id}', 'IsInFavorites')                            ->name('check');
 });
 
 /*****************************  end here  ****************************/
