@@ -110,7 +110,7 @@ class PropertyService
                 ]
             );
            $property['type']=$request['type'];
-           $property['propertable']=$propertyable;
+           $property['propertyable']=$propertyable;
 
            $images=$data->get('image',[]);
 
@@ -211,7 +211,7 @@ class PropertyService
             $property->save();
             $property['images']=$property->images;
             $property['type']=$request['type'];
-            $property['propertable']=$propertyable;
+            $property['propertyable']=$propertyable;
             $message="Property updated successfully";
             $code=200;
 
