@@ -26,10 +26,10 @@ class UpdateUserRequest extends FormRequest
             'first_name' => 'required|string|max:255',
             'last_name' => 'string|max:255',
             //'email' => 'string|email|max:255|unique:users',
-            'email' => [
-                            'email', 'min:6', 'max:50', 'string',
-                            Rule::unique('users', 'email')->ignore($this->route('id')),
-                        ],
+//            'email' => [
+//                            'email', 'min:6', 'max:50', 'string',
+//                            Rule::unique('users', 'email')->ignore($this->route('id')),
+//                        ],
             'password' => 'string|min:8|confirmed',
             'phone_number' => 'regex:/^09\d{8}$/',//|unique:users,phone_number
         ];

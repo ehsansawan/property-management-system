@@ -29,7 +29,7 @@ class UpdateOfficeRequest extends FormRequest
             'data.meeting_rooms'=>'integer',
             'data.has_parking'=>'boolean',
             'data.furnished'=>'boolean',
-            'data.furnished_type'=>'string'
+            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
     }
 }

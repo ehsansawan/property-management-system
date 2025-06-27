@@ -154,6 +154,7 @@ class PropertyService
             $code=404;
             return ['property'=>null,'message'=>$message,'code'=>$code];
         }
+
         DB::beginTransaction();
         try{
             switch ($data->get('type'))
@@ -190,21 +191,28 @@ class PropertyService
 
             $images_to_delete=$data->get('property')['image_to_delete']??[];
 
+
             foreach ($images_to_delete as $image) {
-                $image=Image::query()->find($image);
-                $this->DestroyPicture($image);
-                $image->delete();
+                if($image)
+                {
+                    $image=Image::query()->find($image);
+                    $this->DestroyPicture($image);
+                    $image->delete();
+                }
             }
 
             $images=$data->get('property')['image']??[];
 
                 foreach ($images as $image)
                 {
-                    $file_url=$this->StorePicture($image,'uploads/properties');
-                    Image::query()->create([
-                        'property_id'=>$property->id,
-                        'image_url'=>$file_url,
-                    ]);
+                    if($image)
+                    {
+                        $file_url=$this->StorePicture($image,'uploads/properties');
+                        Image::query()->create([
+                            'property_id'=>$property->id,
+                            'image_url'=>$file_url,
+                        ]);
+                    }
                 }
 
 

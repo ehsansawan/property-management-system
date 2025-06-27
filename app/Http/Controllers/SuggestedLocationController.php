@@ -107,5 +107,17 @@ class SuggestedLocationController extends Controller
             return Response::Error($data,$message);
         }
     }
+    public function approve($id)
+    {
+        $data=[];
+        try {
+            $data=$this->suggestedLocationService->approve($id);
+            return Response::Success($data['location'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
 
 }

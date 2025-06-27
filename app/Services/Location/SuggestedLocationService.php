@@ -2,6 +2,7 @@
 
 namespace App\Services\Location;
 
+use App\Models\City;
 use App\Models\Governorate;
 use App\Models\SuggestedLocation;
 use App\Models\User;
@@ -125,6 +126,42 @@ $location->delete();
 $message='Suggested location deleted successfully';
 $code=200;
 return ['location'=>$location,'message'=>$message,'code'=>$code];
+}
+public function approve($id)
+{
+ $location=SuggestedLocation::query()->find($id);
+
+ if(!$location)
+ {
+     $message="suggested location not found";
+     $code=404;
+     return ['location'=>null,'message'=>$message,'code'=>$code];
+ }
+
+ $city=City::query()->where('name',$location->city_name)
+     ->where('governorate_id',$location->governorate_id)->exists();
+
+ if($city)
+ {
+     $location->delete();
+     $message="city already exist";
+     $code=200;
+     return ['location'=>$location,'message'=>$message,'code'=>$code];
+ }
+
+
+     City::query()->create([
+         'name'=>$location->city_name,
+         'governorate_id'=>$location->governorate_id,
+     ]);
+
+ $location->delete();
+
+ $message='city is added successfully';
+ $code=200;
+
+ return ['location'=>$city,'message'=>$message,'code'=>$code];
+
 }
 
 }

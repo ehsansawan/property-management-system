@@ -32,7 +32,7 @@ class UpdatePropertyRequest extends FormRequest
             'property.image'       => 'sometimes|array',
             'property.image.*'     => ['file'=>'mimes:jpeg,jpg,png,webp', 'max:4096'],
             'property.image_to_delete'=>'sometimes|array',
-            'property.image_to_delete.*'=>'integer|exists:images,id',
+            'property.image_to_delete.*'=>'nullable|integer|exists:images,id',
             //'property.title'=>'string',
         ];
         switch ($this->input('type'))

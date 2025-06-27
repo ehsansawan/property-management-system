@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('has_alternative_power')->default(false);
             $table->boolean('has_garage')->default(false);
             $table->boolean('furnished')->default(false);
-            $table->string('furnished_type')->nullable();// deluxe ,super deluxe , normal;
+            $table->enum('furnished_type',['economic','standard','delux','super_delux','luxury'])->nullable();// deluxe ,super deluxe , normal;
             $table->timestamps();
         });
     }

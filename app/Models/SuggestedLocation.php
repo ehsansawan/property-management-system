@@ -8,6 +8,7 @@ class SuggestedLocation extends Model
 {
     //
     protected $fillable = ['user_id','governorate_id','city_name'];
+    protected $casts=['governorate_id'=>'integer'];
     protected $table = 'suggested_locations';
 
     public function user()

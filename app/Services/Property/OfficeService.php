@@ -48,7 +48,7 @@ class OfficeService
     {
         $office=Office::query()->find($id);
         $data=collect($request->get('data'));
-        $fields = [ 'floor','rooms','bathrooms','meeting_rooms','has_parking','furnished'];
+        $fields = [ 'floor','rooms','bathrooms','meeting_rooms','has_parking','furnished','furnished_type'];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {
@@ -78,7 +78,7 @@ class OfficeService
             'meeting_rooms'=>'integer',
             'has_parking'=>'boolean',
             'furnished'=>'required|boolean',
-            'furnished_type'=>'string'
+            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
 
         return ['attributes'=>$attributes];

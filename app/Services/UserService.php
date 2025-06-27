@@ -81,18 +81,14 @@ class UserService
             return ['user' => $user, 'message' => $message, 'code' => $code];
         }
 
-        if ($data->filled('first_name')) {
-            $user->first_name = $data->first_name;
+        $fields = ['first_name', 'last_name', 'phone_number'];
+
+        foreach ($fields as $field) {
+            if (filled($data->get($field))) {
+                $user->{$field} = $data->get($field);
+            }
         }
-        if ($data->filled('last_name')) {
-            $user->last_name = $data->last_name;
-        }
-        if ($data->filled('email')) {
-            $user->email = $data->email;
-        }
-        if ($data->filled('phone')) {
-            $user->phone = $data->phone;
-        }
+
         if ($data->filled('password'))
         {
             $user->password = bcrypt($data->password);

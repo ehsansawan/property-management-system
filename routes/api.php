@@ -142,6 +142,7 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
          Route::post('/update/{id}', 'update')->name('update');
         Route::get('/show/{id}', 'show')->name('show');
         Route::delete('/delete/{id}', 'delete')->name('delete');
+        Route::post('/approve/{id}', 'approve')->name('approve');
      });
 });
 

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->smallInteger('meeting_rooms')->default(0);
             $table->boolean('has_parking')->default(false);
             $table->boolean('furnished');
-            $table->string('furnished_type')->nullable();
+            $table->enum('furnished_type',['economic','standard','delux','super_delux','luxury'])->nullable();
 
             $table->timestamps();
         });

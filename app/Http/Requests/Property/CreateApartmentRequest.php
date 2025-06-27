@@ -31,7 +31,7 @@ class CreateApartmentRequest extends FormRequest
             'data.has_alternative_power'=>'boolean',
             'data.has_garage'=>'boolean',
             'data.furnished'=>'boolean',
-            'data.furnished_type'=>'string',
+            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
     }
 }

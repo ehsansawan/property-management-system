@@ -68,7 +68,7 @@ class ApartmentService
 
 
         $fields = [  'floor','rooms','bedrooms','bathrooms','has_elevator','has_garage','furnished',
-            'furniture_type','has_alternative_power'];
+            'furnished_type','has_alternative_power'];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {
@@ -103,7 +103,7 @@ class ApartmentService
             'has_alternative_power'=>'boolean',
             'has_garage'=>'boolean',
             'furnished'=>'boolean',
-            'furnished_type'=>'string',
+            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
 
         return ['attributes'=>$attributes];
