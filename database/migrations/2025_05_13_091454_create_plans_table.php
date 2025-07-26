@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('plans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('plan_id')->constrained('plans')->cascadeOnDelete();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->string('status'); // is active,expired,cancelled ;
+            $table->string('name')->unique();
+            $table->longText('features');
+            $table->integer('duration'); // by days
+            $table->string('type');      // monthly or yearly
+            $table->decimal('price', 8, 2);
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists('plans');
     }
 };
