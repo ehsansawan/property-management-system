@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Governorate;
 use App\Models\City;
 use App\Models\Location;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -23,6 +24,17 @@ class DatabaseSeeder extends Seeder
 //            'name' => 'Test User',
 //            'email' => 'test@example.com',
 //        ]);
+
+
+        Storage::disk('public')->deleteDirectory('uploads');
+        Storage::disk('public')->makeDirectory('uploads');
+
+
+      //  Storage::disk('public')->makeDirectory('uploads/properties');
+      //  Storage::disk('public')->makeDirectory('uploads/Profile');
+
+
+
 
         // إنشاء 10 محافظات
         for ($i = 1; $i <= 10; $i++) {

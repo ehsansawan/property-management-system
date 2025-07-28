@@ -24,7 +24,7 @@ class UpdatePropertyRequest extends FormRequest
         $rules= [
 
             //
-            'type' => 'required|string|in:Apartment,Land,Office,Shop',
+            'type' => 'required|string|in:apartment,land,office,shop',
             'property.area'=>'numeric',
             'property.name'=>'string',
             'property.description'=>'string',
@@ -37,16 +37,16 @@ class UpdatePropertyRequest extends FormRequest
         ];
         switch ($this->input('type'))
         {
-            case'Apartment':
+            case'apartment':
                 $rules=array_merge($rules,$this->getApartmentRules());
                 break;
-            case'Land':
+            case'land':
                 $rules=array_merge($rules,$this->getLandRules());
                 break;
-            case'Office':
+            case'office':
                 $rules=array_merge($rules,$this->getOfficesRules());
                 break;
-            case'Shop':
+            case'shop':
                 $rules=array_merge($rules,$this->getShopRules());
                 break;
         }
@@ -55,6 +55,13 @@ class UpdatePropertyRequest extends FormRequest
         return $rules;
     }
 
+    protected function prepareForValidation()
+    {
+        if($this->has('type'))
+        {
+            $this->merge(['type'=>strtolower($this->get('type'))]);
+        }
+    }
 
     protected function getApartmentRules(): array
     {

@@ -108,11 +108,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasMany(Review::class);
     }
 
-    public function ads()
-    {
-        return $this->hasMany(Ad::class);
-    }
-
     public function apartments()
     {
         return $this->properties()->where('property_type', \App\Models\Apartment::class);
@@ -134,5 +129,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function suggestedLocations()
     {
         return $this->hasMany(SuggestedLocation::class);
+    }
+
+    public function ads()
+    {
+        return $this->hasmanyThrough(Ad::class, property::class);
     }
 }

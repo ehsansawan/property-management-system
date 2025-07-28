@@ -147,6 +147,17 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
         Route::delete('/delete/{id}', 'delete')->name('delete');
         Route::post('/approve/{id}', 'approve')->name('approve');
      });
+ //ads
+    Route::controller(\App\Http\Controllers\AdController::class)->prefix('ad')
+        ->name('ad.')
+        ->group(function () {
+            Route::get('/index', 'index')->name('index');
+            Route::post('/create', 'create')->name('create');
+            Route::get('/activate/{id}','activate')->name('activate');
+            Route::get('show/{id}', 'show')->name('show');
+            Route::post('getAdsByPropertyType','getAdsByPropertyType')->name('getAdsByPropertyType');
+            Route::post('getUserAds','getUserAds')->name('getUserAds');
+        });
 });
 
 

@@ -10,6 +10,7 @@ use App\Services\UserService;
 use App\Traits\PictureTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Nette\Schema\ValidationException;
 
 class PropertyService
 {
@@ -71,21 +72,21 @@ class PropertyService
         $data=collect($request);
         DB::beginTransaction();
         try{
-            switch ($data->get('type'))
+            switch (strtolower($data->get('type')))
             {
-                case 'Apartment':
+                case 'apartment':
                    $apartment= $this->apartmentService->create($data);
                     $propertyable=$apartment['apartment'];
                     break;
-                case 'Land':
+                case 'land':
                     $land= $this->landService->create($data);
                     $propertyable=$land['land'];
                     break;
-                case 'Office':
+                case 'office':
                     $office= $this->officeService->create($data);
                     $propertyable=$office['office'];
                     break;
-               case 'Shop':
+               case 'shop':
                    $shop= $this->shopService->create($data);
                    $propertyable=$shop['shop'];
                    break;
@@ -147,9 +148,8 @@ class PropertyService
             $code=404;
             return ['property'=>null,'message'=>$message,'code'=>$code];
         }
-        if($data->get('type')!=class_basename($propertyable_type))
+        if($data->get('type') != strtolower(class_basename($propertyable_type)))
         {
-
             $message="Property type is not compatible with the type u send";
             $code=404;
             return ['property'=>null,'message'=>$message,'code'=>$code];
@@ -157,21 +157,21 @@ class PropertyService
 
         DB::beginTransaction();
         try{
-            switch ($data->get('type'))
+            switch (strtolower($data->get('type')))
             {
-                case 'Apartment':
+                case 'apartment':
                     $apartment= $this->apartmentService->update($data,$propertyable_id);
                     $propertyable=$apartment['apartment'];
                     break;
-                case 'Land':
+                case 'land':
                     $land= $this->landService->update($data,$propertyable_id);
                     $propertyable=$land['land'];
                     break;
-                case 'Office':
+                case 'office':
                     $office= $this->officeService->update($data,$propertyable_id);
                     $propertyable=$office['office'];
                     break;
-                case 'Shop':
+                case 'shop':
                     $shop= $this->shopService->update($data,$propertyable_id);
                     $propertyable=$shop['shop'];
                     break;

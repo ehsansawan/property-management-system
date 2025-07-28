@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('property_ad', function (Blueprint $table) {
+        Schema::create('ads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ad_id')->constrained('ads');
-            $table->foreignId('property_id')->constrained('properties');
-            // we have to add a price column for the property
+            $table->foreignId('property_id')->constrained('properties')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+            $table->boolean('is_active')->default(1);
+            $table->integer('views')->default(0);
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('property_ad');
+        Schema::dropIfExists('ads');
     }
 };

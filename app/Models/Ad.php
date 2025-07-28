@@ -7,17 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ad extends Model
 {
+    //
     use HasFactory;
-    protected $fillable = [];
+    protected $fillable = ['property_id','start_date','end_date','is_active','views'];
+    protected $casts =[
+        'start_date' => 'date:Y-m-d-H:i:s',
+        'end_date' => 'date:Y-m-d-H:i:s',
+        'is_active' => 'boolean',
+        'views' => 'integer',
+        'property_id' => 'integer'
+    ];
 
-    public function user()
+    public function property()
     {
-        $this->belongsTo(User::class);
-    }
-
-    public function properties()
-    {
-         $this->hasMany(Property_Ad::class);
+        return $this->belongsTo(Property::class);
     }
 
 }

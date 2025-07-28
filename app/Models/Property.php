@@ -32,12 +32,12 @@ class Property extends Model
 
     public function location()
     {
-        $this->belongsTo(Location::class);
+        return $this->belongsTo(Location::class);
     }
 
-    public function Ads()
+    public function Ad()
     {
-        $this->hasMany(Property_Ad::class);
+        return $this->hasone(Ad::class);
     }
 
     //morph relationship

@@ -78,7 +78,7 @@ class OfficeService
             'meeting_rooms'=>'integer',
             'has_parking'=>'boolean',
             'furnished'=>'required|boolean',
-            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
+            'furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
 
         return ['attributes'=>$attributes];

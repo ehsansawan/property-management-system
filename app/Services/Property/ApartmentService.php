@@ -103,7 +103,7 @@ class ApartmentService
             'has_alternative_power'=>'boolean',
             'has_garage'=>'boolean',
             'furnished'=>'boolean',
-            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
+            'furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
 
         return ['attributes'=>$attributes];
