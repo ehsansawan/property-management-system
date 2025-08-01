@@ -33,14 +33,15 @@ class AdService
     }
     public function getUserAds( $request) : array
     {
+        //for admin
         $id=$request->id;
 
-        //for admin
+
         if(!$request->id)
             $id=auth('api')->id();
 
 
-        $user=User::query()->with('ads.property')->find($id);
+        $user=User::query()->with('ads.property.images')->find($id);
 
         $ads=$user->ads;
         foreach($ads as $ad)
@@ -51,7 +52,6 @@ class AdService
         return ['ads'=>$ads,'message'=>$message,'code'=>$code];
 
     }
-
     public function show($id) : array
     {
         $ad=Ad::query()->with(['property.images'])->find($id);
@@ -72,7 +72,6 @@ class AdService
         return ['ad'=>$ad,'message'=>$message,'code'=>$code];
 
     }
-
     public function create($request) :array
     {
        $start_date=Carbon::now();
@@ -137,6 +136,107 @@ class AdService
             'message' => 'Get ' . ucfirst(strtolower($request['type'])) . ' ads',
             'code' => 200
         ];
+    }
+    public function search(array $filters)
+    {
+        $query = Ad::with('property.images'); // نجيب العقار مع الصور
+
+        // فلترة حسب خصائص العقار
+        $query->whereHas('property', function ($q) use ($filters) {
+
+            if (!empty($filters['city'])) {
+                $q->where('city', $filters['city']);
+            }
+
+            if (!empty($filters['type'])) {
+                $q->where('type', $filters['type']);
+            }
+
+            if (!empty($filters['min_price'])) {
+                $q->where('price', '>=', $filters['min_price']);
+            }
+
+            if (!empty($filters['max_price'])) {
+                $q->where('price', '<=', $filters['max_price']);
+            }
+
+            if (!empty($filters['min_space'])) {
+                $q->where('space', '>=', $filters['min_space']);
+            }
+
+            if (!empty($filters['max_space'])) {
+                $q->where('space', '<=', $filters['max_space']);
+            }
+
+            // أضف أي خصائص إضافية للعقار حسب الحاجة
+        });
+
+        return $query->get(); // لاحقًا منرجع لـ paginate
+    }
+    public function activateSelectedAds($request):array
+    {
+
+        $user=$request['user_id']??null;
+        if(!$user)
+            $user=auth('api')->user();
+        if(!$user)
+        {
+            return ['ads'=>null,'message'=>'enter user id or token','code'=>404];
+        }
+
+     $all=$request['all']??null;
+        if($all)
+        {
+
+//         $adsCount=$user->ads()->count();
+//         if($adsCount>3)
+//         {
+//             return ['ads'=>[],'message'=>'you have to upgrade your acount to have +3 ads activated'];
+//         }
+
+         //updating the ads
+         $user->ads()->update(['is_active'=>true,
+         'start_date'=>Carbon::now(),'end_date'=>Carbon::now()->addDays(3)]);
+
+         $ads=$user->ads;
+
+         return ['ads'=>$ads,'message'=>'ads activated successfully','code'=>200];
+
+        }
+
+        $ids_to_activate=$request['ads']??[];
+
+//        $currentActivateCount=$user->ads()->where('is_active',true)->count();
+//        $ads_to_activate=$user->ads()->whereIn('id',$ids_to_activate)->get();
+//
+//        $inactivateAdsToActivate=$ads_to_activate->filter(function ($ad)
+//        {
+//            return $ad->is_active == false;
+//        });
+//
+//        if($inactivateAdsToActivate->count()+$currentActivateCount>3)
+//        {
+//            return ['ads'=>null,'message'=>'u have to upgrade your acount to have +3 ads activated','code'=>404];
+//        }
+
+        // here u have to check the number of ads
+        //first u have ot check the number of activated ads
+        //then check the $ids if its similar and more than 3 the total of the selected ads and the activated you have to throw an error
+
+
+
+        foreach($ids_to_activate as $id)
+        {
+
+            Ad::query()->where('id',$id)
+                ->update(['is_active'=>true,'start_date'=>Carbon::now(),'end_date'=>Carbon::now()->addDays(3)]);
+
+            $ad=Ad::query()->find($id);
+            $ad=$this->DamascusTime($ad);
+            $ads[]=$ad;
+        }
+
+        return ['ads'=>$ads,'message'=>'ads activated successfully','code'=>200];
     }
 
 }

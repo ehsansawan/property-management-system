@@ -157,6 +157,7 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
             Route::get('show/{id}', 'show')->name('show');
             Route::post('getAdsByPropertyType','getAdsByPropertyType')->name('getAdsByPropertyType');
             Route::post('getUserAds','getUserAds')->name('getUserAds');
+            Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');
         });
 });
 

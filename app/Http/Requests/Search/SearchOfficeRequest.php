@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Search;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateAdRequest extends FormRequest
+class SearchOfficeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,13 +22,7 @@ class CreateAdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'property_id'=>'required|unique:ads,property_id|exists:properties,id',
-        ];
-    }
-    public function messages(): array
-    {
-        return [
-            'property_id'=>'this property has already had an ad',
+            //
         ];
     }
 }

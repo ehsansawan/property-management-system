@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateAdRequest;
+use App\Http\Requests\Ads\ActivateSelectedAdsRequest;
+use App\Http\Requests\Ads\CreateAdRequest;
 use App\Http\Responses\Response;
 use App\Services\AdService;
 use Illuminate\Http\Request;
@@ -99,5 +100,20 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
+
+    public function activateSelectedAds(ActivateSelectedAdsRequest $request)
+    {
+        $data=[];
+
+        try {
+            $data=$this->adservice->activateSelectedAds($request->validated());
+            return Response::Success($data['ads'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+
 
 }
