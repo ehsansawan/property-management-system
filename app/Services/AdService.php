@@ -31,6 +31,23 @@ class AdService
         $ad->end_date=$ad->end_date->timezone('Asia/Baghdad')->subHour(10);
         return $ad;
     }
+
+    public function format($ads)
+    {
+        if($ads instanceof \Illuminate\Database\Eloquent\Collection) {
+            $ads=$ads->map(function($ad)  {
+                $ad=$this->DamascusTime($ad);
+                $ad['property']['type']=class_basename($ad['property']['propertyable_type']);
+                return $ad;
+            });
+        }
+        else
+        {
+            $ads=$this->DamascusTime($ads);
+            $ads['property']['type']=class_basename($ads['property']['propertyable_type']);
+        }
+        return $ads;
+    }
     public function getUserAds( $request) : array
     {
         //for admin
@@ -41,11 +58,14 @@ class AdService
             $id=auth('api')->id();
 
 
-        $user=User::query()->with('ads.property.images')->find($id);
+        $user=User::query()->with(['ads.property.images','ads.property.propertyable'])->find($id);
+        if(!$user)
+        {
+            return ['ads'=>null,'message'=>'user not found','code'=>404];
+        }
 
         $ads=$user->ads;
-        foreach($ads as $ad)
-            $ad=$this->DamascusTime($ad);
+        $ads=$this->format($ads);
 
         $message='user ads list';
         $code=200;
@@ -54,7 +74,7 @@ class AdService
     }
     public function show($id) : array
     {
-        $ad=Ad::query()->with(['property.images'])->find($id);
+        $ad=Ad::query()->with(['property.propertyable','property.images'])->find($id);
 
         if(!$ad)
         {
@@ -63,10 +83,10 @@ class AdService
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
 
-        if($ad->property->user->id!==auth('api')->id())
+        if($ad->property->user_id!==auth('api')->id())
         $ad->increment('views');
 
-        $ad=$this->DamascusTime($ad);
+        $ad=$this->format($ad);
         $message='add retrieved successfully';
         $code=200;
         return ['ad'=>$ad,'message'=>$message,'code'=>$code];
@@ -83,7 +103,7 @@ class AdService
           'end_date'=>$end_date,
        ]);
 
-       $ad=$this->DamascusTime($ad);
+       $ad=$this->format($ad);
        $message='ad created successfully';
        $code=200;
        return ['ad'=>$ad,'message'=>$message,'code'=>$code];
@@ -131,6 +151,9 @@ class AdService
             ->with(['property.propertyable','property.images'])
             ->get();
 
+      $ads=$this->format($ads);
+
+
         return [
             'ads' => $ads,
             'message' => 'Get ' . ucfirst(strtolower($request['type'])) . ' ads',
@@ -139,7 +162,7 @@ class AdService
     }
     public function search(array $filters):array
     {
-        $query = Ad::with('property.images'); // نجيب العقار مع الصور
+        $query = Ad::with(['property.images','property.propertyable']); // نجيب العقار مع الصور
 
         // فلترة حسب خصائص العقار
         $query->whereHas('property', function ($q) use ($filters) {
