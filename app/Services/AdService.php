@@ -137,7 +137,7 @@ class AdService
             'code' => 200
         ];
     }
-    public function search(array $filters)
+    public function search(array $filters):array
     {
         $query = Ad::with('property.images'); // نجيب العقار مع الصور
 
@@ -237,6 +237,24 @@ class AdService
         }
 
         return ['ads'=>$ads,'message'=>'ads activated successfully','code'=>200];
+    }
+    public function unactivate($id) :array
+    {
+
+        $ad=Ad::query()->find($id);
+        if(!$ad)
+        {
+            $message='the ad does not published yet';
+            $code=404;
+            return ['ad'=>$ad,'message'=>$message,'code'=>$code];
+        }
+        $ad->is_active=false;
+        $ad->save();
+
+        $ad=$this->DamascusTime($ad);
+        $message='ad unactivated successfully';
+        $code=200;
+        return ['ad'=>$ad,'message'=>$message,'code'=>$code];
     }
 
 }

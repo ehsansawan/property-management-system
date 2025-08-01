@@ -155,6 +155,7 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
             Route::post('/create', 'create')->name('create');
             Route::get('/activate/{id}','activate')->name('activate');
             Route::get('show/{id}', 'show')->name('show');
+            Route::get('unactivate/{id}','unactivate')->name('unactivate');
             Route::post('getAdsByPropertyType','getAdsByPropertyType')->name('getAdsByPropertyType');
             Route::post('getUserAds','getUserAds')->name('getUserAds');
             Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');

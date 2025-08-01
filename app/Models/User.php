@@ -133,6 +133,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function ads()
     {
-        return $this->hasmanyThrough(Ad::class, property::class);
+        return $this->hasmanyThrough(Ad::class, Property::class);
     }
 }

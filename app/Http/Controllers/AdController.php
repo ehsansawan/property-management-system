@@ -31,7 +31,6 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
-
     public function getUserAds(Request $request)
     {
         $data=[];
@@ -45,8 +44,6 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
-
-
     public function show($id)
     {
         $data=[];
@@ -73,7 +70,6 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
-
     public function create(CreateAdRequest $request)
     {
         $data=[];
@@ -100,7 +96,6 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
-
     public function activateSelectedAds(ActivateSelectedAdsRequest $request)
     {
         $data=[];
@@ -108,6 +103,19 @@ class AdController extends Controller
         try {
             $data=$this->adservice->activateSelectedAds($request->validated());
             return Response::Success($data['ads'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+    public function unactivate($id)
+    {
+        $data=[];
+
+        try {
+            $data=$this->adservice->unactivate($id);
+            return Response::Success($data['ad'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
             $message=$th->getMessage();
