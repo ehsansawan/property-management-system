@@ -203,7 +203,7 @@ Route::middleware(JwtMiddleware::class)
 });
 
 Route::middleware(JwtMiddleware::class)
-     ->controller(PlanController::class)
+     ->controller(\App\Http\Controllers\PlanController::class)
                                                                     ->name('plans.')
      ->group(function () {
 
