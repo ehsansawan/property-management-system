@@ -293,6 +293,7 @@ class AdService
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
         $ad->property->is_ad=false;
+        $ad->property->save(); // ✅ This line is required
         $ad->delete();
         $message='deleted successfully';
         $code=200;
