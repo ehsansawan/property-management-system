@@ -122,6 +122,19 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
+    public function delete($id)
+    {
+        $data=[];
+
+        try {
+            $data=$this->adservice->delete($id);
+            return Response::Success($data['ad'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
 
 
 }

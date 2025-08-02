@@ -110,6 +110,7 @@ class PropertyService
                     'description'=>$data->get('description'),
                 ]
             );
+            $property=$property->refresh();
            $property['type']=$request['type'];
            $property['propertyable']=$propertyable;
 

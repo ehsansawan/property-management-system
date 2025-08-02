@@ -103,6 +103,9 @@ class AdService
           'end_date'=>$end_date,
        ]);
 
+       $ad->property()->update(['is_ad'=>true]);
+       $ad=Ad::query()->with(['property.images','property.propertyable'])->find($ad->id);
+
        $ad=$this->format($ad);
        $message='ad created successfully';
        $code=200;
@@ -276,6 +279,20 @@ class AdService
 
         $ad=$this->DamascusTime($ad);
         $message='ad unactivated successfully';
+        $code=200;
+        return ['ad'=>$ad,'message'=>$message,'code'=>$code];
+    }
+    public function delete($id):array
+    {
+        $ad=Ad::query()->find($id);
+        if(!$ad)
+        {
+            $message='there is no add to delete';
+            $code=404;
+            return ['ad'=>$ad,'message'=>$message,'code'=>$code];
+        }
+        $ad->delete();
+        $message='deleted successfully';
         $code=200;
         return ['ad'=>$ad,'message'=>$message,'code'=>$code];
     }

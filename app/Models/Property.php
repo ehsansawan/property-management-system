@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Property extends Model
 {
     use HasFactory;
-    protected $fillable=['user_id','location_id','area','name','title','description','price'];
-    protected $casts=['location_id'=>'integer','area'=>'integer','price'=>'float'];
+    protected $fillable=['user_id','location_id','area','name','title','description','price','is_ad'];
+    protected $casts=['location_id'=>'integer','area'=>'integer','price'=>'float','is_ad'=>'boolean'];
 
     public function user()
     {

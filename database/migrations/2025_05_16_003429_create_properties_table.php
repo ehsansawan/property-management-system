@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->unsignedBigInteger('propertyable_id')->nullable();
             $table->string('propertyable_type')->nullable();
+            $table->boolean('is_ad')->default(0);
             $table->date('deleted_at')->nullable();
 
             $table->timestamps();
