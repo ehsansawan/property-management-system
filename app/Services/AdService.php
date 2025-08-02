@@ -285,12 +285,14 @@ class AdService
     public function delete($id):array
     {
         $ad=Ad::query()->find($id);
+
         if(!$ad)
         {
             $message='there is no add to delete';
             $code=404;
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
+        $ad->property->is_ad=false;
         $ad->delete();
         $message='deleted successfully';
         $code=200;

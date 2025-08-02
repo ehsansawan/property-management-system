@@ -20,7 +20,7 @@ class VerifiedEmail
             ($request->user() instanceof MustVerifyEmail &&
                 ! $request->user()->hasVerifiedEmail()))
         {
-          return \App\Http\Responses\Response::Error(false,'Your email address is not verified.');
+          return \App\Http\Responses\Response::Error('unverified email ','Your email address is not verified.');
         }
 
         return $next($request);
