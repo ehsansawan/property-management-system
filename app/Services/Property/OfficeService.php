@@ -39,6 +39,7 @@ class OfficeService
             'meeting_rooms'=>$data->get('meeting_rooms'),
             'has_parking'=>$data->get('has_parking'),
             'furnished'=>$data->get('furnished'),
+         //   'furnished_type'=>$data->get('furnished_type'),
         ]);
         $message="office added successfully";
         $code=201;
@@ -48,7 +49,9 @@ class OfficeService
     {
         $office=Office::query()->find($id);
         $data=collect($request->get('data'));
-        $fields = [ 'floor','rooms','bathrooms','meeting_rooms','has_parking','furnished','furnished_type'];
+        $fields = [ 'floor','rooms','bathrooms','meeting_rooms','has_parking','furnished',
+          //  'furnished_type'
+        ];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {
@@ -78,7 +81,7 @@ class OfficeService
             'meeting_rooms'=>'integer',
             'has_parking'=>'boolean',
             'furnished'=>'required|boolean',
-            'furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
+      //      'furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
 
         return ['attributes'=>$attributes];

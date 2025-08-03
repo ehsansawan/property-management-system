@@ -33,6 +33,9 @@ class UpdatePropertyRequest extends FormRequest
             'property.image.*'     => ['file'=>'mimes:jpeg,jpg,png,webp', 'max:4096'],
             'property.image_to_delete'=>'sometimes|array',
             'property.image_to_delete.*'=>'nullable|integer|exists:images,id',
+            'property.latitude'     => 'nullable|numeric|between:-90,90',
+            'property.longitude'    => 'nullable|numeric|between:-180,180',
+            'property.address'      => 'string|nullable',
             //'property.title'=>'string',
         ];
         switch ($this->input('type'))

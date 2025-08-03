@@ -26,13 +26,16 @@ class CreatePropertyRequest extends FormRequest
             //
             'type' => 'required|string|in:apartment,land,office,shop',
             'property.user_id'     => 'integer|exists:users,id',
-            'property.location_id' => 'required|integer|exists:locations,id',
-            'property.area'        => 'numeric',
-            'property.name'        => 'string',
-            'property.description' => 'string',
-            'property.price'       => 'numeric',
+       //   'property.location_id' => 'required|integer|exists:locations,id',
+            'property.area'        => 'numeric|nullable',
+            'property.name'        => 'string|nullable',
+            'property.description' => 'string|nullable',
+            'property.price'       => 'numeric|nullable',
             'property.image'       => 'sometimes|array',
             'property.image.*'     => ['file'=>'mimes:jpeg,jpg,png,webp', 'max:4096'],
+            'property.latitude'     => 'nullable|numeric|between:-90,90',
+            'property.longitude'    => 'nullable|numeric|between:-180,180',
+            'property.address'      => 'string|nullable',
         ];
 
         switch ($this->get('type'))

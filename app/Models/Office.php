@@ -9,7 +9,9 @@ class Office extends Model
 {
     //
     use HasFactory;
-    protected $fillable=['floor','rooms','bathrooms','meeting_rooms','has_parking','furnished'];
+    protected $fillable=['floor','rooms','bathrooms','meeting_rooms','has_parking','furnished',
+    //    'furnished_type'
+    ];
     protected $casts=['floor'=>'integer','rooms'=>'integer','bathrooms'=>'integer','meeting_rooms'=>'integer'
         ,'has_parking'=>'boolean','furnished'=>'boolean'];
     public function property()

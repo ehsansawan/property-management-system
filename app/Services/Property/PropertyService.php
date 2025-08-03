@@ -102,13 +102,16 @@ class PropertyService
            $property=$propertyable->property()->create(
                [
                    'user_id'=>$user_id,
-                   'location_id'=>$data->get('location_id'),
+                   //'location_id'=>$data->get('location_id'),
                    'area'=>$data->get('area'),
                    'price'=>$data->get('price'),
                    'name'=>$data->get('name'),
                    //'title'=>$data->get('title'),
                     'description'=>$data->get('description'),
-                ]
+                   'address'=>$data->get('address'),
+                   'longitude'=>$data->get('longitude'),
+                   'latitude'=>$data->get('latitude'),
+               ]
             );
             $property=$property->refresh();
            $property['type']=$request['type'];
@@ -181,7 +184,7 @@ class PropertyService
 
             $property=Property::query()->find($id);
 
-            $fields = ['area','name','description','price'];
+            $fields = ['area','name','description','price','address','longitude','latitude'];
 
             foreach ($fields as $field) {
                 if (filled($data->get('property')[$field])) {
@@ -218,6 +221,7 @@ class PropertyService
 
 
             $property->save();
+            $property->refresh();
             $property['images']=$property->images;
             $property['type']=$request['type'];
             $property['propertyable']=$propertyable;
@@ -340,7 +344,7 @@ class PropertyService
 
       $data['property']=[
           'user_id'     => 'integer|exists:users,id',
-          'location_id' => 'required|integer|exists:locations,id',
+        //  'location_id' => 'required|integer|exists:locations,id',
           'area'        => 'numeric',
           'name'        => 'string',
           'description' => 'string',
@@ -348,6 +352,9 @@ class PropertyService
           'property.image.*'     => ['file'=>'mimes:jpeg,jpg,png,webp', 'max:4096'],
           'property.image_to_delete'=>'sometimes|array',
           'property.image_to_delete.*'=>'integer|exists:images,id',
+          'property.latitude'     => 'nullable|numeric|between:-90,90',
+          'property.longitude'    => 'nullable|numeric|between:-180,180',
+          'property.address'      => 'string|nullable',
       ];
       $data['type']=$request->get('type');
       $message='data retired successfully';

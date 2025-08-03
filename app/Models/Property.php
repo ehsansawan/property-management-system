@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Property extends Model
 {
     use HasFactory;
-    protected $fillable=['user_id','location_id','area','name','title','description','price','is_ad'];
+    protected $fillable=['user_id','area','name','title','description','price','is_ad','latitude','longitude','address'];
     protected $casts=['location_id'=>'integer','area'=>'integer','price'=>'float','is_ad'=>'boolean'];
 
     public function user()

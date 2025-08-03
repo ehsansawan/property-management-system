@@ -29,7 +29,7 @@ class CreateOfficeRequest extends FormRequest
             'data.meeting_rooms'=>'integer',
             'data.has_parking'=>'boolean',
             'data.furnished'=>'required|boolean',
-            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
+     //       'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
     }
 }
