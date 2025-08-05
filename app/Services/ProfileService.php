@@ -21,12 +21,12 @@ class ProfileService
     public function show($request):array
     {
         $user_id=$request['user_id']??auth('api')->id();
-        $user=User::query()->find($user_id);
+        $user=User::query()->with('profile')->find($user_id);
 
         if(!$user){
             $message='user not found';
             $code=404;
-            return ['profile'=>null,'message'=>$message,'code'=>$code];
+            return ['profile'=>$user,'message'=>$message,'code'=>$code];
         }
 
         $profile=$user->profile;
@@ -36,17 +36,25 @@ class ProfileService
         {
             $message="you haven't created a profile yet";
             $code=404;
-            return["profile"=>$profile,"message"=>$message,"code"=>$code];
+            return["profile"=>$user,"message"=>$message,"code"=>$code];
         }
 
         $message="profile retrieved successfully";
         $code=200;
-        return["profile"=>$profile,"message"=>$message,"code"=>$code];
+        return["profile"=>$user,"message"=>$message,"code"=>$code];
 
     }
     public function create($request):array
     {
-        $user=auth('api')->user();
+        $user=User::query()->find(auth('api')->id());
+
+        if(!$user)
+        {
+            $message="there is no user to create profile";
+            $code=404;
+            return ['profile'=>null,'message'=>$message,'code'=>$code];
+        }
+
         $profile=$user->profile;
        // $profile= Profile::query()->where('user_id',auth('api')->id())->first();
 
@@ -54,7 +62,7 @@ class ProfileService
         {
             $message="you have already created a profile";
             $code=500;
-            return["profile"=>$profile,"message"=>$message,"code"=>$code];
+            return["profile"=>$user,"message"=>$message,"code"=>$code];
         }
 
 
@@ -76,12 +84,13 @@ class ProfileService
         {
             $message="something went wrong,try again later";
             $code=500;
-            return["profile"=>$profile,"message"=>$message,"code"=>$code];
+            return["profile"=>$user,"message"=>$message,"code"=>$code];
         }
 
+        $user=User::query()->with('profile')->find(auth('api')->id());
         $message="profile created successfully";
         $code=200;
-        return["profile"=>$profile,"message"=>$message,"code"=>$code];
+        return["profile"=>$user,"message"=>$message,"code"=>$code];
 
     }
     public function update($request):array
@@ -110,7 +119,7 @@ class ProfileService
         {
             $message="you haven't created a profile yet";
             $code=404;
-            return["profile"=>$profile,"message"=>$message,"code"=>$code];
+            return["profile"=>$user,"message"=>$message,"code"=>$code];
         }
 
 
@@ -131,10 +140,11 @@ class ProfileService
        $profile->image_url=$file_url??$profile->image_url;
 
         $profile->save();
+        $user=User::query()->with('profile')->find(auth('api')->id());
         $message="profile updated successfully";
         $code=200;
 
-        return["profile"=>$profile,"message"=>$message,"code"=>$code];
+        return["profile"=>$user,"message"=>$message,"code"=>$code];
 
     }
     public function delete($request):array

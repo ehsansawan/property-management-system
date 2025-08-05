@@ -74,6 +74,17 @@ Route::controller(AuthController::class)->prefix('auth')
         Route::post('/checkCode','checkCode')->name('checkCode');
     });
 
+//Profile
+Route::controller(ProfileController::class)->prefix('profile')
+    ->name('profile.')
+    ->middleware([JwtMiddleware::class])
+    ->group(function () {
+        Route::post('/create', 'create')->name('create');
+        Route::get('/show', 'show')->name('show');
+        Route::post('/update', 'update')->name('update');
+        Route::delete('/delete', 'delete')->name('delete');
+    });
+
 Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function () {
 
 // User
@@ -86,15 +97,7 @@ Route::controller(UserController::class)->prefix('user')
             Route::post('update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
-//Profile
-Route::controller(ProfileController::class)->prefix('profile')
-        ->name('profile.')
-        ->group(function () {
-            Route::post('/create', 'create')->name('create');
-            Route::get('/show', 'show')->name('show');
-            Route::post('/update', 'update')->name('update');
-            Route::delete('/delete', 'delete')->name('delete');
-        });
+
 //property
 Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
 ->name('property.')
