@@ -20,6 +20,9 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->string('phone_number');
             $table->string('image_url')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

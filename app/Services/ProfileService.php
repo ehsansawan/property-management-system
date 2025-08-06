@@ -78,8 +78,12 @@ class ProfileService
                 "phone_number"=>$data->get('phone_number'),
                 "image_url"=>$file_url??null,
                 "gender"=>$data->get('gender'),
+                'longitude'=>$data->get('longitude'),
+                'latitude'=>$data->get('latitude'),
+                'address'=>$data->get('address')
             ]
         );
+
         if(!$profile)
         {
             $message="something went wrong,try again later";
@@ -123,7 +127,7 @@ class ProfileService
         }
 
 
-        $fields = ['first_name', 'last_name', 'phone_number', 'gender'];
+        $fields = ['first_name', 'last_name', 'phone_number', 'gender','longitude','latitude','address'];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {
@@ -145,6 +149,10 @@ class ProfileService
         $code=200;
 
         return["profile"=>$user,"message"=>$message,"code"=>$code];
+
+    }
+    public function addLocation($request)
+    {
 
     }
     public function delete($request):array

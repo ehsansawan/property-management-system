@@ -136,5 +136,21 @@ class AdController extends Controller
         }
     }
 
+    public function nearToYou(Request $request)
+    {
+        $data=[];
+
+        try {
+            $data=$this->adservice->nearToYou($request);
+            return Response::Success($data['ads'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+
+
+
 
 }

@@ -31,7 +31,6 @@ class AdService
         $ad->end_date=$ad->end_date->timezone('Asia/Baghdad')->subHour(10);
         return $ad;
     }
-
     public function format($ads)
     {
         if($ads instanceof \Illuminate\Database\Eloquent\Collection) {
@@ -170,9 +169,6 @@ class AdService
         // فلترة حسب خصائص العقار
         $query->whereHas('property', function ($q) use ($filters) {
 
-            if (!empty($filters['city'])) {
-                $q->where('city', $filters['city']);
-            }
 
             if (!empty($filters['type'])) {
                 $q->where('type', $filters['type']);
@@ -299,13 +295,12 @@ class AdService
         $code=200;
         return ['ad'=>$ad,'message'=>$message,'code'=>$code];
     }
-
     public function nearToYou($request): array
     {
         $user = auth('api')->user();
 
-        $userLat = $user->latitude;
-        $userLng = $user->longitude;
+        $userLat = $user->profile->latitude;
+        $userLng = $user->profile->longitude;
 
         // تأكد إنو عنده إحداثيات
         if (!$userLat || !$userLng) {
@@ -317,22 +312,33 @@ class AdService
         }
 
         // المسافة باستخدام Haversine
-        $ads = Ad::query()->where('is_active', true)
+
+        $user = auth()->user();
+        $userLat = $user->profile->latitude;
+        $userLng = $user->profile->longitude;
+
+        $ads = Ad::query()
+            ->where('is_active', true)
             ->whereHas('property', function ($query) {
-                $query->whereNotNull('latitude')->whereNotNull('longitude');
+                $query->whereNotNull('latitude')
+                    ->whereNotNull('longitude');
             })
-            ->with(['property.images','property.propertyable']) // إذا بدك تجيب الصور
-            ->selectRaw('ads.*,
-            properties.latitude, properties.longitude,
-            6371 * acos(
-                cos(radians(?)) * cos(radians(properties.latitude)) *
-                cos(radians(properties.longitude) - radians(?)) +
-                sin(radians(?)) * sin(radians(properties.latitude))
-            ) as distance', [$userLat, $userLng, $userLat])
-            // here why he repeat the $userlat
             ->join('properties', 'ads.property_id', '=', 'properties.id')
+            ->selectRaw('ads.*, properties.latitude, properties.longitude,
+        6371 * acos(
+            cos(radians(?)) * cos(radians(properties.latitude)) *
+            cos(radians(properties.longitude) - radians(?)) +
+            sin(radians(?)) * sin(radians(properties.latitude))
+        ) as distance', [$userLat, $userLng, $userLat])
+            ->with([
+                'property.images',
+                'property.propertyable'
+            ])
             ->orderBy('distance')
-            ->get();
+            ->paginate($request['number']??10);
+
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+    //    $ads=$this->format($ads);
 
         //we need propertyable + type
         return [

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Search;
+namespace App\Http\Requests\Ads;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchOfficeRequest extends FormRequest
+class SearchLandRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class SearchOfficeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'data.type'=>'string|in:industrial,agricultural,commercial,residential',
+            'data.is_inside_master_plan'=>'boolean',
+            'data.is_serviced'=>'boolean',
+            'data.slope'=>'nullable|string|in:flat,sloped,mountainous'
         ];
     }
 }

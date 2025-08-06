@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Search;
+namespace App\Http\Requests\Ads;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchRequest extends FormRequest
+class SearchShopRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,11 @@ class SearchRequest extends FormRequest
     {
         return [
             //
+            'data.floor'=>'integer',
+            'data.type'=>'string|in:retail,grocery,pharmacy,bookstore,restaurant,salon,other',
+            'data.has_warehouse'=>'boolean',
+            'data.has_bathroom'=>'boolean',
+            'data.has_ac'=>'boolean',
         ];
     }
 }

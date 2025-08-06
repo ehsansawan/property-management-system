@@ -10,9 +10,9 @@ class Profile extends Model
     //
     use HasFactory;
     protected $fillable=[
-        'user_id','first_name','last_name','gender','phone_number','image_url'
+        'user_id','first_name','last_name','gender','phone_number','image_url','longitude','latitude','address'
     ];
-
+    protected $casts = ['longitude'=>'float','latitude'=>'float'];
     public function user()
     {
         return $this->belongsTo(User::class);

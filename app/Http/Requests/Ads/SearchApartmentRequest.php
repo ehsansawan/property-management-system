@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Search;
+namespace App\Http\Requests\Ads;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,7 @@ class SearchApartmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,15 @@ class SearchApartmentRequest extends FormRequest
     {
         return [
             //
+            'data.floor'=>'integer',
+            'data.rooms'=>'integer',
+            'data.bathrooms'=>'integer',
+            'data.bedrooms'=>'integer',
+            'data.has_elevator'=>'boolean',
+            'data.has_alternative_power'=>'boolean',
+            'data.has_garage'=>'boolean',
+            'data.furnished'=>'boolean',
+            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
         ];
     }
 }

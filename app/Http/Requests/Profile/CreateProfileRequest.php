@@ -28,6 +28,9 @@ class CreateProfileRequest extends FormRequest
             'phone_number' => 'required|regex:/^09\d{8}$/',//|unique:users,phone_number
             'image_url' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'gender' => 'nullable|string|in:male,female',
+            'latitude'     => 'nullable|numeric|between:-90,90',
+            'longitude'    => 'nullable|numeric|between:-180,180',
+            'address'      => 'string|nullable',
         ];
     }
 }

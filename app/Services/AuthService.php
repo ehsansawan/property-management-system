@@ -58,6 +58,9 @@ class AuthService
             'image_url'=>null,
             'gender'=>null,
             'phone_number'=>$request['phone_number'],
+            'longitude'=>$request['longitude']??null,
+            'latitude'=>$request['latitude']??null,
+            'address'=>$request['address']??null,
         ]);
 
         $message='user registered successfully';
@@ -70,7 +73,6 @@ class AuthService
         return ['user'=>$user,'message'=>$message,'code'=>$code];
 
     }
-
     public function login($request):array
     {
         $credentials = ['email'=>$request['email'],'password'=>$request['password']];
@@ -98,7 +100,6 @@ class AuthService
         return ['user'=>$user,'message'=>$message,'code'=>$code];
 
     }
-
     public function logout():array
     {
         $user=Auth('api')->user();
@@ -115,7 +116,6 @@ class AuthService
         }
         return ['user'=>$user,'message'=>$message,'code'=>$code];
     }
-
     public function refresh(Request $request):array
     {
         try {
@@ -155,7 +155,6 @@ class AuthService
         }
 
     }
-
     public function forgetPassword(Request $request):array
     {
         $input=$request->validate([

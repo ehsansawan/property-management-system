@@ -29,6 +29,9 @@ class UpdateProfileRequest extends FormRequest
             'image_url' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'gender' => 'nullable|string|in:male,female',
             'user_id'=> 'integer|exists:users,id',
+            'latitude'     => 'nullable|numeric|between:-90,90',
+            'longitude'    => 'nullable|numeric|between:-180,180',
+            'address'      => 'string|nullable',
         ];
     }
 }

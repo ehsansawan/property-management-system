@@ -53,9 +53,7 @@ class UserService
                 'password'=>bcrypt($data->password),
                 'phone_number'=>$data->phone_number,
                 'fcm_token'=>$data->fcm_token,
-                'longitude'=>$data->longitude,
-                'latitude'=>$data->latitude,
-                'address'=>$data->address
+
                 //role_id
             ]
         );
@@ -84,7 +82,7 @@ class UserService
             return ['user' => $user, 'message' => $message, 'code' => $code];
         }
 
-        $fields = ['first_name', 'last_name', 'phone_number','longitude','latitude','address'];
+        $fields = ['first_name', 'last_name', 'phone_number'];
 
         foreach ($fields as $field) {
             if (filled($data->get($field))) {

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Search;
+namespace App\Http\Requests\Ads;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchLandRequest extends FormRequest
+class SearchOfficeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class SearchLandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'data.floor'=>'integer',
+            'data.rooms'=>'integer',
+            'data.bathrooms'=>'integer',
+            'data.meeting_rooms'=>'integer',
+            'data.has_parking'=>'boolean',
+            'data.furnished'=>'boolean',
         ];
     }
 }
