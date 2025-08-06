@@ -297,6 +297,7 @@ class AdService
     }
     public function nearToYou($request): array
     {
+
         $user = auth('api')->user();
 
         $userLat = $user->profile->latitude;
