@@ -300,4 +300,46 @@ class AdService
         return ['ad'=>$ad,'message'=>$message,'code'=>$code];
     }
 
+    public function nearToYou($request): array
+    {
+        $user = auth('api')->user();
+
+        $userLat = $user->latitude;
+        $userLng = $user->longitude;
+
+        // تأكد إنو عنده إحداثيات
+        if (!$userLat || !$userLng) {
+            return [
+                'ads' => [],
+                'message' => 'User location not set',
+                'code' => 422,
+            ];
+        }
+
+        // المسافة باستخدام Haversine
+        $ads = Ad::query()->where('is_active', true)
+            ->whereHas('property', function ($query) {
+                $query->whereNotNull('latitude')->whereNotNull('longitude');
+            })
+            ->with(['property.images','property.propertyable']) // إذا بدك تجيب الصور
+            ->selectRaw('ads.*,
+            properties.latitude, properties.longitude,
+            6371 * acos(
+                cos(radians(?)) * cos(radians(properties.latitude)) *
+                cos(radians(properties.longitude) - radians(?)) +
+                sin(radians(?)) * sin(radians(properties.latitude))
+            ) as distance', [$userLat, $userLng, $userLat])
+            // here why he repeat the $userlat
+            ->join('properties', 'ads.property_id', '=', 'properties.id')
+            ->orderBy('distance')
+            ->get();
+
+        //we need propertyable + type
+        return [
+            'ads' => $ads,
+            'message' => 'Ads near you',
+            'code' => 200,
+        ];
+    }
+
 }

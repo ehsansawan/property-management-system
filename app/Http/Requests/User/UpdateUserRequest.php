@@ -32,6 +32,9 @@ class UpdateUserRequest extends FormRequest
 //                        ],
             'password' => 'string|min:8|confirmed',
             'phone_number' => 'regex:/^09\d{8}$/',//|unique:users,phone_number
+            'latitude'     => 'nullable|numeric|between:-90,90',
+            'longitude'    => 'nullable|numeric|between:-180,180',
+            'address'      => 'string|nullable',
         ];
     }
 }

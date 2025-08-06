@@ -235,8 +235,26 @@ class AuthService
         // update user password
         $user->update(['password'=>bcrypt($input['password'])]);
 
+
         //delete current code
         ResetCodePassword::query()->where('code','=',$input['code'])->delete();
+
+        $credentials = ['email'=>$user['email'],'password'=>$request['password']];
+
+        $token = Auth('api')->attempt($credentials);
+
+        if (!$token) {
+            $user=null;
+            $message = 'your email or password is wrong';
+            $code=401;
+        }
+
+        $user = Auth('api')->user();
+        $user['token']=  $token;
+        $user['token_type']=  'Bearer';
+
+        $input=$user;
+
 
         $message='password reset successfully';
         $code=200;
