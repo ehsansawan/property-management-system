@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Ads\ActivateSelectedAdsRequest;
 use App\Http\Requests\Ads\CreateAdRequest;
+use App\Http\Requests\Ads\SearchAdRequest;
 use App\Http\Responses\Response;
 use App\Services\AdService;
 use Illuminate\Http\Request;
@@ -142,6 +143,20 @@ class AdController extends Controller
 
         try {
             $data=$this->adservice->nearToYou($request);
+            return Response::Success($data['ads'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+
+    public function search(SearchAdRequest $request)
+    {
+        $data=[];
+
+        try {
+            $data=$this->adservice->Search($request->validated());
             return Response::Success($data['ads'],$data['message'],$data['code']);
         }
         catch (Throwable $th){

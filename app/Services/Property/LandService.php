@@ -90,6 +90,33 @@ class LandService
         return ['attributes'=>$attributes];
 
     }
+    public function search($query,$request)
+    {
+        $query=$query->join('lands','properties.propertyable_id','=','lands.id')
+            ->where('properties.propertyable_type',\App\Models\Land::class);
+
+
+
+        if(isset($request['type']))
+        {
+            $query->where('lands.type',$request['type']);
+        }
+        if(!empty($request['is_inside_master_plan']))
+        {
+            $query->where('lands.is_inside_master_plan',$request['is_inside_master_plan']);
+        }
+        if(!empty($request['is_serviced']))
+        {
+            $query->where('lands.is_serviced',$request['is_serviced']);
+        }
+        if(isset($request['slope']))
+        {
+            $query->where('lands.slope',$request['slope']);
+        }
+
+        return $query;
+
+    }
 
 
 }

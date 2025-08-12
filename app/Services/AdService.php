@@ -6,6 +6,10 @@ use App\Models\Ad;
 use App\Models\Apartment;
 use App\Models\Land;
 use App\Models\User;
+use App\Services\Property\ApartmentService;
+use App\Services\Property\LandService;
+use App\Services\Property\OfficeService;
+use App\Services\Property\ShopService;
 use Carbon\Carbon;
 
 
@@ -20,9 +24,18 @@ class AdService
         'shop' => \App\Models\Shop::class,
         'office' => \App\Models\Office::class,
     ];
-    public function __construct()
+    protected ApartmentService $apartmentService;
+    protected LandService $landService;
+    protected OfficeService $officeService;
+    protected ShopService $shopService;
+    public function __construct(ApartmentService $apartmentService, LandService $landService,
+                                OfficeService $officeService, ShopService $shopService
+    )
     {
-        //
+        $this->apartmentService = $apartmentService;
+        $this->landService = $landService;
+        $this->officeService = $officeService;
+        $this->shopService = $shopService;
     }
 
     public function DamascusTime($ad)
@@ -162,39 +175,6 @@ class AdService
             'code' => 200
         ];
     }
-    public function search(array $filters):array
-    {
-        $query = Ad::with(['property.images','property.propertyable']); // نجيب العقار مع الصور
-
-        // فلترة حسب خصائص العقار
-        $query->whereHas('property', function ($q) use ($filters) {
-
-
-            if (!empty($filters['type'])) {
-                $q->where('type', $filters['type']);
-            }
-
-            if (!empty($filters['min_price'])) {
-                $q->where('price', '>=', $filters['min_price']);
-            }
-
-            if (!empty($filters['max_price'])) {
-                $q->where('price', '<=', $filters['max_price']);
-            }
-
-            if (!empty($filters['min_space'])) {
-                $q->where('space', '>=', $filters['min_space']);
-            }
-
-            if (!empty($filters['max_space'])) {
-                $q->where('space', '<=', $filters['max_space']);
-            }
-
-            // أضف أي خصائص إضافية للعقار حسب الحاجة
-        });
-
-        return $query->get(); // لاحقًا منرجع لـ paginate
-    }
     public function activateSelectedAds($request):array
     {
 
@@ -300,23 +280,28 @@ class AdService
 
         $user = auth('api')->user();
 
-        $userLat = $user->profile->latitude;
-        $userLng = $user->profile->longitude;
+        $userLat = $request['latitude'];
+        $userLng = $request['longitude'];
 
         // تأكد إنو عنده إحداثيات
         if (!$userLat || !$userLng) {
-            return [
-                'ads' => [],
-                'message' => 'User location not set',
-                'code' => 422,
-            ];
+            $userLat = $user->profile->latitude;
+            $userLng = $user->profile->longitude;
+
+            if (!$userLat || !$userLng)
+            {
+                return [
+                    'ads' => [],
+                    'message' => 'User location not set',
+                    'code' => 422,
+                ];
+            }
         }
 
         // المسافة باستخدام Haversine
 
         $user = auth()->user();
-        $userLat = $user->profile->latitude;
-        $userLng = $user->profile->longitude;
+
 
         $ads = Ad::query()
             ->where('is_active', true)
@@ -347,6 +332,57 @@ class AdService
             'message' => 'Ads near you',
             'code' => 200,
         ];
+    }
+
+    public function search ($request):array
+    {
+
+         $query=Ad::query()->where('is_active',true)
+             ->join('properties', 'ads.property_id', '=', 'properties.id')
+             ->select('ads.*');
+
+
+        if (isset($request['min_price'])) {
+            $query->where('properties.price', '>=', $request['min_price']);
+        }
+
+        if (isset($request['max_price'])) {
+            $query->where('properties.price', '<=', $request['max_price']);
+        }
+
+        if (isset($request['min_area'])) {
+            $query->where('properties.area', '>=', $request['min_area']);
+        }
+
+        if (isset($request['max_area'])) {
+            $query->where('properties.area', '<=', $request['max_area']);
+        }
+
+
+        switch ($request['type']??null)
+        {
+            case 'apartment':
+              $query= $this->apartmentService->search($query,$request['data']??[]);
+              break;
+            case 'land':
+                $query=$this->landService->search($query,$request['data']??[]);
+                break;
+            case 'office':
+                $query=$this->officeService->search($query,$request['data']??[]);
+                 break;
+            case 'shop':
+                $query=$this->shopService->search($query,$request['data']??[]);
+                 break;
+        }
+
+
+        $ads=$query->with('property.propertyable','property.images')->get();
+        $ads=$this->format($ads);
+
+
+
+
+        return['ads'=>$ads,'message'=>'Search results found','code'=>200];
     }
 
 }

@@ -22,16 +22,20 @@ class SearchApartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'data.floor'=>'integer',
-            'data.rooms'=>'integer',
-            'data.bathrooms'=>'integer',
-            'data.bedrooms'=>'integer',
+
+            'data.min_floor'=>'integer',
+            'data.max_floor'=>'integer',
+            'data.min_rooms'=>'integer',
+            'data.max_rooms'=>'integer',
+            'data.min_bathrooms'=>'integer',
+            'data.min_bedrooms'=>'integer',
             'data.has_elevator'=>'boolean',
             'data.has_alternative_power'=>'boolean',
             'data.has_garage'=>'boolean',
             'data.furnished'=>'boolean',
-            'data.furnished_type'=>'nullable|string|in:economic,standard,delux,super_delux,luxury',
+            'data.furnished_type'=>'string|in:economic,standard,delux,super_delux,luxury',
         ];
     }
+
+
 }

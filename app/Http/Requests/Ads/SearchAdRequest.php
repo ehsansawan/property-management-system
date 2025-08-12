@@ -63,6 +63,48 @@ protected function prepareForValidation()
         $this->merge(['type'=>strtolower($this->get('type'))]);
     }
 }
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $min = $this->input('min_price');
+            $max = $this->input('max_price');
+
+            // إذا الحقلين موجودين
+            if (!is_null($min) && !is_null($max) && $min > $max) {
+                $validator->errors()->add('min_price', 'min price should be less than max price');
+            }
+        });
+        $validator->after(function ($validator) {
+            $min = $this->input('min_area');
+            $max = $this->input('max_area');
+
+            // إذا الحقلين موجودين
+            if (!is_null($min) && !is_null($max) && $min > $max) {
+                $validator->errors()->add('min_area', 'min area should be less than max price');
+            }
+        });
+
+        $validator->after(function ($validator) {
+            $min = $this->input('data.min_floor');
+            $max = $this->input('data.max_floor');
+
+
+            // إذا الحقلين موجودين
+            if (!is_null($min) && !is_null($max) && $min > $max) {
+                $validator->errors()->add('data.min_floor', 'min floor should be less than max floor');
+            }
+        });
+        $validator->after(function ($validator) {
+            $min = $this->input('data.min_rooms');
+            $max = $this->input('data.max_rooms');
+
+            // إذا الحقلين موجودين
+            if (!is_null($min) && !is_null($max) && $min > $max) {
+                $validator->errors()->add('data.min_rooms', 'min rooms should be less than max rooms');
+            }
+        });
+
+    }
 protected function getApartmentRules(): array
 {
     return (new SearchApartmentRequest())->rules();

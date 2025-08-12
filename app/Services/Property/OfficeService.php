@@ -86,4 +86,44 @@ class OfficeService
 
         return ['attributes'=>$attributes];
     }
+    public function search($query,$request)
+    {
+        $query=$query->join('offices','properties.propertyable_id','=','offices.id')
+            ->where('properties.propertyable_type',\App\Models\Office::class);
+
+        if(isset($request['floor']))
+        {
+            $query->where('offices.floor','>=',$request['floor']);
+        }
+        if(isset($request['rooms']))
+        {
+            $query->where('offices.rooms','>=',$request['rooms']);
+        }
+        if(isset($request['bathrooms']))
+        {
+            $query->where('offices.bathrooms','>=',$request['bathrooms']);
+        }
+        if(isset($request['meeting_rooms']))
+        {
+            $query->where('offices.meeting_rooms','>=',$request['meeting_rooms']);
+        }
+        if(!empty($request['has_parking']))
+        {
+            $query->where('offices.has_parking','=',$request['has_parking']);
+        }
+        if(!empty($request['furnished']))
+        {
+            $query->where('offices.furnished','=',$request['furnished']);
+        }
+
+//
+//        'data.floor'=>'integer',
+//            'data.rooms'=>'integer',
+//            'data.bathrooms'=>'integer',
+//            'data.meeting_rooms'=>'integer',
+//            'data.has_parking'=>'boolean',
+//            'data.furnished'=>'boolean',
+        return $query;
+
+    }
 }

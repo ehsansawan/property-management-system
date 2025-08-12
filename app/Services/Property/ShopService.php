@@ -82,5 +82,36 @@ class ShopService
 
         return ['attributes'=>$attributes];
     }
+    public function search($query,$request)
+    {
+
+        $query=$query->join('shops','properties.propertyable_id','=','shops.id')
+            ->where('properties.propertyable_type',\App\Models\Shop::class);
+
+
+        if(isset($request['floor']))
+        {
+            $query->where('shops.floor','>=',$request['floor']);
+        }
+        if(isset($request['type']))
+        {
+            $query->where('shops.type',$request['type']);
+        }
+        if(!empty($request['has_warehouse']))
+        {
+            $query->where('shops.has_warehouse',$request['has_warehouse']);
+        }
+        if(!empty($request['has_bathroom']))
+        {
+            $query->where('shops.has_bathroom',$request['has_bathroom']);
+        }
+        if(!empty($request['has_ac']))
+        {
+            $query->where('shops.has_ac',$request['has_ac']);
+        }
+
+        return $query;
+
+    }
 
 }

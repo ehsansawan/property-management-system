@@ -108,6 +108,61 @@ class ApartmentService
 
         return ['attributes'=>$attributes];
     }
+    public function search($query,$request)
+    {
+        $query=$query->join('apartments','properties.propertyable_id','=','apartments.id')
+            ->where('properties.propertyable_type',\App\Models\Apartment::class);
+
+        if (isset($request['min_floor'])) {
+            $query->where('apartments.floor', '>=', $request['min_floor']);
+        }
+        if (isset($request['max_floor'])) {
+            $query->where('apartments.floor', '<=', $request['max_floor']);
+        }
+        if(isset($request['min_rooms'])){
+            $query->where('apartments.rooms', '>=', $request['min_rooms']);
+        }
+        if (isset($request['max_rooms'])) {
+            $query->where('apartments.rooms', '<=', $request['max_rooms']);
+        }
+        if(isset($request['min_bathrooms']))
+        {
+            $query->where('apartments.bathrooms','>=',$request['min_bathrooms']);
+        }
+        if (isset($request['min_bedrooms']))
+        {
+            $query->where('apartments.bedrooms','>=',$request['min_bedrooms']);
+        }
+        if(isset($request['has_alternative_power']) && $request['has_alternative_power'] )
+        {
+            $query->where('apartments.has_alternative_power',true);
+        }
+        if(isset($request['has_garage']) && $request['has_garage'] )
+        {
+            $query->where('apartments.has_garage',true);
+        }
+        if(isset($request['has_elevator']) && $request['has_elevator'] )
+        {
+            $query->where('apartments.has_elevator',true);
+        }
+        if(isset($request['furnished']) && $request['furnished'] )
+        {
+            $query->where('apartments.furnished',true);
+        }
+        if(isset($request['furnished_type']))
+        {
+            $query->where('apartments.furnished_type',$request['furnished_type']);
+        }
+
+
+        //difference between !empty and isset
+        //isset return 1 if u put a 0
+        //empty consider 0 as an empty value
+        //u can use !empty($request['has_***]) instead of isset($request['has_alternative_power']) && $request['has_alternative_power']
+
+        return $query;
+
+    }
 
 
 

@@ -164,6 +164,7 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
             Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');
             Route::delete('delete/{id}','delete')->name('delete');
             Route::post('nearToYou','nearToYou')->name('nearToYou');
+            Route::post('search','search')->name('search');
         });
 });
 
