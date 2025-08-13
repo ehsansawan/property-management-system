@@ -285,8 +285,12 @@ class AdService
 
         // تأكد إنو عنده إحداثيات
         if (!$userLat || !$userLng) {
-            $userLat = $user->profile->latitude;
-            $userLng = $user->profile->longitude;
+            if($user)
+            {
+                $userLat = $user->profile->latitude;
+                $userLng = $user->profile->longitude;
+            }
+
 
             if (!$userLat || !$userLng)
             {
