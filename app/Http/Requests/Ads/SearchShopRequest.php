@@ -23,7 +23,7 @@ class SearchShopRequest extends FormRequest
     {
         return [
             //
-            'data.floor'=>'integer',
+         //   'data.floor'=>'integer',
             'data.type'=>'string|in:retail,grocery,pharmacy,bookstore,restaurant,salon,other',
             'data.has_warehouse'=>'boolean',
             'data.has_bathroom'=>'boolean',

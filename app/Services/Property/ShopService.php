@@ -89,10 +89,11 @@ class ShopService
             ->where('properties.propertyable_type',\App\Models\Shop::class);
 
 
-        if(isset($request['floor']))
-        {
-            $query->where('shops.floor','>=',$request['floor']);
-        }
+//        if(isset($request['floor']))
+//        {
+//            $query->where('shops.floor','>=',$request['floor']);
+//        }
+
         if(isset($request['type']))
         {
             $query->where('shops.type',$request['type']);
