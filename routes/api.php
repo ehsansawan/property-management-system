@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlockController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\BlockedUser;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\VerifiedEmail;
 use App\Models\User;
@@ -85,7 +88,7 @@ Route::controller(ProfileController::class)->prefix('profile')
         Route::delete('/delete', 'delete')->name('delete');
     });
 
-Route::middleware([JwtMiddleware::class,VerifiedEmail::class])->group(function () {
+Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class])->group(function () {
 
 // User
 Route::controller(UserController::class)->prefix('user')
@@ -158,16 +161,37 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
             Route::post('/create', 'create')->name('create');
             Route::get('/activate/{id}','activate')->name('activate');
             Route::get('show/{id}', 'show')
-                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class])->name('show');
+                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('show');
             Route::get('unactivate/{id}','unactivate')->name('unactivate');
-            Route::post('getAdsByPropertyType','getAdsByPropertyType')->name('getAdsByPropertyType');
+            Route::post('getAdsByPropertyType','getAdsByPropertyType')
+                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('getAdsByPropertyType');
             Route::post('getUserAds','getUserAds')->name('getUserAds');
             Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');
             Route::delete('delete/{id}','delete')->name('delete');
             Route::post('nearToYou','nearToYou')
-                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class])->name('nearToYou');
-            Route::post('search','search')->name('search');
+                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('nearToYou');
+            Route::post('search','search')
+                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('search');
         });
+    //block
+    Route::controller(BlockController::class)->prefix('block')
+        ->name('block.')
+        ->group(function () {
+           Route::post('/create', 'create')->name('block');
+           Route::delete('/unblock/{id}', 'unblock')->name('unblock');
+        });
+    //report
+    Route::controller(ReportController::class)->prefix('report')
+        ->name('report.')
+        ->group(function () {
+           Route::get('/index', 'index')->name('index');
+           Route::post('/create','create')->name('create');
+           Route::get('/show/{id}', 'show')->name('show');
+           Route::get('/showAdReports/{ad_id}', 'showAdReports')->name('showAdReports');
+           Route::delete('/delete/{id}', 'delete')->name('delete');
+
+        });
+
 });
 
 

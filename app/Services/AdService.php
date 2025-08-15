@@ -337,7 +337,6 @@ class AdService
             'code' => 200,
         ];
     }
-
     public function search ($request):array
     {
 
@@ -380,10 +379,10 @@ class AdService
         }
 
 
-        $ads=$query->with('property.propertyable','property.images')->get();
-        $ads=$this->format($ads);
+        $ads=$query->with('property.propertyable','property.images')
+            ->paginate($request['num']??10);
 
-
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
 
         return['ads'=>$ads,'message'=>'Search results found','code'=>200];

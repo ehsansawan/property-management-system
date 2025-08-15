@@ -22,10 +22,12 @@ class SearchLandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'data.type'=>'string|in:industrial,agricultural,commercial,residential',
+            'data.type'=>'sometimes|array',
+            'data.type.*'=>'string|in:industrial,agricultural,commercial,residential',
             'data.is_inside_master_plan'=>'boolean',
             'data.is_serviced'=>'boolean',
-            'data.slope'=>'nullable|string|in:flat,sloped,mountainous'
+            'data.slope'=>'sometimes|array',
+            'data.slope.*'=>'nullable|string|in:flat,sloped,mountainous'
         ];
     }
 }

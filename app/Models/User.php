@@ -135,4 +135,19 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasmanyThrough(Ad::class, Property::class);
     }
+
+    public function blockedBy()
+    {
+        return $this->hasMany(Block::class,'blocked_id');
+    }
+    // for admin to know whose they blocked
+    public function blocks()
+    {
+        return $this->hasMany(Block::class,'blocker_id');
+    }
+    public function isBlocked()
+    {
+        return Block::query()->where('blocked_id',auth('api')->id())->exists();
+    }
+
 }

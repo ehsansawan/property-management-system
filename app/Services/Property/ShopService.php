@@ -96,7 +96,7 @@ class ShopService
 
         if(isset($request['type']))
         {
-            $query->where('shops.type',$request['type']);
+            $query->whereIn('shops.type',$request['type']);
         }
         if(!empty($request['has_warehouse']))
         {

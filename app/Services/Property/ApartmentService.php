@@ -151,7 +151,7 @@ class ApartmentService
         }
         if(isset($request['furnished_type']))
         {
-            $query->where('apartments.furnished_type',$request['furnished_type']);
+            $query->whereIn('apartments.furnished_type',$request['furnished_type']);
         }
 
 
