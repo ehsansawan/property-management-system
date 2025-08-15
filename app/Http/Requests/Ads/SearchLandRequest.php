@@ -22,8 +22,8 @@ class SearchLandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'data.type'=>'sometimes|array',
-            'data.type.*'=>'string|in:industrial,agricultural,commercial,residential',
+            'data.LandType'=>'sometimes|array',
+            'data.LandType.*'=>'string|in:industrial,agricultural,commercial,residential',
             'data.is_inside_master_plan'=>'boolean',
             'data.is_serviced'=>'boolean',
             'data.slope'=>'sometimes|array',

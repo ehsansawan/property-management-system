@@ -24,8 +24,8 @@ class SearchShopRequest extends FormRequest
         return [
             //
          //   'data.floor'=>'integer',
-            'data.type'=>'sometimes|array',
-            'data.type.*'=>'string|in:retail,grocery,pharmacy,bookstore,restaurant,salon,other',
+            'data.ShopType'=>'sometimes|array',
+            'data.ShopType.*'=>'string|in:retail,grocery,pharmacy,bookstore,restaurant,salon,other',
             'data.has_warehouse'=>'boolean',
             'data.has_bathroom'=>'boolean',
             'data.has_ac'=>'boolean',

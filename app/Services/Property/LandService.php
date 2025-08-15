@@ -97,9 +97,9 @@ class LandService
 
 
 
-        if(isset($request['type']))
+        if(isset($request['LandType']))
         {
-            $query->whereIn('lands.type',$request['type']);
+            $query->whereIn('lands.type',$request['LandType']);
         }
         if(!empty($request['is_inside_master_plan']))
         {
