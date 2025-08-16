@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Ad;
 use App\Models\Favorite;
-use App\Models\Property;
 use Illuminate\Support\Facades\Auth;
 
 class FavoriteService
@@ -21,63 +21,63 @@ class FavoriteService
         return [ 'data' => $data, 'message' => $message, 'code' => $code ];
     }
 
-    public function add($property_id) : array 
+    public function add($ad_id) : array 
     {
         $user = Auth::guard('api')->user();
-        $pr = Property::find($property_id);
+        $pr = Ad::find($ad_id);
 
         if(!$pr)
         {
-            $message = "Property not found";
+            $message = "Ad not found";
             $code = 400;
             return [ 'data' => null, 'message' => $message, 'code' => $code ];
         }
 
-        if($user->favorites->where('property_id', $pr->id)->first() != null)
+        if($user->favorites->where('ad_id', $pr->id)->first() != null)
         {
-            $message = "Property already added to favorites";
+            $message = "Ad already added to favorites";
             $code = 400;
             return [ 'data' => null, 'message' => $message, 'code' => $code ];
         }
 
         $data = Favorite::create([
-            'property_id' => $property_id,
+            'ad_id' => $ad_id,
             'user_id' => $user->id,
         ]);
 
-        $message = "Property added to favorites successfully";
+        $message = "Ad added to favorites successfully";
         $code = 200;
         return [ 'data' => $data, 'message' => $message, 'code' => $code ];
     }
 
-    public function remove($property_id) : array
+    public function remove($ad_id) : array
     {
         $user = Auth::guard('api')->user();
-        if(!$user->favorites->where('property_id', $property_id)->first())
+        if(!$user->favorites->where('ad_id', $ad_id)->first())
         {
-            $message = "Property not found in favorites";
+            $message = "Ad not found in favorites";
             $code = 400;
             return [ 'data' => null, 'message' => $message, 'code' => $code ];
         }
-        $data = $user->favorites->where('property_id', $property_id)->first();
+        $data = $user->favorites->where('ad_id', $ad_id)->first();
         $data->delete();
-        $message = "Property removed from favorites successfully";
+        $message = "Ad removed from favorites successfully";
         $code = 200;
         return [ 'data' => null, 'message' => $message, 'code' => $code ];
     }
 
-    public function IsInFavorites($property_id) : array
+    public function IsInFavorites($ad_id) : array
     {
         $user = Auth::guard('api')->user();
-        if($user->favorites->where('property_id', $property_id)->first() != null)
+        if($user->favorites->where('ad_id', $ad_id)->first() != null)
         {
-            $message = "Property found in favorites";
+            $message = "Ad found in favorites";
             $code = 200;
             return [ 'data' => 'true', 'message' => $message, 'code' => $code ];
         }
         else 
         {
-            $message = "Property not found in favorites";
+            $message = "Ad not found in favorites";
             $code = 200;
             return [ 'data' => 'false', 'message' => $message, 'code' => $code ];
         }

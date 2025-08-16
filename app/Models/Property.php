@@ -16,10 +16,6 @@ class Property extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function favorites()
-    {
-        $this->hasMany(Favorite::class);
-    }
 
     public function appointments()
     {

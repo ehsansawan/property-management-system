@@ -31,12 +31,12 @@ class FavoriteController extends Controller
         }
     }
 
-    public function add($property_id)
+    public function add($ad_id)
     {
         $data = [];
         try 
         {
-            $data = $this->service->add($property_id);
+            $data = $this->service->add($ad_id);
             return Response::Success($data['data'], $data['message'], $data['code']);
         }
         catch (Throwable $th)
@@ -46,12 +46,12 @@ class FavoriteController extends Controller
         }
     }
 
-    public function remove($property_id)
+    public function remove($ad_id)
     {
         $data = [];
         try 
         {
-            $data = $this->service->remove($property_id);
+            $data = $this->service->remove($ad_id);
             return Response::Success($data['data'], $data['message'], $data['code']);
         }
         catch (Throwable $th)
@@ -61,12 +61,12 @@ class FavoriteController extends Controller
         }
     }
 
-    public function IsInFavorites($property_id)
+    public function IsInFavorites($ad_id)
     {
         $data = [];
         try 
         {
-            $data = $this->service->IsInFavorites($property_id);
+            $data = $this->service->IsInFavorites($ad_id);
             return Response::Success($data['data'], $data['message'], $data['code']);
         }
         catch (Throwable $th)
