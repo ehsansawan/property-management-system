@@ -6,11 +6,13 @@ use App\Models\Ad;
 use App\Models\Apartment;
 use App\Models\Land;
 use App\Models\User;
+use App\Models\UserSearches;
 use App\Services\Property\ApartmentService;
 use App\Services\Property\LandService;
 use App\Services\Property\OfficeService;
 use App\Services\Property\ShopService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 
 class AdService
@@ -337,13 +339,13 @@ class AdService
             'code' => 200,
         ];
     }
-
-    public function search ($request):array
+    public function querySearch($request)
     {
 
-         $query=Ad::query()->where('is_active',true)
-             ->join('properties', 'ads.property_id', '=', 'properties.id')
-             ->select('ads.*');
+
+        $query=Ad::query()->where('is_active',true)
+            ->join('properties', 'ads.property_id', '=', 'properties.id')
+            ->select('ads.*');
 
 
         if (isset($request['min_price'])) {
@@ -366,27 +368,116 @@ class AdService
         switch ($request['type']??null)
         {
             case 'apartment':
-              $query= $this->apartmentService->search($query,$request['data']??[]);
-              break;
+                $query= $this->apartmentService->search($query,$request['data']??[]);
+                break;
             case 'land':
                 $query=$this->landService->search($query,$request['data']??[]);
                 break;
             case 'office':
                 $query=$this->officeService->search($query,$request['data']??[]);
-                 break;
+                break;
             case 'shop':
                 $query=$this->shopService->search($query,$request['data']??[]);
-                 break;
+                break;
+        }
+      // u have to do a join with premuim user and order by it
+        return $query;
+    }
+    public function search ($request):array
+    {
+       $query=$this->querySearch($request);
+
+        $ads=$query->with('property.propertyable','property.images')
+            ->paginate($request['num']??10);
+
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+
+        if(auth('api')->id())
+        {
+
+            UserSearches::query()->create([
+              'user_id'=>auth('api')->id(),
+               'filters'=>$request
+            ]);
         }
 
 
-        $ads=$query->with('property.propertyable','property.images')->get();
-        $ads=$this->format($ads);
-
-
-
-
         return['ads'=>$ads,'message'=>'Search results found','code'=>200];
+    }
+    public function recommend($request):array
+    {
+
+
+        $valid=Validator::make($request->all(),[
+           'user_id'=>'nullable|integer|exists:users,id',
+           'num'=>'nullable|integer',
+        ]);
+
+        if($valid->fails())
+        {
+          return ['ads'=>null,'message'=>$valid->errors(),'code'=>422];
+        }
+
+
+      if(!request('user_id') && !auth()->check())
+      {
+          $ads=Ad::query()->where('is_active',true)
+              ->with('property.propertyable','property.images')->orderBy('views','desc')
+              ->paginate($request['num']??10);
+
+          $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+
+          $message='recommended ads retrieved successfully';
+          $code=200;
+          return ['ads'=>$ads,'message'=>$message,'code'=>$code];
+      }
+
+      $lastSearches=UserSearches::query()
+          ->where('user_id',auth('api')->id())->latest()->take(5)->get();
+
+
+      $finalQuery=null;
+      foreach($lastSearches as $index=> $lastSearch)
+      {
+          $query=$this->querySearch($lastSearch->filters);
+
+          if($index==0)
+              $finalQuery=$query;
+          else
+          $finalQuery=$finalQuery->union($query);
+      }
+
+      // because if $final was null it will throw an error
+      if(!$finalQuery)
+      {
+          $finalQuery=Ad::query()
+              ->where('is_active',true)
+              ->orderBy('views','desc')->take(10);
+      }
+      else if($finalQuery->count()<10)
+      {
+          $finalQuery=$finalQuery->union(Ad::query()
+              ->where('is_active',true)
+              ->orderBy('views','desc')->take(10));
+
+      }
+
+      if(!$finalQuery)
+      {
+          $ads=null;
+          $message='there is no ads on the app';
+          $code=200;
+          return ['ads'=>$ads,'message'=>$message,'code'=>$code];
+      }
+
+
+       $ads=$finalQuery->with('property.propertyable','property.images')
+           ->paginate($request['num']??10);
+
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+
+      return ['ads'=>$ads,'message'=>'ok','code'=>200];
+
     }
 
 }

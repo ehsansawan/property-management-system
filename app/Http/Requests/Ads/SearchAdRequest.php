@@ -27,6 +27,7 @@ class SearchAdRequest extends FormRequest
             'max_price'=>'numeric|nullable',
             'min_area'=>'numeric|nullable',
             'max_area'=>'numeric|nullable',
+            'num'=>'integer|nullable',
         ];
 
         if($this->filled('type')){

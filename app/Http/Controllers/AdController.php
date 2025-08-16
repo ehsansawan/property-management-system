@@ -136,7 +136,6 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
-
     public function nearToYou(Request $request)
     {
         $data=[];
@@ -150,7 +149,6 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
-
     public function search(SearchAdRequest $request)
     {
         $data=[];
@@ -164,7 +162,19 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
+    public function recommend(Request $request)
+    {
+        $data=[];
 
+        try {
+            $data=$this->adservice->recommend($request);
+            return Response::Success($data['ads'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
 
 
 
