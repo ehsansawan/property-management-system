@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
@@ -172,6 +171,8 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('nearToYou');
             Route::post('search','search')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('search');
+            Route::post('recommend','recommend')
+                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class]) ->name('recommend');
         });
     //block
     Route::controller(BlockController::class)->prefix('block')
