@@ -185,10 +185,10 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
     Route::controller(ReportController::class)->prefix('report')
         ->name('report.')
         ->group(function () {
-           Route::get('/index', 'index')->name('index');
+           Route::post('/index', 'index')->name('index');
            Route::post('/create','create')->name('create');
            Route::get('/show/{id}', 'show')->name('show');
-           Route::get('/showAdReports/{ad_id}', 'showAdReports')->name('showAdReports');
+           Route::post('/showAdReports', 'showAdReports')->name('showAdReports');
            Route::delete('/delete/{id}', 'delete')->name('delete');
 
         });

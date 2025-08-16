@@ -10,7 +10,7 @@ class Report extends Model
 {
     //
     use HasFactory,softDeletes;
-    protected $fillable=['user_id','ad_id','reason'];
+    protected $fillable=['user_id','ad_id','reason','description'];
 
     public function user()
     {

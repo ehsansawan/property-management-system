@@ -380,6 +380,7 @@ class AdService
                 $query=$this->shopService->search($query,$request['data']??[]);
                 break;
         }
+
       // u have to do a join with premuim user and order by it
         return $query;
     }

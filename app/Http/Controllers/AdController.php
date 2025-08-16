@@ -19,19 +19,6 @@ class AdController extends Controller
         $this->adservice = $adService;
     }
 
-    public function index(Request $request)
-    {
-        $data=[];
-
-        try {
-            $data=$this->adservice->index($request);
-            return Response::Success($data['ad'],$data['message'],$data['code']);
-        }
-        catch (Throwable $th){
-            $message=$th->getMessage();
-            return Response::Error($data,$message);
-        }
-    }
     public function getUserAds(Request $request)
     {
         $data=[];
