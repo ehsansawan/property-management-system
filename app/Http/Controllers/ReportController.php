@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateReportRequest;
 use App\Http\Responses\Response;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
@@ -15,25 +16,25 @@ class ReportController extends Controller
     {
         $this->reportService = $reportService;
     }
-    public function index()
+    public function index(Request $request)
     {
         $data=[];
 
         try {
-            $data=$this->reportService->index();
-            return Response::Success($data['report'],$data['message'],$data['code']);
+            $data=$this->reportService->index($request  );
+            return Response::Success($data['reports'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
             $message=$th->getMessage();
             return Response::Error($data,$message);
         }
     }
-    public function create(Request $request)
+    public function create(CreateReportRequest $request)
     {
         $data=[];
 
         try {
-            $data=$this->reportService->create($request);
+            $data=$this->reportService->create($request->validated());
             return Response::Success($data['report'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
@@ -54,12 +55,12 @@ class ReportController extends Controller
             return Response::Error($data,$message);
         }
     }
-    public function showAdReports($ad_id)
+    public function showAdReports(Request $request)
     {
         $data=[];
 
         try {
-            $data=$this->reportService->showAdReports($ad_id);
+            $data=$this->reportService->showAdReports($request);
             return Response::Success($data['reports'],$data['message'],$data['code']);
         }
         catch (Throwable $th){
@@ -67,7 +68,7 @@ class ReportController extends Controller
             return Response::Error($data,$message);
         }
     }
-    public function igonre($id)
+    public function delete($id)
     {
         $data=[];
 
