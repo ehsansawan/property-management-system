@@ -37,7 +37,8 @@ class CreateReportRequest extends FormRequest
                     'fake_information',
                     'other',
                 ]),
-            ]
+            ],
+            'description' => 'nullable|string',
         ];
     }
 }
