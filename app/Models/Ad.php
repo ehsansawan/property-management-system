@@ -23,4 +23,9 @@ class Ad extends Model
         return $this->belongsTo(Property::class);
     }
 
+    public function favorites()
+    {
+        $this->hasMany(Favorite::class);
+    }
+
 }
