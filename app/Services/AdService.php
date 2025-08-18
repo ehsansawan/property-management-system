@@ -88,7 +88,7 @@ class AdService
     }
     public function show($id) : array
     {
-        $ad=Ad::query()->with(['property.propertyable','property.images'])->find($id);
+        $ad=Ad::query()->with(['property.propertyable','property.images','property.user.profile'])->find($id);
 
         if(!$ad)
         {
