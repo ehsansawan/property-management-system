@@ -94,9 +94,12 @@ class ShopService
 //            $query->where('shops.floor','>=',$request['floor']);
 //        }
 
-        if(isset($request['ShopType']))
+        if(!empty($request['ShopType']))
         {
+            if(is_array($request['ShopType']))
             $query->whereIn('shops.type',$request['ShopType']);
+            else
+            $query->where('shops.type',$request['ShopType']);
         }
         if(!empty($request['has_warehouse']))
         {
@@ -113,6 +116,15 @@ class ShopService
 
         return $query;
 
+    }
+    public function similarTo($ad):array
+    {
+        $request['ShopType']      = $ad['type'] ?? null;
+        $request['has_warehouse'] = $ad['has_warehouse'] ?? null;
+        $request['has_bathroom']  = $ad['has_bathroom'] ?? null;
+        $request['has_ac']        = $ad['has_ac'] ?? null;
+
+        return $request;
     }
 
 }

@@ -51,14 +51,14 @@ class AdService
         if($ads instanceof \Illuminate\Database\Eloquent\Collection) {
             $ads=$ads->map(function($ad)  {
                 $ad=$this->DamascusTime($ad);
-                $ad['property']['type']=class_basename($ad['property']['propertyable_type']);
+                $ad['property']['type']=strtolower(class_basename($ad['property']['propertyable_type']));
                 return $ad;
             });
         }
         else
         {
             $ads=$this->DamascusTime($ads);
-            $ads['property']['type']=class_basename($ads['property']['propertyable_type']);
+            $ads['property']['type']=strtolower(class_basename($ads['property']['propertyable_type']));
         }
         return $ads;
     }
@@ -348,6 +348,7 @@ class AdService
             ->select('ads.*');
 
 
+
         if (isset($request['min_price'])) {
             $query->where('properties.price', '>=', $request['min_price']);
         }
@@ -381,7 +382,9 @@ class AdService
                 break;
         }
 
+
       // u have to do a join with premuim user and order by it
+
         return $query;
     }
     public function search ($request):array
@@ -478,6 +481,64 @@ class AdService
         $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
       return ['ads'=>$ads,'message'=>'ok','code'=>200];
+
+    }
+    public function similarTo($id)
+    {
+//        $valid=Validator::make($id,[
+//            'id'=>'nullable|integer|exists:ads,id',
+//        ]);
+//
+//        if($valid->fails())
+//        {
+//            return ['ads'=>null,'message'=>$valid->errors(),'code'=>422];
+//        }
+
+        $ad=Ad::query()->with(['property.propertyable'])->find($id);
+        $ad=$this->format($ad);
+
+
+
+
+
+        $request['min_price'] = isset($ad['property']['price']) ? max($ad['property']['price'] - 1000, 0) : null;
+        $request['max_price'] = isset($ad['property']['price']) ? $ad['property']['price'] + 1000 : null;
+
+        $request['min_area'] = isset($ad['property']['area']) ? max($ad['property']['area'] - 100, 0) : null;
+        $request['max_area'] = isset($ad['property']['area']) ? $ad['property']['area'] + 100 : null;
+
+        $request['type'] = $ad['property']['type'] ?? null;
+
+        switch ($request['type']??null)
+        {
+            case 'apartment':
+                $request['data']= $this->apartmentService->similarTo($ad['property']['propertyable']??[]);
+                break;
+            case 'land':
+                $request['data']=$this->landService->similarTo($ad['property']['propertyable']??[]);
+                break;
+            case 'office':
+                $request['data']=$this->officeService->similarTo($ad['property']['propertyable']??[]);
+                break;
+            case 'shop':
+                $request['data']=$this->shopService->similarTo($ad['property']['propertyable']??[]);
+                break;
+        }
+
+
+
+        $query=$this->querySearch($request);
+
+
+        $ads=$query->with('property.propertyable','property.images')
+             -> where('ads.id','!=',$id);
+
+
+        $ads=$ads->paginate(10);
+
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+
+        return ['ads'=>$ads,'message'=>'similar ads','code'=>200];
 
     }
 

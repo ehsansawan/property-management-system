@@ -97,9 +97,12 @@ class LandService
 
 
 
-        if(isset($request['LandType']))
+        if(!empty($request['LandType']))
         {
+            if(is_array($request['LandType']))
             $query->whereIn('lands.type',$request['LandType']);
+            else
+            $query->where('lands.type',$request['LandType']);
         }
         if(!empty($request['is_inside_master_plan']))
         {
@@ -109,13 +112,25 @@ class LandService
         {
             $query->where('lands.is_serviced',$request['is_serviced']);
         }
-        if(isset($request['slope']))
+        if(!empty($request['slope']))
         {
+            if(is_array($request['slope']))
             $query->whereIn('lands.slope',$request['slope']);
+            else
+            $query->where('lands.slope',$request['slope']);
         }
 
         return $query;
 
+    }
+    public function similarTo($ad):array
+    {
+        $request['LandType']              = $ad['type'] ?? null;
+        $request['is_inside_master_plan'] = $ad['is_inside_master_plan'] ?? null;
+        $request['is_serviced']           = $ad['is_serviced'] ?? null;
+        $request['slope']                 = $ad['slope'] ?? null;
+
+        return $request;
     }
 
 

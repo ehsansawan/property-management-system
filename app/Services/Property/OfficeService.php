@@ -126,4 +126,16 @@ class OfficeService
         return $query;
 
     }
+    public function similarTo($ad):array
+    {
+        $request['floor']         =  isset($ad['floor']) ? max($ad['floor'] - 1, 0) : null;
+        $request['rooms']         =  isset($ad['rooms']) ? max($ad['rooms'] - 1, 0) : null;
+        $request['bathrooms']     =  isset($ad['bathrooms']) ? max($ad['bathrooms'] - 1, 0) : null;
+        $request['meeting_rooms'] =  isset($ad['meeting_rooms']) ? max($ad['meeting_rooms'] - 1, 0) : null;
+
+        $request['has_parking']   = $ad['has_parking'] ?? null;
+        $request['furnished']     = $ad['furnished'] ?? null;
+
+        return $request;
+    }
 }

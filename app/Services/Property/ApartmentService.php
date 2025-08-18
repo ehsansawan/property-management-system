@@ -149,10 +149,14 @@ class ApartmentService
         {
             $query->where('apartments.furnished',true);
         }
-        if(isset($request['furnished_type']))
-        {
-            $query->whereIn('apartments.furnished_type',$request['furnished_type']);
+        if (!empty($request['furnished_type'])) {
+            if (is_array($request['furnished_type'])) {
+                $query->whereIn('apartments.furnished_type', $request['furnished_type']);
+            } else {
+                $query->where('apartments.furnished_type', $request['furnished_type']);
+            }
         }
+
 
 
         //difference between !empty and isset
@@ -161,6 +165,34 @@ class ApartmentService
         //u can use !empty($request['has_***]) instead of isset($request['has_alternative_power']) && $request['has_alternative_power']
 
         return $query;
+
+    }
+    public function similarTo($ad):array
+    {
+        // Floors
+        $request['min_floor'] = isset($ad['floor']) ? max($ad['floor'] - 1, 0) : null;
+        $request['max_floor'] = isset($ad['floor']) ? $ad['floor'] + 1 : null;
+
+// Rooms
+        $request['min_rooms'] = isset($ad['rooms']) ? max($ad['rooms'] - 1, 0) : null;
+        $request['max_rooms'] = isset($ad['rooms']) ? $ad['rooms'] + 1 : null;
+
+// Bathrooms
+        $request['min_bathrooms'] = isset($ad['bathrooms']) ? max($ad['bathrooms'] - 1, 0) : null;
+
+// Bedrooms
+        $request['min_bedrooms'] = isset($ad['bedrooms']) ? max($ad['bedrooms'] - 1, 0) : null;
+
+// Booleans (direct equality)
+        $request['has_alternative_power'] = $ad['has_alternative_power'] ?? null;
+        $request['has_garage']            = $ad['has_garage'] ?? null;
+        $request['has_elevator']          = $ad['has_elevator'] ?? null;
+        $request['furnished']             = $ad['furnished'] ?? null;
+
+// Furnished type (string/array)
+        $request['furnished_type'] = $ad['furnished_type'] ?? null;
+
+        return $request;
 
     }
 

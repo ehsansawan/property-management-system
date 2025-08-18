@@ -20,7 +20,7 @@ class Response
     public static function Error($data, $message, $code = 500): JsonResponse
     {
 
-        if (!is_array($data)) {
+        if (!is_array($data) || empty($data)) {
             if (is_null($data)) {
                 $data = [];
             } else {
@@ -37,6 +37,7 @@ class Response
 
     public static function Validation($data , $message ,$code=422 ):JsonResponse
     {
+
         return response()->json([
             'status'=>0,
             'data'=>$data,
