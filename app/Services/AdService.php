@@ -97,7 +97,7 @@ class AdService
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
 
-        if($ad->property->user_id!==auth('api')->id())
+        if($ad->property->user_id!=auth('api')->id())
         $ad->increment('views');
 
         $ad=$this->format($ad);
