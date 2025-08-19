@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-
-
+use Spatie\Permission\Models\Role;
 
 
 class AuthService
@@ -62,6 +61,22 @@ class AuthService
             'latitude'=>$request['latitude']??null,
             'address'=>$request['address']??null,
         ]);
+
+
+        $clientRole=Role::query()->where('name','client')->first();
+        $user->assignRole($clientRole);
+
+        //Assign permissions for user
+        $permissions=$clientRole->permissions()->pluck('name')->toArray();
+        $user->givePermissionTo($permissions);
+
+        //very important
+        // load the user's roles and permissions (research about this method)
+        $user->load('roles','permissions');
+
+        //Reload the user instant to get updated roles and permissions
+        $user=User::query()->find($user->id);
+     //   $user=$this->appendRolesAndPermissions($user);
 
         $message='user registered successfully';
         $code=201;

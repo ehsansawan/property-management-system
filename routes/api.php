@@ -117,7 +117,8 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
     Route::controller(\App\Http\Controllers\AdController::class)->prefix('ad')
         ->name('ad.')
         ->group(function () {
-
+            Route::get('index','index')
+                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class]) ->name('index');
             Route::post('/create', 'create')->name('create');
             Route::get('/activate/{id}','activate')->name('activate');
             Route::get('show/{id}', 'show')

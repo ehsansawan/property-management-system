@@ -8,12 +8,18 @@ use App\Models\ResetCodePassword;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Models\Role;
 
 class UserService
 {
     /**
      * Create a new class instance.
      */
+    protected array $rolesType = [
+        1 => 'admin',
+        2 => 'client',
+        3 => 'premium_client',
+    ];
     public function __construct()
     {
         //
@@ -53,7 +59,6 @@ class UserService
                 'password'=>bcrypt($data->password),
                 'phone_number'=>$data->phone_number,
                 'fcm_token'=>$data->fcm_token,
-
                 //role_id
             ]
         );
@@ -64,6 +69,24 @@ class UserService
             $code=400;
             return ['user'=>$user,'message'=>$message,'code'=>$code];
         }
+
+
+        $Role=Role::query()->where('name',$this->rolesType[$request['role_id']])->first();
+        $user->assignRole($Role);
+
+        //Assign permissions for user
+        $permissions=$Role->permissions()->pluck('name')->toArray();
+        $user->givePermissionTo($permissions);
+
+        //very important
+        // load the user's roles and permissions (research about this method)
+        $user->load('roles','permissions');
+
+        //Reload the user instant to get updated roles and permissions
+        $user=User::query()->find($user->id);
+       // $user=$this->appendRolesAndPermissions($user);
+
+
         $message='user created successfully';
         $code=200;
         return ['user'=>$user,'message'=>$message,'code'=>$code];

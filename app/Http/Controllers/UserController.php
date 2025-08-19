@@ -15,6 +15,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     protected UserService $userService;
     private $id;
     public function __construct(UserService $userService)
@@ -50,7 +51,6 @@ class UserController extends Controller
         }
 
     }
-
     public function create(CreateUserRequest $request):JsonResponse
     {
         $data=[];

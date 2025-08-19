@@ -62,12 +62,29 @@ class AdService
         }
         return $ads;
     }
+    public function index()
+    {
+        $ads=Ad::query()->with(['property.propertyable','property.images'])->paginate(10);
+
+        if(!$ads)
+        {
+            $message='ads not found';
+            $code=404;
+        }
+        $message='ads retrieved successfully';
+        $code=200;
+
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+        return ['ads'=>$ads,'message'=>$message,'code'=>$code];
+    }
     public function getUserAds( $request) : array
     {
         //for admin
+        $user=auth()->user();
+        if($user->hasRole('super_admin') || $user->hasRole('admin'))
         $id=$request->id;
 
-
+       // for client
         if(!$request->id)
             $id=auth('api')->id();
 

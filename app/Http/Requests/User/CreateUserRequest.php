@@ -29,6 +29,7 @@ class CreateUserRequest extends FormRequest
             'password' => 'required|string|min:8|confirmed',
             'phone_number' => 'required|regex:/^09\d{8}$/',//|unique:users,phone_number
             'fcm_token' => 'string|max:255',
+            'role_id'=>'integer|exists:roles,id|min:1|max:3',
         ];
     }
 }
