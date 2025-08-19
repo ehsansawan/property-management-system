@@ -22,7 +22,7 @@ class ReviewService
         $code = 200;
         return ['reviews' => $reviews, 'message' => $message, 'code' => $code];
     }
-    
+
     public function user_store($req) : array
     {
         $request = new Request($req);
@@ -41,7 +41,7 @@ class ReviewService
             $code = 400;
             return ['review' => null, 'message' => $message,'code' => $code];
         }
-        
+
         $message = 'review created successfully'; $code = 200;
         return ['review' => $review, 'message' => $message, 'code' => $code];
     }
@@ -50,7 +50,7 @@ class ReviewService
     {
         $review = Review::find($id);
 
-        if (!$review) 
+        if (!$review)
         {
             $message = 'review not found';    $code = 404;
             return ['review' => null, 'message' => $message, 'code' => $code];
@@ -128,7 +128,7 @@ class ReviewService
 
     public function property_index($property_id) : array
     {
-        $reviews = Review::where('property_id', $property_id)->get();
+        $reviews = Review::query()->with(['user.profile'])->where('property_id', $property_id)->get();
         $message = 'reviews retrieved successfully'; $code = 200;
         return ['reviews' => $reviews, 'message' => $message, 'code' => $code];
     }
