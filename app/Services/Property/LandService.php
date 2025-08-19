@@ -97,9 +97,12 @@ class LandService
 
 
 
-        if(isset($request['LandType']))
+        if(!empty($request['LandType']))
         {
+            if(is_array($request['LandType']))
             $query->whereIn('lands.type',$request['LandType']);
+            else
+            $query->where('lands.type',$request['LandType']);
         }
         if(!empty($request['is_inside_master_plan']))
         {
@@ -109,13 +112,44 @@ class LandService
         {
             $query->where('lands.is_serviced',$request['is_serviced']);
         }
-        if(isset($request['slope']))
+        if(!empty($request['slope']))
         {
+            if(is_array($request['slope']))
             $query->whereIn('lands.slope',$request['slope']);
+            else
+            $query->where('lands.slope',$request['slope']);
         }
 
         return $query;
 
+    }
+    public function similarTo($ad,$query)
+    {
+        $request['LandType']              = $ad['type'] ?? null;
+        $request['is_inside_master_plan'] = $ad['is_inside_master_plan'] ?? null;
+        $request['is_serviced']           = $ad['is_serviced'] ?? null;
+        $request['slope']                 = $ad['slope'] ?? null;
+
+        $query = $query->join('lands', 'properties.propertyable_id', '=', 'lands.id')
+            ->where('properties.propertyable_type', \App\Models\Land::class)
+            ->selectRaw(("
+            (
+             0
+             + CASE WHEN lands.type = ? THEN 3 ELSE 0 END
+             + CASE WHEN lands.is_inside_master_plan = ? THEN 2 ELSE 0 END
+             + CASE WHEN lands.is_serviced = ? THEN 2 ELSE 0 END
+             + CASE WHEN lands.slope = ? THEN 1 ELSE 0 END
+            ) as points
+        "), [
+            $request['LandType'],
+            $request['is_inside_master_plan'],
+            $request['is_serviced'],
+            $request['slope'],
+                ])
+            ->orderByDesc('points');
+
+
+        return $query;
     }
 
 

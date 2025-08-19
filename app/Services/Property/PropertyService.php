@@ -8,6 +8,7 @@ use App\Models\Property;
 use App\Models\User;
 use App\Services\UserService;
 use App\Traits\PictureTrait;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Nette\Schema\ValidationException;
@@ -29,9 +30,23 @@ class PropertyService
          $this->shopService = $shopService;
     }
 
+    public function format($properties)
+    {
+        if($properties instanceof \Illuminate\Database\Eloquent\Collection) {
+            $ads=$properties->map(function($property)  {
+                $property['type']=strtolower(class_basename($property->propertyable_type));
+                return $property;
+            });
+        }
+        else
+        {
+            $properties['type']=strtolower(class_basename($properties->propertyable_type));
+        }
+        return $properties;
+    }
     public function getProperty($id)
     {
-        $property=Property::query()->with('propertyable','images')->find($id);
+        $property=Property::query()->with(['propertyable','images','user','ad'])->find($id);
         if(!$property)
         {
             $message="Property not found";
@@ -56,13 +71,13 @@ class PropertyService
             $code=404;
             return ['properties'=>null,'message'=>$message,'code'=>$code];
         }
-        $properties=$user->properties()->with('propertyable','images')->get();
 
-        $properties= $properties->map(function ($property) {
-            $prop = $property->toArray();
-            $prop['type'] = class_basename($property->propertyable_type);
-            return $prop;
-        });
+        $properties=$user->properties()->with('propertyable','images')->paginate($request['num']??10);
+
+        $properties->getCollection()->transform(fn($property) => $this->format($property));
+
+
+
         // for returning a good formatting for the front_end
 
         return['properties'=>$properties,'message'=>'properties retrieved successfully','code'=>200];
@@ -159,53 +174,57 @@ class PropertyService
             return ['property'=>null,'message'=>$message,'code'=>$code];
         }
 
-        DB::beginTransaction();
-        try{
-            switch (strtolower($data->get('type')))
-            {
-                case 'apartment':
-                    $apartment= $this->apartmentService->update($data,$propertyable_id);
-                    $propertyable=$apartment['apartment'];
-                    break;
-                case 'land':
-                    $land= $this->landService->update($data,$propertyable_id);
-                    $propertyable=$land['land'];
-                    break;
-                case 'office':
-                    $office= $this->officeService->update($data,$propertyable_id);
-                    $propertyable=$office['office'];
-                    break;
-                case 'shop':
-                    $shop= $this->shopService->update($data,$propertyable_id);
-                    $propertyable=$shop['shop'];
-                    break;
-            }
+        $property=Property::query()->find($id);
 
-
-            $property=Property::query()->find($id);
-
-            $fields = ['area','name','description','price','address','longitude','latitude'];
-
-            foreach ($fields as $field) {
-                if (filled($data->get('property')[$field])) {
-
-                    $property->{$field} = $data->get('property')[$field];
-                }
-            }
-
-            $images_to_delete=$data->get('property')['image_to_delete']??[];
-
-
-            foreach ($images_to_delete as $image) {
-                if($image)
+        if($property->user_id==auth('api')->id())
+        {
+            DB::beginTransaction();
+            try{
+                switch (strtolower($data->get('type')))
                 {
-                    $image=Image::query()->find($image);
-                    $this->DestroyPicture($image);
-                    $image->delete();
+                    case 'apartment':
+                        $apartment= $this->apartmentService->update($data,$propertyable_id);
+                        $propertyable=$apartment['apartment'];
+                        break;
+                    case 'land':
+                        $land= $this->landService->update($data,$propertyable_id);
+                        $propertyable=$land['land'];
+                        break;
+                    case 'office':
+                        $office= $this->officeService->update($data,$propertyable_id);
+                        $propertyable=$office['office'];
+                        break;
+                    case 'shop':
+                        $shop= $this->shopService->update($data,$propertyable_id);
+                        $propertyable=$shop['shop'];
+                        break;
                 }
-            }
 
-            $images=$data->get('property')['image']??[];
+
+
+
+                $fields = ['area','name','description','price','address','longitude','latitude'];
+
+                foreach ($fields as $field) {
+                    if (filled($data->get('property')[$field])) {
+
+                        $property->{$field} = $data->get('property')[$field];
+                    }
+                }
+
+                $images_to_delete=$data->get('property')['image_to_delete']??[];
+
+
+                foreach ($images_to_delete as $image) {
+                    if($image)
+                    {
+                        $image=Image::query()->find($image);
+                        $this->DestroyPicture($image);
+                        $image->delete();
+                    }
+                }
+
+                $images=$data->get('property')['image']??[];
 
                 foreach ($images as $image)
                 {
@@ -219,24 +238,29 @@ class PropertyService
                     }
                 }
 
+                DB::commit();
+            }
+            catch (\Exception $e)
+            {
+                DB::rollBack();
+                $message=$e->getMessage();
+                return Response::Error($data,$message);
+            }
+        }
+
 
             $property->save();
             $property->refresh();
             $property['images']=$property->images;
             $property['type']=$request['type'];
-            $property['propertyable']=$propertyable;
+            $property['propertyable']=$propertyable??null;
             $message="Property updated successfully";
             $code=200;
 
-            DB::commit();
+
+
             return['property'=>$property,'message'=>$message,'code'=>$code];
-        }
-        catch (\Exception $e)
-        {
-            DB::rollBack();
-            $message=$e->getMessage();
-            return Response::Error($data,$message);
-        }
+
     }
     public function delete($id)
     {
@@ -250,6 +274,7 @@ class PropertyService
                 $code=404;
                 return ['property'=>null,'message'=>$message,'code'=>$code];
             }
+
 
             $propertyable = $property->propertyable;
 

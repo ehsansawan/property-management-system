@@ -94,9 +94,12 @@ class ShopService
 //            $query->where('shops.floor','>=',$request['floor']);
 //        }
 
-        if(isset($request['ShopType']))
+        if(!empty($request['ShopType']))
         {
+            if(is_array($request['ShopType']))
             $query->whereIn('shops.type',$request['ShopType']);
+            else
+            $query->where('shops.type',$request['ShopType']);
         }
         if(!empty($request['has_warehouse']))
         {
@@ -113,6 +116,34 @@ class ShopService
 
         return $query;
 
+    }
+    public function similarTo($ad,$query)
+    {
+        $request['ShopType']      = $ad['type'] ?? null;
+        $request['has_warehouse'] = $ad['has_warehouse'] ?? 0;
+        $request['has_bathroom']  = $ad['has_bathroom'] ?? 0;
+        $request['has_ac']        = $ad['has_ac'] ?? 0;
+
+
+        $query=$query->join('shops','properties.propertyable_id','=','shops.id')
+            ->where('properties.propertyable_type',\App\Models\Shop::class)
+            ->selectRaw("
+            (0
+             + CASE WHEN shops.type = ? THEN 5 ELSE 0 END
+             + CASE WHEN shops.has_warehouse = ? THEN 1 ELSE 0 END
+             + CASE WHEN shops.has_bathroom = ? THEN 1 ELSE 0 END
+             + CASE WHEN shops.has_ac = ? THEN 1 ELSE 0 END
+            ) as points
+        ", [
+                $request['ShopType'],
+                $request['has_warehouse'],
+                $request['has_bathroom'],
+                $request['has_ac'],
+            ])
+            ->orderByDesc('points');
+
+
+        return $query;
     }
 
 }

@@ -51,14 +51,14 @@ class AdService
         if($ads instanceof \Illuminate\Database\Eloquent\Collection) {
             $ads=$ads->map(function($ad)  {
                 $ad=$this->DamascusTime($ad);
-                $ad['property']['type']=class_basename($ad['property']['propertyable_type']);
+                $ad['property']['type']=strtolower(class_basename($ad['property']['propertyable_type']));
                 return $ad;
             });
         }
         else
         {
             $ads=$this->DamascusTime($ads);
-            $ads['property']['type']=class_basename($ads['property']['propertyable_type']);
+            $ads['property']['type']=strtolower(class_basename($ads['property']['propertyable_type']));
         }
         return $ads;
     }
@@ -78,8 +78,9 @@ class AdService
             return ['ads'=>null,'message'=>'user not found','code'=>404];
         }
 
-        $ads=$user->ads;
-        $ads=$this->format($ads);
+        $ads=Ad::query()->join('properties','properties.id','=','ads.property_id')
+            ->where('user_id',$user->id)->with(['property.images','property.propertyable'])->paginate(10);
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
         $message='user ads list';
         $code=200;
@@ -88,7 +89,7 @@ class AdService
     }
     public function show($id) : array
     {
-        $ad=Ad::query()->with(['property.propertyable','property.images'])->find($id);
+        $ad=Ad::query()->with(['property.propertyable','property.images','property.user.profile'])->find($id);
 
         if(!$ad)
         {
@@ -97,7 +98,7 @@ class AdService
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
 
-        if($ad->property->user_id!==auth('api')->id())
+        if($ad->property->user_id!=auth('api')->id())
         $ad->increment('views');
 
         $ad=$this->format($ad);
@@ -262,6 +263,7 @@ class AdService
     }
     public function delete($id):array
     {
+
         $ad=Ad::query()->find($id);
 
         if(!$ad)
@@ -270,6 +272,18 @@ class AdService
             $code=404;
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
+
+        $user=auth('api')->user();
+        if(!$user->hasRole('super_admin') || !$user->hasRole('admin'))
+        {
+            $user_id=auth('api')->id();
+            if($user_id != $ad->property->user_id)
+            {
+                return ['ad'=>null,'message'=>'you are not allowed to delete this property','code'=>403];
+            }
+        }
+
+
         $ad->property->is_ad=false;
         $ad->property->save(); // ✅ This line is required
         $ad->delete();
@@ -348,6 +362,7 @@ class AdService
             ->select('ads.*');
 
 
+
         if (isset($request['min_price'])) {
             $query->where('properties.price', '>=', $request['min_price']);
         }
@@ -381,7 +396,9 @@ class AdService
                 break;
         }
 
+
       // u have to do a join with premuim user and order by it
+
         return $query;
     }
     public function search ($request):array
@@ -478,6 +495,82 @@ class AdService
         $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
       return ['ads'=>$ads,'message'=>'ok','code'=>200];
+
+    }
+    public function similarTo($id)
+    {
+
+
+        $ad=Ad::query()->with(['property.propertyable'])->find($id);
+        if(!$ad)
+        {
+            return ['ads'=>null,'message'=>'ads not found','code'=>404];
+        }
+        $ad=$this->format($ad);
+
+
+
+
+
+        $request['min_price'] = isset($ad['property']['price']) ? max($ad['property']['price'] - 1000000, 0) : null;
+        $request['max_price'] = isset($ad['property']['price']) ? $ad['property']['price'] + 1000000 : null;
+
+        $request['min_area'] = isset($ad['property']['area']) ? max($ad['property']['area'] - 1000, 0) : null;
+        $request['max_area'] = isset($ad['property']['area']) ? $ad['property']['area'] + 1000 : null;
+
+        $query=Ad::query()->where('is_active',true)
+            ->join('properties', 'ads.property_id', '=', 'properties.id')
+            ->select('ads.*');
+
+        if (isset($request['min_price'])) {
+            $query->where('properties.price', '>=', $request['min_price']);
+        }
+
+        if (isset($request['max_price'])) {
+            $query->where('properties.price', '<=', $request['max_price']);
+        }
+
+        if (isset($request['min_area'])) {
+            $query->where('properties.area', '>=', $request['min_area']);
+        }
+
+        if (isset($request['max_area'])) {
+            $query->where('properties.area', '<=', $request['max_area']);
+        }
+
+
+        $request['type'] = $ad['property']['type'] ?? null;
+
+        switch ($request['type']??null)
+        {
+            case 'apartment':
+                $query= $this->apartmentService->similarTo($ad['property']['propertyable']??[],$query);
+                break;
+            case 'land':
+                $query=$this->landService->similarTo($ad['property']['propertyable']??[],$query);
+                break;
+            case 'office':
+                $query=$this->officeService->similarTo($ad['property']['propertyable']??[],$query);
+                break;
+            case 'shop':
+                $query=$this->shopService->similarTo($ad['property']['propertyable']??[],$query);
+                break;
+        }
+
+
+
+      //  $query=$this->querySearch($request);
+
+
+        $ads=$query->with('property.propertyable','property.images')
+             -> where('ads.id','!=',$id);
+
+
+        $ads=$ads->paginate(10);
+
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+
+        return ['ads'=>$ads,'message'=>'similar ads','code'=>200];
 
     }
 

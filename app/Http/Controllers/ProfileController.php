@@ -18,13 +18,28 @@ class ProfileController extends Controller
     {
         $this->profileService = $profileService;
     }
-
-    public function show(Request $request):JsonResponse
+    public function get_my_profile():JsonResponse
     {
         $data=[];
 
         try {
-            $data=$this->profileService->show($request);
+
+            $data=$this->profileService->get_my_profile();
+            return Response::Success($data['profile'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+
+    }
+    public function show($id):JsonResponse
+    {
+        $data=[];
+
+        try {
+
+            $data=$this->profileService->show($id);
             return Response::Success($data['profile'],$data['message'],$data['code']);
         }
         catch (Throwable $th){

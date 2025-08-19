@@ -28,6 +28,16 @@ return Application::configure(basePath: dirname(__DIR__))
            return Response::Error($e->getMessage(),'Authentication Error.',401);
         });
 
+        $exceptions->renderable(function(AccessDeniedHttpException $e, $request) {
+            // that's for when someone has no permission to do smth we need to customize the message for fornt_end
+            return \App\Http\Responses\Response::Error(
+                '',
+                'you do not have the authorization to access this page.',
+                403
+            );
+        });
+
+
 
     })->create();
 

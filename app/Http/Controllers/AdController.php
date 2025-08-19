@@ -162,6 +162,19 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
+    public function similarTo($id)
+    {
+        $data=[];
+
+        try {
+            $data=$this->adservice->similarTo($id);
+            return Response::Success($data['ads'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
 
 
 

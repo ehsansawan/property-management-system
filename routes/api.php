@@ -80,9 +80,10 @@ Route::controller(AuthController::class)->prefix('auth')
 Route::controller(ProfileController::class)->prefix('profile')
     ->name('profile.')
     ->middleware([JwtMiddleware::class])
-    ->group(function () {
+    ->group(function (){
+        Route::get('getMyProfile','get_my_profile')->name('get_my_profile');
         Route::post('/create', 'create')->name('create');
-        Route::get('/show', 'show')->name('show');
+        Route::get('/show/{id}', 'show')->name('show'); // 2 types and u have to put {id}
         Route::post('/update', 'update')->name('update');
         Route::delete('/delete', 'delete')->name('delete');
     });
@@ -94,10 +95,10 @@ Route::controller(UserController::class)->prefix('user')
         ->name('user.')
         ->group(function () {
             Route::get('/getUsers', 'get_users')->name('getUsers');
-            Route::post('/create', 'create')->name('create');
+            Route::post('/create', 'create')->name('create'); // super admin can create users with roles {admin,premuim_cleint,cleint}
             Route::get('/show/{id}', 'show')->name('show');
             Route::post('update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::delete('/delete/{id}', 'delete')->name('delete'); // 2 types
         });
 
 //property
@@ -111,52 +112,12 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
        Route::post('/update/{id}', 'update')->name('update');
        Route::delete('/delete/{id}', 'delete')->name('delete');
     });
-//location
-Route::controller(LocationController::class)->prefix('location')
-    ->name('location.')
-    ->group(function () {
-       Route::get('/index', 'index')->name('index');
-       Route::post('/create', 'create')->name('create');
-       Route::post('/update/{id}', 'update')->name('update');
-       Route::delete('/delete/{id}', 'delete')->name('delete');
-    });
-//governorate
-Route::controller(\App\Http\Controllers\GovernorateController::class)->prefix('governorate')
-    ->name('governorate.')
-    ->group(function () {
-        Route::get('/index', 'index')->name('index');
-        Route::post('/create', 'create')->name('create');
-        Route::post('/update/{id}', 'update')->name('update');
-        Route::delete('/delete/{id}', 'delete')->name('delete');
-    });
-//city
-Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
-    ->name('city.')
-    ->group(function () {
-       Route::get('show/{id}', 'show')->name('show');
-       Route::get('getCitiesByGovernorate/{governorate_id}', 'getCitiesByGovernorate')->name('getCitiesByGovernorate');
-       Route::post('/create', 'create')->name('create');
-       Route::post('/update/{id}', 'update')->name('update');
-       Route::delete('/delete/{id}', 'delete')->name('delete');
-    });
-//suggested location
- Route::controller(\App\Http\Controllers\SuggestedLocationController::class)->prefix('suggested-location')
-     ->name('suggested-location.')
-     ->group(function () {
-        Route::get('/index', 'index')->name('index');
-        Route::post('/suggestedLocationsByGovernorate','suggestedLocationsByGovernorate')->name('suggestedLocationsByGovernorate');
-        Route::post('/userSuggestedLocations','userSuggestedLocations')->name('userSuggestedLocations');
-         Route::post('/create', 'create')->name('create');
-         Route::post('/update/{id}', 'update')->name('update');
-        Route::get('/show/{id}', 'show')->name('show');
-        Route::delete('/delete/{id}', 'delete')->name('delete');
-        Route::post('/approve/{id}', 'approve')->name('approve');
-     });
+
  //ads
     Route::controller(\App\Http\Controllers\AdController::class)->prefix('ad')
         ->name('ad.')
         ->group(function () {
-            Route::get('/index', 'index')->name('index');
+
             Route::post('/create', 'create')->name('create');
             Route::get('/activate/{id}','activate')->name('activate');
             Route::get('show/{id}', 'show')
@@ -166,14 +127,17 @@ Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('getAdsByPropertyType');
             Route::post('getUserAds','getUserAds')->name('getUserAds');
             Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');
-            Route::delete('delete/{id}','delete')->name('delete');
+            Route::delete('delete/{id}','delete')->name('delete'); // 2 types
             Route::post('nearToYou','nearToYou')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('nearToYou');
             Route::post('search','search')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('search');
             Route::post('recommend','recommend')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class]) ->name('recommend');
+            Route::get('similarTo/{id}','similarTo')
+                ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class]) ->name('recommend');
         });
+
     //block
     Route::controller(BlockController::class)->prefix('block')
         ->name('block.')
@@ -264,3 +228,44 @@ Route::middleware(JwtMiddleware::class)
 /*****************************  end here  ****************************/
 
 
+////location
+//Route::controller(LocationController::class)->prefix('location')
+//    ->name('location.')
+//    ->group(function () {
+//       Route::get('/index', 'index')->name('index');
+//       Route::post('/create', 'create')->name('create');
+//       Route::post('/update/{id}', 'update')->name('update');
+//       Route::delete('/delete/{id}', 'delete')->name('delete');
+//    });
+////governorate
+//Route::controller(\App\Http\Controllers\GovernorateController::class)->prefix('governorate')
+//    ->name('governorate.')
+//    ->group(function () {
+//        Route::get('/index', 'index')->name('index');
+//        Route::post('/create', 'create')->name('create');
+//        Route::post('/update/{id}', 'update')->name('update');
+//        Route::delete('/delete/{id}', 'delete')->name('delete');
+//    });
+////city
+//Route::controller(\App\Http\Controllers\CityController::class)->prefix('city')
+//    ->name('city.')
+//    ->group(function () {
+//       Route::get('show/{id}', 'show')->name('show');
+//       Route::get('getCitiesByGovernorate/{governorate_id}', 'getCitiesByGovernorate')->name('getCitiesByGovernorate');
+//       Route::post('/create', 'create')->name('create');
+//       Route::post('/update/{id}', 'update')->name('update');
+//       Route::delete('/delete/{id}', 'delete')->name('delete');
+//    });
+////suggested location
+// Route::controller(\App\Http\Controllers\SuggestedLocationController::class)->prefix('suggested-location')
+//     ->name('suggested-location.')
+//     ->group(function () {
+//        Route::get('/index', 'index')->name('index');
+//        Route::post('/suggestedLocationsByGovernorate','suggestedLocationsByGovernorate')->name('suggestedLocationsByGovernorate');
+//        Route::post('/userSuggestedLocations','userSuggestedLocations')->name('userSuggestedLocations');
+//         Route::post('/create', 'create')->name('create');
+//         Route::post('/update/{id}', 'update')->name('update');
+//        Route::get('/show/{id}', 'show')->name('show');
+//        Route::delete('/delete/{id}', 'delete')->name('delete');
+//        Route::post('/approve/{id}', 'approve')->name('approve');
+//     });
