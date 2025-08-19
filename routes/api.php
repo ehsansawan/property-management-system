@@ -186,18 +186,19 @@ Route::middleware(JwtMiddleware::class)
 });
 
 
-Route::middleware(JwtMiddleware::class)
-     ->controller(ReviewController::class)
+Route::controller(ReviewController::class)
                                                                     ->name('reviews.')
-     ->group(function () {
-
-    Route::get('/reviews', 'index')                                 ->name('index');
-    Route::post('/reviews', 'user_store')                           ->name('store');
-    Route::get('/reviews/{id}', 'show')                             ->name('show');
-    Route::put('/reviews/{id}', 'user_update')                      ->name('update');
-    Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy');
-    Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy');
+    ->group(function() {
     Route::get('/ad/{ad_id}/reviews', 'ad_index')                   ->name('ad.index');
+    Route::group(['middleware' => JwtMiddleware::class], function () {
+        Route::get('/reviews', 'index')                                 ->name('index');
+        Route::post('/reviews', 'user_store')                           ->name('store');
+        Route::get('/reviews/{id}', 'show')                             ->name('show');
+        Route::put('/reviews/{id}', 'user_update')                      ->name('update');
+        Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy');
+        Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy');
+        Route::get('/user/ad/{ad_id}/reviews', 'get_user_reviews')      ->name('user.ad.index');
+    });
 });
 
 Route::middleware(JwtMiddleware::class)
