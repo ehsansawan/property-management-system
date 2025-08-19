@@ -123,14 +123,33 @@ class LandService
         return $query;
 
     }
-    public function similarTo($ad):array
+    public function similarTo($ad,$query)
     {
         $request['LandType']              = $ad['type'] ?? null;
         $request['is_inside_master_plan'] = $ad['is_inside_master_plan'] ?? null;
         $request['is_serviced']           = $ad['is_serviced'] ?? null;
         $request['slope']                 = $ad['slope'] ?? null;
 
-        return $request;
+        $query = $query->join('lands', 'properties.propertyable_id', '=', 'lands.id')
+            ->where('properties.propertyable_type', \App\Models\Land::class)
+            ->selectRaw(("
+            (
+             0
+             + CASE WHEN lands.type = ? THEN 3 ELSE 0 END
+             + CASE WHEN lands.is_inside_master_plan = ? THEN 2 ELSE 0 END
+             + CASE WHEN lands.is_serviced = ? THEN 2 ELSE 0 END
+             + CASE WHEN lands.slope = ? THEN 1 ELSE 0 END
+            ) as points
+        "), [
+            $request['LandType'],
+            $request['is_inside_master_plan'],
+            $request['is_serviced'],
+            $request['slope'],
+                ])
+            ->orderByDesc('points');
+
+
+        return $query;
     }
 
 

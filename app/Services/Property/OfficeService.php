@@ -126,7 +126,7 @@ class OfficeService
         return $query;
 
     }
-    public function similarTo($ad):array
+    public function similarTo($ad,$query)
     {
         $request['floor']         =  isset($ad['floor']) ? max($ad['floor'] - 1, 0) : null;
         $request['rooms']         =  isset($ad['rooms']) ? max($ad['rooms'] - 1, 0) : null;
@@ -136,6 +136,31 @@ class OfficeService
         $request['has_parking']   = $ad['has_parking'] ?? null;
         $request['furnished']     = $ad['furnished'] ?? null;
 
-        return $request;
+        $query = $query->join('offices', 'properties.propertyable_id', '=', 'offices.id')
+            ->where('properties.propertyable_type', \App\Models\Office::class)
+            ->selectRaw(("
+            (
+             0
+             + CASE WHEN offices.floor <= ? THEN 2 ELSE 0 END
+             + CASE WHEN offices.rooms = ? THEN 2 ELSE 0 END
+             + CASE WHEN offices.bathrooms = ? THEN 1 ELSE 0 END
+             + CASE WHEN offices.meeting_rooms = ? THEN 1 ELSE 0 END
+             + CASE WHEN offices.has_parking = ? THEN 1 ELSE 0 END
+             + CASE WHEN offices.furnished = ? THEN 1 ELSE 0 END
+            ) as points
+        "),
+            [
+                $request['floor'],
+                $request['rooms'],
+                $request['bathrooms'],
+                $request['meeting_rooms'],
+                $request['has_parking'],
+                $request['furnished'],
+            ])
+            ->orderByDesc('points');
+
+        return $query;
+
+
     }
 }

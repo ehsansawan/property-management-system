@@ -78,8 +78,9 @@ class AdService
             return ['ads'=>null,'message'=>'user not found','code'=>404];
         }
 
-        $ads=$user->ads;
-        $ads=$this->format($ads);
+        $ads=Ad::query()->join('properties','properties.id','=','ads.property_id')
+            ->where('user_id',$user->id)->with(['property.images','property.propertyable'])->paginate(10);
+        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
         $message='user ads list';
         $code=200;
@@ -485,49 +486,67 @@ class AdService
     }
     public function similarTo($id)
     {
-//        $valid=Validator::make($id,[
-//            'id'=>'nullable|integer|exists:ads,id',
-//        ]);
-//
-//        if($valid->fails())
-//        {
-//            return ['ads'=>null,'message'=>$valid->errors(),'code'=>422];
-//        }
+
 
         $ad=Ad::query()->with(['property.propertyable'])->find($id);
+        if(!$ad)
+        {
+            return ['ads'=>null,'message'=>'ads not found','code'=>404];
+        }
         $ad=$this->format($ad);
 
 
 
 
 
-        $request['min_price'] = isset($ad['property']['price']) ? max($ad['property']['price'] - 1000, 0) : null;
-        $request['max_price'] = isset($ad['property']['price']) ? $ad['property']['price'] + 1000 : null;
+        $request['min_price'] = isset($ad['property']['price']) ? max($ad['property']['price'] - 1000000, 0) : null;
+        $request['max_price'] = isset($ad['property']['price']) ? $ad['property']['price'] + 1000000 : null;
 
-        $request['min_area'] = isset($ad['property']['area']) ? max($ad['property']['area'] - 100, 0) : null;
-        $request['max_area'] = isset($ad['property']['area']) ? $ad['property']['area'] + 100 : null;
+        $request['min_area'] = isset($ad['property']['area']) ? max($ad['property']['area'] - 1000, 0) : null;
+        $request['max_area'] = isset($ad['property']['area']) ? $ad['property']['area'] + 1000 : null;
+
+        $query=Ad::query()->where('is_active',true)
+            ->join('properties', 'ads.property_id', '=', 'properties.id')
+            ->select('ads.*');
+
+        if (isset($request['min_price'])) {
+            $query->where('properties.price', '>=', $request['min_price']);
+        }
+
+        if (isset($request['max_price'])) {
+            $query->where('properties.price', '<=', $request['max_price']);
+        }
+
+        if (isset($request['min_area'])) {
+            $query->where('properties.area', '>=', $request['min_area']);
+        }
+
+        if (isset($request['max_area'])) {
+            $query->where('properties.area', '<=', $request['max_area']);
+        }
+
 
         $request['type'] = $ad['property']['type'] ?? null;
 
         switch ($request['type']??null)
         {
             case 'apartment':
-                $request['data']= $this->apartmentService->similarTo($ad['property']['propertyable']??[]);
+                $query= $this->apartmentService->similarTo($ad['property']['propertyable']??[],$query);
                 break;
             case 'land':
-                $request['data']=$this->landService->similarTo($ad['property']['propertyable']??[]);
+                $query=$this->landService->similarTo($ad['property']['propertyable']??[],$query);
                 break;
             case 'office':
-                $request['data']=$this->officeService->similarTo($ad['property']['propertyable']??[]);
+                $query=$this->officeService->similarTo($ad['property']['propertyable']??[],$query);
                 break;
             case 'shop':
-                $request['data']=$this->shopService->similarTo($ad['property']['propertyable']??[]);
+                $query=$this->shopService->similarTo($ad['property']['propertyable']??[],$query);
                 break;
         }
 
 
 
-        $query=$this->querySearch($request);
+      //  $query=$this->querySearch($request);
 
 
         $ads=$query->with('property.propertyable','property.images')

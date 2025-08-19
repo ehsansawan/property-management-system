@@ -30,6 +30,20 @@ class PropertyService
          $this->shopService = $shopService;
     }
 
+    public function format($properties)
+    {
+        if($properties instanceof \Illuminate\Database\Eloquent\Collection) {
+            $ads=$properties->map(function($property)  {
+                $property['type']=strtolower(class_basename($property->propertyable_type));
+                return $property;
+            });
+        }
+        else
+        {
+            $properties['type']=strtolower(class_basename($properties->propertyable_type));
+        }
+        return $properties;
+    }
     public function getProperty($id)
     {
         $property=Property::query()->with(['propertyable','images','user','ad'])->find($id);
@@ -57,13 +71,13 @@ class PropertyService
             $code=404;
             return ['properties'=>null,'message'=>$message,'code'=>$code];
         }
-        $properties=$user->properties()->with('propertyable','images')->get();
 
-        $properties= $properties->map(function ($property) {
-            $prop = $property->toArray();
-            $prop['type'] = class_basename($property->propertyable_type);
-            return $prop;
-        });
+        $properties=$user->properties()->with('propertyable','images')->paginate($request['num']??10);
+
+        $properties->getCollection()->transform(fn($property) => $this->format($property));
+
+
+
         // for returning a good formatting for the front_end
 
         return['properties'=>$properties,'message'=>'properties retrieved successfully','code'=>200];

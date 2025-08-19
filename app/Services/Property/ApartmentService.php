@@ -167,33 +167,71 @@ class ApartmentService
         return $query;
 
     }
-    public function similarTo($ad):array
+    public function similarTo($ad, $query)
     {
-        // Floors
-        $request['min_floor'] = isset($ad['floor']) ? max($ad['floor'] - 1, 0) : null;
-        $request['max_floor'] = isset($ad['floor']) ? $ad['floor'] + 1 : null;
+        // إعداد قيم min/max
+        $minFloor     = isset($ad['floor']) ? max($ad['floor'] - 1, 0) : null;
+        $maxFloor     = isset($ad['floor']) ? $ad['floor'] + 1 : null;
 
-// Rooms
-        $request['min_rooms'] = isset($ad['rooms']) ? max($ad['rooms'] - 1, 0) : null;
-        $request['max_rooms'] = isset($ad['rooms']) ? $ad['rooms'] + 1 : null;
+        $minRooms     = isset($ad['rooms']) ? max($ad['rooms'] - 1, 0) : null;
+        $maxRooms     = isset($ad['rooms']) ? $ad['rooms'] + 1 : null;
 
-// Bathrooms
-        $request['min_bathrooms'] = isset($ad['bathrooms']) ? max($ad['bathrooms'] - 1, 0) : null;
+        $minBathrooms = isset($ad['bathrooms']) ? max($ad['bathrooms'] - 1, 0) : null;
+        $maxBathrooms = isset($ad['bathrooms']) ? $ad['bathrooms'] + 1 : null;
 
-// Bedrooms
-        $request['min_bedrooms'] = isset($ad['bedrooms']) ? max($ad['bedrooms'] - 1, 0) : null;
+        $minBedrooms  = isset($ad['bedrooms']) ? max($ad['bedrooms'] - 1, 0) : null;
+        $maxBedrooms  = isset($ad['bedrooms']) ? $ad['bedrooms'] + 1 : null;
 
-// Booleans (direct equality)
-        $request['has_alternative_power'] = $ad['has_alternative_power'] ?? null;
-        $request['has_garage']            = $ad['has_garage'] ?? null;
-        $request['has_elevator']          = $ad['has_elevator'] ?? null;
-        $request['furnished']             = $ad['furnished'] ?? null;
+        // Booleans
+        $hasAlternativePower = $ad['has_alternative_power'] ?? null;
+        $hasGarage           = $ad['has_garage'] ?? null;
+        $hasElevator         = $ad['has_elevator'] ?? null;
+        $furnished           = $ad['furnished'] ?? null;
 
-// Furnished type (string/array)
-        $request['furnished_type'] = $ad['furnished_type'] ?? null;
+        $query = $query->join('apartments', 'properties.propertyable_id', '=', 'apartments.id')
+            ->where('properties.propertyable_type', \App\Models\Apartment::class)
+            ->selectRaw(("
+        (
+         0
+         + CASE
+             WHEN ? IS NOT NULL AND ? IS NOT NULL
+                  AND apartments.rooms BETWEEN ? AND ?
+             THEN 3 ELSE 0 END
+         + CASE
+             WHEN ? IS NOT NULL AND ? IS NOT NULL
+                  AND apartments.floor BETWEEN ? AND ?
+             THEN 2 ELSE 0 END
+         + CASE
+             WHEN ? IS NOT NULL AND ? IS NOT NULL
+                  AND apartments.bathrooms BETWEEN ? AND ?
+             THEN 2 ELSE 0 END
+         + CASE
+             WHEN ? IS NOT NULL AND ? IS NOT NULL
+                  AND apartments.bedrooms BETWEEN ? AND ?
+             THEN 2 ELSE 0 END
+         + CASE WHEN ? IS NOT NULL AND apartments.has_alternative_power = ? THEN 1 ELSE 0 END
+         + CASE WHEN ? IS NOT NULL AND apartments.has_garage = ? THEN 1 ELSE 0 END
+         + CASE WHEN ? IS NOT NULL AND apartments.has_elevator = ? THEN 1 ELSE 0 END
+         + CASE WHEN ? IS NOT NULL AND apartments.furnished = ? THEN 1 ELSE 0 END
+        ) as points
+    "), [
+                // Rooms
+                $minRooms, $maxRooms, $minRooms, $maxRooms,
+                // Floors
+                $minFloor, $maxFloor, $minFloor, $maxFloor,
+                // Bathrooms
+                $minBathrooms, $maxBathrooms, $minBathrooms, $maxBathrooms,
+                // Bedrooms
+                $minBedrooms, $maxBedrooms, $minBedrooms, $maxBedrooms,
+                // Booleans
+                $hasAlternativePower,$hasAlternativePower,
+                $hasGarage, $hasGarage,
+                $hasElevator, $hasElevator,
+                $furnished, $furnished,
+            ])
+            ->orderByDesc('points');
 
-        return $request;
-
+        return $query;
     }
 
 
