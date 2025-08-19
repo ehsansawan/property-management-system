@@ -135,4 +135,17 @@ class ReviewController extends Controller
             return Response::Error($data, $message);
         }
     }
+
+    public function get_user_reviews($ad_id)
+    {
+        $data = [];
+        try {
+            $data = $this->service->get_user_reviews($ad_id);
+            return Response::Success($data['reviews'], $data['message'], $data['code']);
+        }
+        catch (Throwable $th) { 
+            $message=$th->getMessage();
+            return Response::Error($data, $message);
+        }
+    }
 }

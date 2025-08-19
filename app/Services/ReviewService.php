@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Ad;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,7 @@ class ReviewService
         $request = new Request($req);
 
         $review = Review::create([
-            'ad_id' => $request->input('ad_id'),
+            'ad_id'       => $request->input('ad_id'),
             'user_id'     => Auth::guard('api')->user()->id,
             'comment'     => $request->input('comment'),
             'rating'      => $request->input('rating'),
@@ -128,9 +129,30 @@ class ReviewService
 
     public function ad_index($ad_id) : array
     {
+        $ad = Ad::find($ad_id);
+        if(!$ad)
+        {
+            $message = 'the Ad ID is not exist'; $code = 404;
+            return ['review' => null, 'message' => $message,'code' => $code];
+        }
         $reviews = Review::query()->with(['user.profile'])->where('ad_id', $ad_id)->get();
         $message = 'reviews retrieved successfully'; $code = 200;
         return ['reviews' => $reviews, 'message' => $message, 'code' => $code];
+    }
+
+    public function get_user_reviews($ad_id)
+    {
+        $ad = Ad::find($ad_id);
+        if(!$ad)
+        {
+            $message = 'Ad ID is not exist'; $code = 404;
+            return ['review' => null, 'message' => $message,'code' => $code];
+        }
+        $user_id = Auth::guard('api')->user()->id;
+        $reviews = Review::query()->with(['user.profile'])
+        ->where('ad_id', $ad_id)->where('user_id', $user_id)->get();
+        $message = 'reviews retrieved successfully'; $code = 200;
+        return ['reviews' => $reviews, 'message' => $message, 'code' => $code]; 
     }
 
 }
