@@ -28,4 +28,9 @@ class Ad extends Model
         $this->hasMany(Favorite::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
 }

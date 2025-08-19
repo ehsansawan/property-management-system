@@ -23,7 +23,7 @@ class CreateReviewRequest extends FormRequest
     {
         return [
             // 'user_id' => 'required|exists:users,id',
-            'property_id' => 'required|exists:properties,id',
+            'ad_id' => 'required|exists:ads,id',
             'rating' => 'required|numeric|between:0,5',
             'comment' => 'string|max:65535',
         ];

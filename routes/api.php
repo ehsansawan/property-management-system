@@ -232,7 +232,7 @@ Route::middleware(JwtMiddleware::class)
     Route::put('/reviews/{id}', 'user_update')                      ->name('update');
     Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy');
     Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy');
-    Route::get('/property/{property_id}/reviews', 'property_index') ->name('property.index');
+    Route::get('/ad/{ad_id}/reviews', 'ad_index')                   ->name('ad.index');
 });
 
 Route::middleware(JwtMiddleware::class)

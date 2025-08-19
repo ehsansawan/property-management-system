@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Ad;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Review extends Model
 {
     //
     use HasFactory;
-    protected $fillable=['property_id','user_id','rating','comment'];
+    protected $fillable=['ad_id','user_id','rating','comment'];
 
 
-    public function property()
+    public function ad()
     {
-        return $this->belongsTo(Property::class);
+        return $this->belongsTo(Ad::class);
     }
     public function user()
     {

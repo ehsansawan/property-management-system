@@ -28,7 +28,7 @@ class ReviewService
         $request = new Request($req);
 
         $review = Review::create([
-            'property_id' => $request->input('property_id'),
+            'ad_id' => $request->input('ad_id'),
             'user_id'     => Auth::guard('api')->user()->id,
             'comment'     => $request->input('comment'),
             'rating'      => $request->input('rating'),
@@ -126,9 +126,9 @@ class ReviewService
         return ['review' => null, 'message' => $message,'code' => $code];
     }
 
-    public function property_index($property_id) : array
+    public function ad_index($ad_id) : array
     {
-        $reviews = Review::where('property_id', $property_id)->get();
+        $reviews = Review::where('ad_id', $ad_id)->get();
         $message = 'reviews retrieved successfully'; $code = 200;
         return ['reviews' => $reviews, 'message' => $message, 'code' => $code];
     }

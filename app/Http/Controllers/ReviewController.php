@@ -123,14 +123,14 @@ class ReviewController extends Controller
         }
     }
 
-    public function property_index(string $property_id)
+    public function ad_index(string $ad_id)
     {
         $data = [];
         try {
-            $data = $this->service->property_index($property_id);
+            $data = $this->service->ad_index($ad_id);
             return Response::Success($data['reviews'], $data['message'], $data['code']);
         }
-        catch (Throwable $th) {
+        catch (Throwable $th) { 
             $message=$th->getMessage();
             return Response::Error($data, $message);
         }
