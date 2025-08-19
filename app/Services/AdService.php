@@ -64,7 +64,7 @@ class AdService
     }
     public function index()
     {
-        $ads=Ad::query()->with(['property.propertyable','property.images'])->paginate(10);
+        $ads=Ad::query()->with(['property.propertyable','property.images','property.user.profile'])->paginate(10);
 
         if(!$ads)
         {
