@@ -44,6 +44,7 @@ $permissions = [
     'auth.checkCode',
 
     // profile
+    'profile.get_my_profile',
     'profile.create',
     'profile.show',
     'profile.update',

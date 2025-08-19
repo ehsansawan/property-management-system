@@ -80,9 +80,10 @@ Route::controller(AuthController::class)->prefix('auth')
 Route::controller(ProfileController::class)->prefix('profile')
     ->name('profile.')
     ->middleware([JwtMiddleware::class])
-    ->group(function () {
+    ->group(function (){
+        Route::get('getMyProfile','get_my_profile')->name('get_my_profile');
         Route::post('/create', 'create')->name('create');
-        Route::get('/show', 'show')->name('show');
+        Route::get('/show/{id}', 'show')->name('show'); // 2 types and u have to put {id}
         Route::post('/update', 'update')->name('update');
         Route::delete('/delete', 'delete')->name('delete');
     });
@@ -94,10 +95,10 @@ Route::controller(UserController::class)->prefix('user')
         ->name('user.')
         ->group(function () {
             Route::get('/getUsers', 'get_users')->name('getUsers');
-            Route::post('/create', 'create')->name('create');
+            Route::post('/create', 'create')->name('create'); // super admin can create users with roles {admin,premuim_cleint,cleint}
             Route::get('/show/{id}', 'show')->name('show');
             Route::post('update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::delete('/delete/{id}', 'delete')->name('delete'); // 2 types
         });
 
 //property
@@ -126,7 +127,7 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('getAdsByPropertyType');
             Route::post('getUserAds','getUserAds')->name('getUserAds');
             Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');
-            Route::delete('delete/{id}','delete')->name('delete');
+            Route::delete('delete/{id}','delete')->name('delete'); // 2 types
             Route::post('nearToYou','nearToYou')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('nearToYou');
             Route::post('search','search')

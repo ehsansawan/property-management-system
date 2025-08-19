@@ -263,6 +263,7 @@ class AdService
     }
     public function delete($id):array
     {
+
         $ad=Ad::query()->find($id);
 
         if(!$ad)
@@ -271,6 +272,18 @@ class AdService
             $code=404;
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
+
+        $user=auth('api')->user();
+        if(!$user->hasRole('super_admin') || !$user->hasRole('admin'))
+        {
+            $user_id=auth('api')->id();
+            if($user_id != $ad->property->user_id)
+            {
+                return ['ad'=>null,'message'=>'you are not allowed to delete this property','code'=>403];
+            }
+        }
+
+
         $ad->property->is_ad=false;
         $ad->property->save(); // ✅ This line is required
         $ad->delete();
