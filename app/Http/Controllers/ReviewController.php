@@ -12,7 +12,7 @@ use App\Http\Requests\Review\UpdateReviewRequest;
 class ReviewController extends Controller
 {
 
-    protected ReviewService $service; 
+    protected ReviewService $service;
 
     public function __construct(ReviewService $service)
     {
@@ -25,7 +25,7 @@ class ReviewController extends Controller
     public function index()
     {
         $data=[];
-        try 
+        try
         {
             $data=$this->service->index();
             return Response::Success($data['reviews'], $data['message'], $data['code']);
@@ -47,8 +47,8 @@ class ReviewController extends Controller
         {
             $data = $this->service->user_store($request->validated());
             return Response::Success($data['review'], $data['message'], $data['code']);
-        } 
-        catch (Throwable $th) 
+        }
+        catch (Throwable $th)
         {
             $message = $th->getMessage();
             return Response::Error($data, $message);
@@ -61,7 +61,7 @@ class ReviewController extends Controller
     public function show(string $id)
     {
         $data = [];
-        try 
+        try
         {
             $data=$this->service->show($id);
             return Response::Success($data['review'], $data['message'], $data['code']);
@@ -89,7 +89,7 @@ class ReviewController extends Controller
             $message=$th->getMessage();
             return Response::Error($data, $message);
         }
-        
+
     }
 
     /**
@@ -98,7 +98,7 @@ class ReviewController extends Controller
     public function destroy(string $id)
     {
         $data=[];
-        try 
+        try
         {
             $data = $this->service->destroy($id);
             return Response::Success($data['review'], $data['message'], $data['code']);
@@ -130,7 +130,7 @@ class ReviewController extends Controller
             $data = $this->service->ad_index($ad_id);
             return Response::Success($data['reviews'], $data['message'], $data['code']);
         }
-        catch (Throwable $th) { 
+        catch (Throwable $th) {
             $message=$th->getMessage();
             return Response::Error($data, $message);
         }

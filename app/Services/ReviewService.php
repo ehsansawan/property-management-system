@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Ad;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
