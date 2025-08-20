@@ -135,7 +135,7 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('search');
             Route::post('recommend','recommend')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class]) ->name('recommend');
-            Route::get('similarTo/{id}','similarTo')
+            Route::post('similarTo/{id}','similarTo')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class]) ->name('recommend');
         });
 

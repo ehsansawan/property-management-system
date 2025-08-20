@@ -96,8 +96,8 @@ class AdService
         }
 
         $ads=Ad::query()->join('properties','properties.id','=','ads.property_id')
-            ->where('user_id',$user->id)->with(['property.images','property.propertyable'])->paginate(10);
-        $ads->getCollection()->transform(fn($ad) => $this->format($ad));
+            ->where('user_id',$user->id)->with(['property.images','property.propertyable'])->get();
+        $ads=$this->format($ads);
 
         $message='user ads list';
         $code=200;
@@ -514,7 +514,7 @@ class AdService
       return ['ads'=>$ads,'message'=>'ok','code'=>200];
 
     }
-    public function similarTo($id)
+    public function similarTo($id,$req)
     {
 
 
@@ -583,7 +583,7 @@ class AdService
              -> where('ads.id','!=',$id);
 
 
-        $ads=$ads->paginate(10);
+        $ads=$ads->paginate($req['num']??10);
 
         $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
