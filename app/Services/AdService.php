@@ -291,7 +291,7 @@ class AdService
         }
 
         $user=auth('api')->user();
-        if(!$user->hasRole('super_admin') || !$user->hasRole('admin'))
+        if(!$user->hasRole('super_admin') && !$user->hasRole('admin'))
         {
             $user_id=auth('api')->id();
             if($user_id != $ad->property->user_id)

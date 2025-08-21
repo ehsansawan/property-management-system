@@ -29,19 +29,19 @@ class RolesPermissionsSeeder extends Seeder
 $permissions = [
 
     //email verification
-    'verification.verify',
-    'verification.send',
+//    'verification.verify',
+//    'verification.send',
 
     // auth
     // no register for superadmin
-    //'auth.register',
-    'auth.login',
-    'auth.logout',
-    'auth.refresh',
-    'auth.me',
-    'auth.forgetPassword',
-    'auth.resetPassword',
-    'auth.checkCode',
+//    'auth.register',
+//    'auth.login',
+//    'auth.logout',
+//    'auth.refresh',
+//    'auth.me',
+//    'auth.forgetPassword',
+//    'auth.resetPassword',
+//    'auth.checkCode',
 
     // profile
     'profile.get_my_profile',
@@ -129,18 +129,18 @@ $permissions = [
 
 $adminpermissions=[
     //email verification
-    'verification.verify',
-    'verification.send',
+//    'verification.verify',
+//    'verification.send',
 
     //auth
     //no register for admin
-    'auth.login',
-    'auth.logout',
-    'auth.refresh',
-    'auth.me',
-    'auth.forgetPassword',
-    'auth.resetPassword',
-    'auth.checkCode',
+//    'auth.login',
+//    'auth.logout',
+//    'auth.refresh',
+//    'auth.me',
+//    'auth.forgetPassword',
+//    'auth.resetPassword',
+//    'auth.checkCode',
 
     // profile
     'profile.create',
@@ -209,17 +209,17 @@ $adminpermissions=[
 $clientpermissions=[
 
     //email verification
-    'verification.verify',
-    'verification.send',
-    //auth
-    'auth.register',
-    'auth.login',
-    'auth.logout',
-    'auth.refresh',
-    'auth.me',
-    'auth.forgetPassword',
-    'auth.resetPassword',
-    'auth.checkCode',
+//    'verification.verify',
+//    'verification.send',
+//    //auth
+//    'auth.register',
+//    'auth.login',
+//    'auth.logout',
+//    'auth.refresh',
+//    'auth.me',
+//    'auth.forgetPassword',
+//    'auth.resetPassword',
+//    'auth.checkCode',
 
     // profile
     'profile.create',
@@ -288,18 +288,18 @@ $clientpermissions=[
 
 $premiumClientPermissions=[
 
-            //email verification
-            'verification.verify',
-            'verification.send',
-            //auth
-            'auth.register',
-            'auth.login',
-            'auth.logout',
-            'auth.refresh',
-            'auth.me',
-            'auth.forgetPassword',
-            'auth.resetPassword',
-            'auth.checkCode',
+//            //email verification
+//            'verification.verify',
+//            'verification.send',
+//            //auth
+//            'auth.register',
+//            'auth.login',
+//            'auth.logout',
+//            'auth.refresh',
+//            'auth.me',
+//            'auth.forgetPassword',
+//            'auth.resetPassword',
+//            'auth.checkCode',
 
             // profile
             'profile.create',
@@ -368,7 +368,7 @@ $premiumClientPermissions=[
 
 
         foreach ($permissions as $permission) {
-            Permission::findOrCreate($permission,'web');
+            Permission::findOrCreate($permission,'api');
         }
 
         //Assign permissions to roles
@@ -386,7 +386,7 @@ $premiumClientPermissions=[
         // admin users
         for ( $x = 1; $x <=5 ; $x++) {
             $adminUser = User::query()->create([
-                'first_name' => 'adminUser ' . $x,
+                'first_name' => 'superadminUser ' . $x,
                 'last_name' => 'User ' . $x,
                 'phone_number' => '093675776' . $x,
                 'password' => Hash::make('password' . $x),

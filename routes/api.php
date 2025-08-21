@@ -81,11 +81,11 @@ Route::controller(ProfileController::class)->prefix('profile')
     ->name('profile.')
     ->middleware([JwtMiddleware::class])
     ->group(function (){
-        Route::get('getMyProfile','get_my_profile')->name('get_my_profile');
-        Route::post('/create', 'create')->name('create');
-        Route::get('/show/{id}', 'show')->name('show'); // 2 types and u have to put {id}
-        Route::post('/update', 'update')->name('update');
-        Route::delete('/delete', 'delete')->name('delete');
+        Route::get('getMyProfile','get_my_profile')->name('get_my_profile')->middleware('can:profile.get_my_profile');
+        Route::post('/create', 'create')->name('create')->middleware('can:profile.create');
+        Route::get('/show/{id}', 'show')->name('show')->middleware('can:profile.show'); // 2 types and u have to put {id}
+        Route::post('/update', 'update')->name('update')->middleware('can:profile.update');
+        Route::delete('/delete', 'delete')->name('delete')->middleware('can:profile.delete');
     });
 
 Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class])->group(function () {

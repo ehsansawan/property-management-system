@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropForeign(['property_id']);
-            $table->dropColumn('property_id');
+                $table->dropForeign(['property_id']);
+                $table->dropColumn('property_id');
+
             $table->foreignId('ad_id')->constrained('ads')->after('id');
         });
     }
