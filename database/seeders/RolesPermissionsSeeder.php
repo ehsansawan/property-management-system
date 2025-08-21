@@ -458,8 +458,8 @@ $premiumClientPermissions=[
                 'first_name' => 'super_adminUser ' . $x,
                 'last_name' => 'User ' . $x,
                 'phone_number' => '093675776' . $x,
-                'password' => Hash::make('password' ),
-                'email'=>    'moalqrfan2002@gmail.com',
+                'password' => Hash::make('Aa@98765' ),
+                'email'=>    'moalqrfan2003@gmail.com',
                 'email_verified_at'=>Carbon::now(),
             ]);
 
