@@ -8,6 +8,7 @@ use App\Http\Responses\Response;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Throwable;
 
 class UserController extends Controller
@@ -22,6 +23,21 @@ class UserController extends Controller
     {
         $this->userService = $userService;
     }
+
+    public function getUserByEmail(Request $request):JsonResponse
+    {
+        $data=[];
+
+        try {
+            $data=$this->userService->getUserByEmail($request);
+            return Response::Success($data['user'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+
     public function get_users():JsonResponse
     {
         $data=[];

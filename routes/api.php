@@ -91,26 +91,28 @@ Route::controller(ProfileController::class)->prefix('profile')
 Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class])->group(function () {
 
 // User
-Route::controller(UserController::class)->prefix('user')
+    Route::controller(UserController::class)->prefix('user')
         ->name('user.')
         ->group(function () {
-            Route::get('/getUsers', 'get_users')->name('getUsers');
-            Route::post('/create', 'create')->name('create'); // super admin can create users with roles {admin,premuim_cleint,cleint}
-            Route::get('/show/{id}', 'show')->name('show');
-            Route::post('update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete'); // 2 types
+            Route::post('/getUserByEmail','getUserByEmail')->name('getUserByEmail')->middleware('can:user.getUserByEmail');
+            Route::get('/getUsers', 'get_users')->name('getUsers')->middleware('can:user.getUsers');
+            Route::post('/create', 'create')->name('create')->middleware('can:user.create');
+            Route::get('/show/{id}', 'show')->name('show')->middleware('can:user.show');
+            Route::post('update/{id}', 'update')->name('update')->middleware('can:user.update');
+            Route::delete('/delete/{id}', 'delete')->name('delete')->middleware('can:user.delete');
         });
+
 
 //property
 Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('property')
 ->name('property.')
     ->group(function () {
-        Route::get('/getProperty/{id}','getProperty')->name('getProperty');
-       Route::get('/getUserProperties', 'getUserProperties')->name('getUserProperties');
-       Route::post('/create', 'create')->name('create');
-       Route::post('/getAttributes','getAttributes')->name('getAttributes');
-       Route::post('/update/{id}', 'update')->name('update');
-       Route::delete('/delete/{id}', 'delete')->name('delete');
+        Route::get('/getProperty/{id}','getProperty')->name('getProperty')->middleware('can:property.getProperty');
+       Route::get('/getUserProperties', 'getUserProperties')->name('getUserProperties')->middleware('can:property.getUserProperties');
+       Route::post('/create', 'create')->name('create')->middleware('can:property.create');
+       Route::post('/getAttributes','getAttributes')->name('getAttributes')->middleware('can:property.getAttributes');
+       Route::post('/update/{id}', 'update')->name('update')->middleware('can:property.update');
+       Route::delete('/delete/{id}', 'delete')->name('delete')->middleware('can:property.delete');
     });
 
  //ads
@@ -119,16 +121,16 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
         ->group(function () {
             Route::get('index','index')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class]) ->name('index');
-            Route::post('/create', 'create')->name('create');
-            Route::get('/activate/{id}','activate')->name('activate');
+            Route::post('/create', 'create')->name('create')->middleware('can:ad.create');
+            Route::get('/activate/{id}','activate')->name('activate')->middleware('can:ad.activate');
             Route::get('show/{id}', 'show')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('show');
-            Route::get('unactivate/{id}','unactivate')->name('unactivate');
+            Route::get('unactivate/{id}','unactivate')->name('unactivate')->middleware('can:ad.unactivate');
             Route::post('getAdsByPropertyType','getAdsByPropertyType')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('getAdsByPropertyType');
-            Route::post('getUserAds','getUserAds')->name('getUserAds');
+            Route::post('getUserAds','getUserAds')->name('getUserAds')->middleware('can:ad.getUserAds');
             Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');
-            Route::delete('delete/{id}','delete')->name('delete'); // 2 types
+            Route::delete('delete/{id}','delete')->name('delete')->middleware('can:ad.delete'); // 2 types
             Route::post('nearToYou','nearToYou')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('nearToYou');
             Route::post('search','search')
@@ -143,18 +145,18 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
     Route::controller(BlockController::class)->prefix('block')
         ->name('block.')
         ->group(function () {
-           Route::post('/create', 'create')->name('block');
-           Route::delete('/unblock/{id}', 'unblock')->name('unblock');
+           Route::post('/create', 'create')->name('block')->middleware('can:block.create');
+           Route::delete('/unblock/{id}', 'unblock')->name('unblock')->middleware('can:block.delete');
         });
     //report
     Route::controller(ReportController::class)->prefix('report')
         ->name('report.')
         ->group(function () {
-           Route::post('/index', 'index')->name('index');
-           Route::post('/create','create')->name('create');
-           Route::get('/show/{id}', 'show')->name('show');
-           Route::post('/showAdReports', 'showAdReports')->name('showAdReports');
-           Route::delete('/delete/{id}', 'delete')->name('delete');
+           Route::post('/index', 'index')->name('index')->middleware('can:report.index');
+           Route::post('/create','create')->name('create')->middleware('can:report.create');
+           Route::get('/show/{id}', 'show')->name('show')->middleware('can:report.show');
+           Route::post('/showAdReports', 'showAdReports')->name('showAdReports')->middleware('can:report.showAdReports');
+           Route::delete('/delete/{id}', 'delete')->name('delete')->middleware('can:report.delete');
 
         });
 
@@ -171,33 +173,51 @@ Route::middleware(JwtMiddleware::class)
                                                                     ->name('subscriptions.')
     ->group(function () {
 
-    Route::get('/activated/admin', 'allActiveSub')                  ->name('allActiveSub');
-    Route::get('/admin', 'index')                                   ->name('index.admin');
-    Route::put('/deactivate/{id}/admin', 'deactivate')              ->name('deactivate.admin');
-    Route::get('/{id}/admin', 'show')                               ->name('show.admin');
-    Route::delete('/{id}/admin', 'destroy')                         ->name('destroy.admin');
+    Route::get('/activated/admin', 'allActiveSub')                  ->name('allActiveSub')
+        ->middleware('can:subscriptions.allActiveSub');
+    Route::get('/admin', 'index')                                   ->name('index.admin')
+        ->middleware('can:subscriptions.admin');
+    Route::put('/deactivate/{id}/admin', 'deactivate')              ->name('deactivate.admin')
+    ->middleware('can:subscriptions.deactivate');
+    Route::get('/{id}/admin', 'show')                               ->name('show.admin')
+    ->middleware('can:subscriptions.show');
+    Route::delete('/{id}/admin', 'destroy')                         ->name('destroy.admin')
+    ->middleware('can:subscriptions.destroy');
 
-    Route::get('/active/client', 'userActiveSub')                   ->name('activeSub.client');
-    Route::put('/deactivate/client', 'userDeactivate')              ->name('deactivate.client');
-    Route::get('/client', 'userIndex')                              ->name('index.client');
-    Route::get('/{id}/client', 'userShow')                          ->name('show.client');
-    Route::post('/client', 'userCreate')                            ->name('store.client');
-    Route::get('/time_remaining/{id}/client', 'time_remaining')     ->name('timeRemaining.client');
+    Route::get('/active/client', 'userActiveSub')                   ->name('activeSub.client')
+    ->middleware('can:subscriptions.activeSub.client');
+    Route::put('/deactivate/client', 'userDeactivate')              ->name('deactivate.client')
+    ->middleware('can:subscriptions.deactivate.client');
+    Route::get('/client', 'userIndex')                              ->name('index.client')
+    ->middleware('can:subscriptions.index.client');
+    Route::get('/{id}/client', 'userShow')                          ->name('show.client')
+    ->middleware('can:subscriptions.show.client');
+    Route::post('/client', 'userCreate')                            ->name('store.client')
+    ->middleware('can:subscriptions.store.client');
+    Route::get('/time_remaining/{id}/client', 'time_remaining')     ->name('timeRemaining.client')
+    ->middleware('can:subscriptions.timeRemaining.client');
 });
-
 
 Route::controller(ReviewController::class)
                                                                     ->name('reviews.')
     ->group(function() {
-    Route::get('/ad/{ad_id}/reviews', 'ad_index')                   ->name('ad.index');
+    Route::get('/ad/{ad_id}/reviews', 'ad_index')                   ->name('ad.index')
+        ->middleware('can:reviews.ad.index');
     Route::group(['middleware' => JwtMiddleware::class], function () {
-        Route::get('/reviews', 'index')                                 ->name('index');
-        Route::post('/reviews', 'user_store')                           ->name('store');
-        Route::get('/reviews/{id}', 'show')                             ->name('show');
-        Route::put('/reviews/{id}', 'user_update')                      ->name('update');
-        Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy');
-        Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy');
-        Route::get('/user/ad/{ad_id}/reviews', 'get_user_reviews')      ->name('user.ad.index');
+        Route::get('/reviews', 'index')                                 ->name('index')
+        ->middleware('can:reviews.index');
+        Route::post('/reviews', 'user_store')                           ->name('store')
+        ->middleware('can:reviews.store');
+        Route::get('/reviews/{id}', 'show')                             ->name('show')
+        ->middleware('can:reviews.show');
+        Route::put('/reviews/{id}', 'user_update')                      ->name('update')
+        ->middleware('can:reviews.update');
+        Route::delete('/reviews/{id}', 'destroy')                       ->name('destroy')
+        ->middleware('can:reviews.destroy');
+        Route::delete('/client/reviews/{id}', 'client_destroy')         ->name('client_destroy')
+        ->middleware('can:reviews.client_destroy');
+        Route::get('/user/ad/{ad_id}/reviews', 'get_user_reviews')      ->name('user.ad.index')
+        ->middleware('can:reviews.user.ad.index');
     });
 });
 
@@ -206,13 +226,20 @@ Route::middleware(JwtMiddleware::class)
                                                                     ->name('plans.')
      ->group(function () {
 
-    Route::get('/plans/yearly_plans', 'getYearlyPlans')             ->name('yearlyPlans');
-    Route::get('/plans/monthly_plans', 'getMonthlyPlans')           ->name('monthlyPlans');
-    Route::get('/plans', 'index')                                   ->name('index');
-    Route::post('/plans', 'store')                                  ->name('store');
-    Route::get('/plans/{id}', 'show')                               ->name('show');
-    Route::put('/plans/{id}', 'update')                             ->name('update');
-    Route::delete('/plans/{id}', 'destroy')                         ->name('destroy');
+    Route::get('/plans/yearly_plans', 'getYearlyPlans')             ->name('yearlyPlans')
+    ->middleware('can:plans.yearlyPlans');
+    Route::get('/plans/monthly_plans', 'getMonthlyPlans')           ->name('monthlyPlans')
+    ->middleware('can:plans.monthlyPlans');
+    Route::get('/plans', 'index')                                   ->name('index')
+    ->middleware('can:plans.index');
+    Route::post('/plans', 'store')                                  ->name('store')
+    ->middleware('can:plans.store');
+    Route::get('/plans/{id}', 'show')                               ->name('show')
+    ->middleware('can:plans.show');
+    Route::put('/plans/{id}', 'update')                             ->name('update')
+    ->middleware('can:plans.update');
+    Route::delete('/plans/{id}', 'destroy')                         ->name('destroy')
+    ->middleware('can:plans.destroy');
 });
 
 Route::middleware(JwtMiddleware::class)
@@ -221,10 +248,10 @@ Route::middleware(JwtMiddleware::class)
                                                                     ->name('favorite.')
      ->group(function () {
 
-    Route::get('/', 'index')                                        ->name('index');
-    Route::post('/{id}', 'add')                                     ->name('add');
-    Route::delete('/{id}', 'remove')                                ->name('remove');
-    Route::get('/{id}', 'IsInFavorites')                            ->name('check');
+    Route::get('/', 'index')                                        ->name('index')->middleware('can:favorite.index');
+    Route::post('/{id}', 'add')                                     ->name('add')->middleware('can:favorite.add');
+    Route::delete('/{id}', 'remove')                                ->name('remove')->middleware('can:favorite.remove');
+    Route::get('/{id}', 'IsInFavorites')                            ->name('check')->middleware('can:favorite.check');
 });
 
 /*****************************  end here  ****************************/

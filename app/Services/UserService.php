@@ -8,6 +8,7 @@ use App\Models\ResetCodePassword;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 class UserService
@@ -24,7 +25,20 @@ class UserService
     {
         //
     }
+    public function getUserByEmail($request):array
+    {
+        $valid=Validator::make($request->all(),[
+            'email'=>'required|email|exists:users,email'
+        ]);
+        if(!$valid->fails()){
+            return['user'=>null,'message'=>'email not exist','code'=>404];
+        }
+        $user=User::query()->with('profile')->where('email',$request['email'])->first();
+        $message='user retrieved successfully';
+        $code=200;
+        return ['user'=>$user,'message'=>$message,'code'=>$code];
 
+    }
     public function get_users():array
     {
         $users = User::with('profile')->get();
