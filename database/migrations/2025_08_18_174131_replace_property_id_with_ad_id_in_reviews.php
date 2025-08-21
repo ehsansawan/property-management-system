@@ -12,10 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reviews', function (Blueprint $table) {
+         
+            if (Schema::hasColumn('reviews', 'property_id')) {
                 $table->dropForeign(['property_id']);
                 $table->dropColumn('property_id');
+            }
 
-            $table->foreignId('ad_id')->constrained('ads')->after('id');
+            if (!Schema::hasColumn('reviews', 'ad_id')) {
+                $table->foreignId('ad_id')->constrained('ads')->after('id');
+            }
         });
     }
 
@@ -25,9 +30,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropForeign(['ad_id']);
-            $table->dropColumn('ad_id');
-            $table->foreignId('property_id')->constrained('properties')->after('id');
+            if (Schema::hasColumn('reviews', 'ad_id')) {
+                $table->dropForeign(['ad_id']);
+                $table->dropColumn('ad_id');
+            }
+
+            if (!Schema::hasColumn('reviews', 'property_id')) {
+                $table->foreignId('property_id')->constrained('properties')->after('id');
+            }
         });
     }
 };
+
