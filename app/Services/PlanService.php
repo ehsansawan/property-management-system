@@ -19,7 +19,7 @@ class PlanService
         $reviews = Plan::all();
         $message ='plans retrieved successfully';
         $code = 200;
-        return ['plans' => $reviews, 'message' => $message, 'code' => $code];
+        return ['plan' => $reviews, 'message' => $message, 'code' => $code];
     }
 
     public function show($plan_id) : array
@@ -108,7 +108,7 @@ class PlanService
         $plans = Plan::query()->where('type', 'yearly')->get();
         
         $message = 'plans retrieved successfully';  $code = 200;
-        return ['plans' => $plans, 'message' => $message, 'code' => $code];
+        return ['plan' => $plans, 'message' => $message, 'code' => $code];
     }
 
     public function getMonthlyPlans() : array
@@ -116,6 +116,6 @@ class PlanService
         $plans = Plan::query()->where('type', 'monthly')->get();
 
         $message = 'plans retrieved successfully';  $code = 200;
-        return ['plans' => $plans, 'message' => $message, 'code' => $code];
+        return ['plan' => $plans, 'message' => $message, 'code' => $code];
     }
 }
