@@ -27,7 +27,7 @@ class UserService
 
     public function get_users():array
     {
-        $users=User::all();
+        $users = User::with('profile')->get();
         $message='users retrieved successfully';
         $code=200;
         return ['users'=>$users,'message'=>$message,'code'=>$code];
