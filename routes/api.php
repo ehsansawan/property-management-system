@@ -192,8 +192,8 @@ Route::middleware(JwtMiddleware::class)
     ->middleware('can:subscriptions.index.client');
     Route::get('/{id}/client', 'userShow')                          ->name('show.client')
     ->middleware('can:subscriptions.show.client');
-    Route::post('/client', 'userCreate')                            ->name('store.client');
-    //->middleware('can:subscriptions.store.client');
+    Route::post('/client', 'userCreate')                            ->name('store.client')
+    ->middleware('can:subscriptions.store.client');
     Route::get('/time_remaining/{id}/client', 'time_remaining')     ->name('timeRemaining.client')
     ->middleware('can:subscriptions.timeRemaining.client');
 });
