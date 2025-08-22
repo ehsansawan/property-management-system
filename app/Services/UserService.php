@@ -8,6 +8,7 @@ use App\Models\ResetCodePassword;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 class UserService
@@ -24,10 +25,23 @@ class UserService
     {
         //
     }
+    public function getUserByEmail($request):array
+    {
+        $valid=Validator::make($request->all(),[
+            'email'=>'required|email|exists:users,email'
+        ]);
+        if(!$valid->fails()){
+            return['user'=>null,'message'=>'email not exist','code'=>404];
+        }
+        $user=User::query()->with('profile')->where('email',$request['email'])->first();
+        $message='user retrieved successfully';
+        $code=200;
+        return ['user'=>$user,'message'=>$message,'code'=>$code];
 
+    }
     public function get_users():array
     {
-        $users=User::all();
+        $users = User::with('profile')->get();
         $message='users retrieved successfully';
         $code=200;
         return ['users'=>$users,'message'=>$message,'code'=>$code];
@@ -58,7 +72,7 @@ class UserService
                 'email'=>$data->email,
                 'password'=>bcrypt($data->password),
                 'phone_number'=>$data->phone_number,
-                'fcm_token'=>$data->fcm_token,
+                'fcm_token'=>$data->fcm_token??null,
                 //role_id
             ]
         );
@@ -105,6 +119,14 @@ class UserService
             return ['user' => $user, 'message' => $message, 'code' => $code];
         }
 
+            $user_id=auth('api')->id();
+            if($user_id != $id)
+            {
+                return ['user'=>null,'message'=>'you are not allowed to do this action','code'=>403];
+            }
+
+
+
         $fields = ['first_name', 'last_name', 'phone_number'];
 
         foreach ($fields as $field) {
@@ -133,6 +155,18 @@ class UserService
             $code = 404;
             return ['user' => $user, 'message' => $message, 'code' => $code];
         }
+
+        $checkUser=auth('api')->user();
+
+        if(!$checkUser->hasRole('super_admin') && !$checkUser->hasRole('admin'))
+        {
+            $user_id=auth('api')->id();
+            if($user_id != $id)
+            {
+                return ['user'=>null,'message'=>'you are not allowed to do this action','code'=>403];
+            }
+        }
+
 
         $user->delete();
         $message = 'user deleted successfully';

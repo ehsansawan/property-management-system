@@ -3,21 +3,33 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class RolesPermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
+
+
+
     public function run(): void
     {
         //
         //create Roles
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('roles')->truncate();
+        DB::table('permissions')->truncate();
+        DB::table('role_has_permissions')->truncate();
+        DB::table('model_has_roles')->truncate();
+        DB::table('model_has_permissions')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $adminRole=Role::create(['name' => 'admin']);
         $clientRole=Role::create(['name' => 'client']);
@@ -29,19 +41,19 @@ class RolesPermissionsSeeder extends Seeder
 $permissions = [
 
     //email verification
-    'verification.verify',
-    'verification.send',
+//    'verification.verify',
+//    'verification.send',
 
     // auth
     // no register for superadmin
-    //'auth.register',
-    'auth.login',
-    'auth.logout',
-    'auth.refresh',
-    'auth.me',
-    'auth.forgetPassword',
-    'auth.resetPassword',
-    'auth.checkCode',
+//    'auth.register',
+//    'auth.login',
+//    'auth.logout',
+//    'auth.refresh',
+//    'auth.me',
+//    'auth.forgetPassword',
+//    'auth.resetPassword',
+//    'auth.checkCode',
 
     // profile
     'profile.get_my_profile',
@@ -51,6 +63,7 @@ $permissions = [
     'profile.delete',
 
     // user
+    'user.getUserByEmail',
     'user.getUsers',
     'user.create',
     'user.show',
@@ -129,18 +142,18 @@ $permissions = [
 
 $adminpermissions=[
     //email verification
-    'verification.verify',
-    'verification.send',
+//    'verification.verify',
+//    'verification.send',
 
     //auth
     //no register for admin
-    'auth.login',
-    'auth.logout',
-    'auth.refresh',
-    'auth.me',
-    'auth.forgetPassword',
-    'auth.resetPassword',
-    'auth.checkCode',
+//    'auth.login',
+//    'auth.logout',
+//    'auth.refresh',
+//    'auth.me',
+//    'auth.forgetPassword',
+//    'auth.resetPassword',
+//    'auth.checkCode',
 
     // profile
     'profile.create',
@@ -149,6 +162,7 @@ $adminpermissions=[
     'profile.delete',
 
     // user
+    'user.getUserByEmail',
     'user.getUsers',
     'user.create',
     'user.show',
@@ -209,17 +223,17 @@ $adminpermissions=[
 $clientpermissions=[
 
     //email verification
-    'verification.verify',
-    'verification.send',
-    //auth
-    'auth.register',
-    'auth.login',
-    'auth.logout',
-    'auth.refresh',
-    'auth.me',
-    'auth.forgetPassword',
-    'auth.resetPassword',
-    'auth.checkCode',
+//    'verification.verify',
+//    'verification.send',
+//    //auth
+//    'auth.register',
+//    'auth.login',
+//    'auth.logout',
+//    'auth.refresh',
+//    'auth.me',
+//    'auth.forgetPassword',
+//    'auth.resetPassword',
+//    'auth.checkCode',
 
     // profile
     'profile.create',
@@ -288,18 +302,18 @@ $clientpermissions=[
 
 $premiumClientPermissions=[
 
-            //email verification
-            'verification.verify',
-            'verification.send',
-            //auth
-            'auth.register',
-            'auth.login',
-            'auth.logout',
-            'auth.refresh',
-            'auth.me',
-            'auth.forgetPassword',
-            'auth.resetPassword',
-            'auth.checkCode',
+//            //email verification
+//            'verification.verify',
+//            'verification.send',
+//            //auth
+//            'auth.register',
+//            'auth.login',
+//            'auth.logout',
+//            'auth.refresh',
+//            'auth.me',
+//            'auth.forgetPassword',
+//            'auth.resetPassword',
+//            'auth.checkCode',
 
             // profile
             'profile.create',
@@ -368,7 +382,7 @@ $premiumClientPermissions=[
 
 
         foreach ($permissions as $permission) {
-            Permission::findOrCreate($permission,'web');
+            Permission::findOrCreate($permission,'api');
         }
 
         //Assign permissions to roles
@@ -386,11 +400,12 @@ $premiumClientPermissions=[
         // admin users
         for ( $x = 1; $x <=5 ; $x++) {
             $adminUser = User::query()->create([
-                'first_name' => 'adminUser ' . $x,
+                'first_name' => 'superadminUser ' . $x,
                 'last_name' => 'User ' . $x,
                 'phone_number' => '093675776' . $x,
-                'password' => Hash::make('password' . $x),
+                'password' => Hash::make('password' ),
                 'email'=>    'adminexample@gmail'.$x.'com',
+                'email_verified_at'=>Carbon::now(),
             ]);
 
             $adminUser->assignRole($adminRole);
@@ -406,8 +421,9 @@ $premiumClientPermissions=[
                 'first_name' => 'premium_clientUser ' . $x,
                 'last_name' => 'User ' . $x,
                 'phone_number' => '093675776' . $x,
-                'password' => Hash::make('password' . $x),
+                'password' => Hash::make('password' ),
                 'email'=>    'clientexample@gmail'.$x.'com',
+                'email_verified_at'=>Carbon::now(),
             ]);
 
             $clientUser->assignRole($clientRole);
@@ -424,8 +440,9 @@ $premiumClientPermissions=[
                 'first_name' => 'premium_clientUser ' . $x,
                 'last_name' => 'User ' . $x,
                 'phone_number' => '093675776' . $x,
-                'password' => Hash::make('password' . $x),
+                'password' => Hash::make('password' ),
                 'email'=>    'premium_clientexample@gmail'.$x.'com',
+                'email_verified_at'=>Carbon::now(),
             ]);
 
             $premiumClientUser->assignRole($premiumClientRole);
@@ -436,13 +453,14 @@ $premiumClientPermissions=[
         }
 
         // super admin users
-        for ( $x = 1; $x <= 2; $x++) {
+        for ( $x = 1; $x <= 1; $x++) {
             $superAdminUser = User::query()->create([
                 'first_name' => 'super_adminUser ' . $x,
                 'last_name' => 'User ' . $x,
                 'phone_number' => '093675776' . $x,
-                'password' => Hash::make('password' . $x),
-                'email'=>    'superadminexample@gmail'.$x.'com',
+                'password' => Hash::make('Aa@98765' ),
+                'email'=>    'moalqrfan2003@gmail.com',
+                'email_verified_at'=>Carbon::now(),
             ]);
 
             $superAdminUser->assignRole($superAdminRole);

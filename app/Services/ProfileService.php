@@ -30,9 +30,10 @@ class ProfileService
             $code=404;
             return ['profile'=>null,'message'=>$message,'code'=>$code];
         }
+        $user['profile']=$profile;
         $message="profile retrieved successfully";
         $code=200;
-        return["profile"=>$profile,"message"=>$message,"code"=>$code];
+        return["profile"=>$user,"message"=>$message,"code"=>$code];
 
 
     }
