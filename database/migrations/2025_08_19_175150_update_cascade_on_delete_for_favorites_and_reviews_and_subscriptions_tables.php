@@ -27,8 +27,17 @@ return new class extends Migration
 
         Schema::table('reviews', function (Blueprint $table) {
             // Drop the existing indexes (not foreign keys)
-            $table->dropIndex('reviews_user_id_foreign');
-            $table->dropIndex('reviews_ad_id_foreign');
+            // $table->dropIndex('reviews_user_id_foreign');
+            if (Schema::hasColumn('reviews', 'user_id')) {
+               $table->dropIndex('reviews_user_id_foreign');
+            }
+
+            
+            if (Schema::hasColumn('reviews', 'ad_id')) {
+                // only drop if an index actually exists
+                // if no index, skip this line
+                $table->dropIndex('reviews_ad_id_foreign');
+            }
 
             // Add proper foreign keys with cascade delete
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
