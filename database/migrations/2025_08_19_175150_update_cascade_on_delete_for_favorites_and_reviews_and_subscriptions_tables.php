@@ -16,13 +16,25 @@ return new class extends Migration
             $table->foreign('ad_id')->references('id')->on('ads')->cascadeOnDelete();
         });
 
-        // تعديل جدول review
+        // // تعديل جدول review
+        // Schema::table('reviews', function (Blueprint $table) {
+        //     $table->dropForeign(['user_id']);
+        //     $table->dropForeign(['ad_id']);
+        //     $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+        //     $table->foreign('ad_id')->references('id')->on('ads')->cascadeOnDelete();
+        // });
+
+
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropForeign(['ad_id']);
+            // Drop the existing indexes (not foreign keys)
+            $table->dropIndex('reviews_user_id_foreign');
+            $table->dropIndex('reviews_ad_id_foreign');
+
+            // Add proper foreign keys with cascade delete
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('ad_id')->references('id')->on('ads')->cascadeOnDelete();
         });
+
 
         // تعديل جدول subscriptions
         Schema::table('subscriptions', function (Blueprint $table) {
@@ -41,13 +53,21 @@ return new class extends Migration
             $table->foreign('ad_id')->references('id')->on('ads');
         });
 
-        // التراجع عن تعديل جدول review
-        Schema::table('review', function (Blueprint $table) {
+        // // التراجع عن تعديل جدول review
+        // Schema::table('review', function (Blueprint $table) {
+        //     $table->dropForeign(['user_id']);
+        //     $table->dropForeign(['ad_id']);
+        //     $table->foreign('user_id')->references('id')->on('users');
+        //     $table->foreign('ad_id')->references('id')->on('ads');
+        // });
+
+        Schema::table('reviews', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropForeign(['ad_id']);
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('ad_id')->references('id')->on('ads');
+            $table->index('user_id', 'reviews_user_id_foreign');
+            $table->index('ad_id', 'reviews_ad_id_foreign');
         });
+
 
         // التراجع عن تعديل جدول subscriptions
         Schema::table('subscriptions', function (Blueprint $table) {
