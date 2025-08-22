@@ -101,6 +101,10 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class]
             Route::get('/show/{id}', 'show')->name('show')->middleware('can:user.show');
             Route::post('update/{id}', 'update')->name('update')->middleware('can:user.update');
             Route::delete('/delete/{id}', 'delete')->name('delete')->middleware('can:user.delete');
+            Route::get('upgradeToPremium/{id}','upgradeToPremium')->name('upgradeToPremium')
+                ->middleware('can:user.upgradeToPremium');
+            Route::post('assignUserRole','assignUserRole')->name('assignUserRole')
+            ->middleware('can:user.assignUserRole');
         });
 
 
@@ -146,8 +150,10 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
     Route::controller(BlockController::class)->prefix('block')
         ->name('block.')
         ->group(function () {
-           Route::post('/create', 'create')->name('block')->middleware('can:block.create');
-           Route::delete('/unblock/{id}', 'unblock')->name('unblock')->middleware('can:block.delete');
+           Route::post('/create', 'block')->name('block')->middleware('can:block.block');
+           Route::delete('/unblock/{id}', 'unblock')->name('unblock')->middleware('can:block.unblock');
+           Route::get('index','index')->name('index');
+               //->middleware('can:block.index');
         });
     //report
     Route::controller(ReportController::class)->prefix('report')

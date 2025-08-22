@@ -110,6 +110,34 @@ class UserController extends Controller
         }
 
     }
+    public function upgradeToPremium($id):JsonResponse
+    {
+        $data=[];
+        // u must pay attention if user_role is client so the Auth()->user->id = $id
+        // but if the user_role is admin it doesn't matter
+        try {
+            $data=$this->userService->upgradeToPremium($id);
+            return Response::Success($data['user'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+
+    }
+    public function assignUserRole(Request $request):JsonResponse
+    {
+        $data=[];
+
+        try {
+            $data=$this->userService->assignUserRole($request);
+            return Response::Success($data['user'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
 
 
 

@@ -21,7 +21,7 @@ class FavoriteService
         return [ 'data' => $data, 'message' => $message, 'code' => $code ];
     }
 
-    public function add($ad_id) : array 
+    public function add($ad_id) : array
     {
         $user = Auth::guard('api')->user();
         $pr = Ad::find($ad_id);
@@ -68,6 +68,7 @@ class FavoriteService
 
     public function IsInFavorites($ad_id) : array
     {
+
         $user = Auth::guard('api')->user();
         if($user->favorites->where('ad_id', $ad_id)->first() != null)
         {
@@ -75,11 +76,21 @@ class FavoriteService
             $code = 200;
             return [ 'data' => 'true', 'message' => $message, 'code' => $code ];
         }
-        else 
+        else
         {
             $message = "Ad not found in favorites";
             $code = 200;
             return [ 'data' => 'false', 'message' => $message, 'code' => $code ];
         }
+    }
+    public function IsFavorite($ad_id)
+    {
+        $user = Auth::guard('api')->user();
+        if($user->favorites->where('ad_id', $ad_id)->first() != null)
+        {
+            return true;
+        }
+     return false;
+
     }
 }

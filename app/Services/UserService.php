@@ -173,5 +173,80 @@ class UserService
         $code=200;
         return ['user'=>$user,'message'=>'user deleted successfully','code'=>$code];
     }
+    public function upgradeToPremium($id):array  // for admin
+    {
+        $vaild=Validator::make(
+            ['id' => $id],
+            ['id' => 'required|integer|exists:users,id']
+        );
+
+        if($vaild->fails())
+        {
+            return ['user'=>null,'message'=>$vaild->errors(),'code'=>422];
+        }
+
+
+        $user = User::query()->with(['roles','permissions'])->find($id);
+
+        if(!$user->hasAnyRole(['super_admin','admin','client','premium_client']))
+        {
+            return ['user'=>$user,'message'=>'this user does not have any roles yet ','code'=>403];
+        }
+
+        if(!$user->hasRole('client') )
+        {
+            return ['user'=>$user,'message'=>'you are not allowed to do this action','code'=>403];
+        }
+
+
+      //  $role = Role::where('name', $request['role_id'])->firstOrFail();
+
+
+        $user->syncRoles([]);
+        $user->syncPermissions([]);
+
+        $Role=Role::query()->where('name',$this->rolesType[3])->first();
+        $user->assignRole($Role);
+
+        //Assign permissions for user
+        $permissions=$Role->permissions()->pluck('name')->toArray();
+        $user->givePermissionTo($permissions);
+
+    $user=User::query()->with(['roles','permissions'])->find($id);
+
+        return ['user'=>$user,'message'=>'user permissions assigned successfully','code'=>200];
+    }
+    public function assignUserRole($request) // for super admin
+    {
+        $vaild=Validator::make($request->all(),[
+            'user_id'=>'required|exists:users,id',
+            'role_id'=>'required|min:1|max:3',
+        ]);
+        if($vaild->fails())
+        {
+            return ['user'=>null,'message'=>$vaild->errors(),'code'=>422];
+        }
+
+        $user = User::find($request['user_id']);
+
+
+        //  $role = Role::where('name', $request['role_id'])->firstOrFail();
+
+
+        $user->syncRoles([]);
+        $user->syncPermissions([]);
+
+        $Role=Role::query()->where('name',$this->rolesType[$request['role_id']])->first();
+        $user->assignRole($Role);
+
+        //Assign permissions for user
+        $permissions=$Role->permissions()->pluck('name')->toArray();
+        $user->givePermissionTo($permissions);
+        $user=User::query()->with(['roles','permissions'])->find($user->id);
+
+        return ['user'=>$user,'message'=>'user permissions assigned successfully','code'=>200];
+    }
+
+
 
 }

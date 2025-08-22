@@ -13,6 +13,7 @@ use App\Services\Property\OfficeService;
 use App\Services\Property\ShopService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 
 class AdService
@@ -30,14 +31,16 @@ class AdService
     protected LandService $landService;
     protected OfficeService $officeService;
     protected ShopService $shopService;
+    protected FavoriteService $favoriteService;
     public function __construct(ApartmentService $apartmentService, LandService $landService,
-                                OfficeService $officeService, ShopService $shopService
+                                OfficeService $officeService, ShopService $shopService,FavoriteService $favoriteService
     )
     {
         $this->apartmentService = $apartmentService;
         $this->landService = $landService;
         $this->officeService = $officeService;
         $this->shopService = $shopService;
+        $this->favoriteService = $favoriteService;
     }
 
     public function DamascusTime($ad)
@@ -52,6 +55,7 @@ class AdService
             $ads=$ads->map(function($ad)  {
                 $ad=$this->DamascusTime($ad);
                 $ad['property']['type']=strtolower(class_basename($ad['property']['propertyable_type']));
+                $ad['Is_favorite']=$this->favoriteService->IsFavorite($ad['id']);
                 return $ad;
             });
         }
@@ -59,6 +63,8 @@ class AdService
         {
             $ads=$this->DamascusTime($ads);
             $ads['property']['type']=strtolower(class_basename($ads['property']['propertyable_type']));
+
+           $ads['Is_favorite']=$this->favoriteService->IsFavorite($ads['id']);
         }
         return $ads;
     }
