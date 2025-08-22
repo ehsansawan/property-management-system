@@ -176,13 +176,13 @@ Route::middleware(JwtMiddleware::class)
     Route::get('/activated/admin', 'allActiveSub')                  ->name('allActiveSub')
         ->middleware('can:subscriptions.allActiveSub');
     Route::get('/admin', 'index')                                   ->name('index.admin')
-        ->middleware('can:subscriptions.admin');
+        ->middleware('can:subscriptions.index.admin');
     Route::put('/deactivate/{id}/admin', 'deactivate')              ->name('deactivate.admin')
-    ->middleware('can:subscriptions.deactivate');
+    ->middleware('can:subscriptions.deactivate.admin');
     Route::get('/{id}/admin', 'show')                               ->name('show.admin')
-    ->middleware('can:subscriptions.show');
+    ->middleware('can:subscriptions.show.admin');
     Route::delete('/{id}/admin', 'destroy')                         ->name('destroy.admin')
-    ->middleware('can:subscriptions.destroy');
+    ->middleware('can:subscriptions.destroy.admin');
 
     Route::get('/active/client', 'userActiveSub')                   ->name('activeSub.client')
     ->middleware('can:subscriptions.activeSub.client');
