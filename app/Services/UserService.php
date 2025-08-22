@@ -25,20 +25,29 @@ class UserService
     {
         //
     }
-    public function getUserByEmail($request):array
-    {
-        $valid=Validator::make($request->all(),[
-            'email'=>'required|email|exists:users,email'
-        ]);
-        if(!$valid->fails()){
-            return['user'=>null,'message'=>'email not exist','code'=>404];
-        }
-        $user=User::query()->with('profile')->where('email',$request['email'])->first();
-        $message='user retrieved successfully';
-        $code=200;
-        return ['user'=>$user,'message'=>$message,'code'=>$code];
+    public function getUserByEmail(Request $request): array
+{
+    $valid = Validator::make($request->all(), [
+        'email' => 'required|email|exists:users,email'
+    ]);
 
+    if ($valid->fails()) {
+        return [
+            'user' => null,
+            'message' => 'email not exist or invalid',
+            'code' => 404
+        ];
     }
+
+    $user = User::with('profile')->where('email', $request->email)->first();
+
+    return [
+        'user' => $user,
+        'message' => 'user retrieved successfully',
+        'code' => 200
+    ];
+}
+
     public function get_users():array
     {
         $users = User::with('profile')->get();
