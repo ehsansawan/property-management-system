@@ -28,6 +28,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'password',
         'phone_number',
         'fcm_token',
+        'has_active_subscription'
        // 'role_id',
     ];
 
