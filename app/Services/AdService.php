@@ -55,7 +55,7 @@ class AdService
             $ads=$ads->map(function($ad)  {
                 $ad=$this->DamascusTime($ad);
                 $ad['property']['type']=strtolower(class_basename($ad['property']['propertyable_type']));
-                $ad['Is_favorite']=$this->favoriteService->IsInFavorites($ad['id']);
+                $ad['Is_favorite']=$this->favoriteService->IsFavorite($ad['id']);
                 return $ad;
             });
         }

@@ -88,11 +88,9 @@ class FavoriteService
         $user = Auth::guard('api')->user();
         if($user->favorites->where('ad_id', $ad_id)->first() != null)
         {
-            $message = "Ad found in favorites";
-            $code = 200;
-            return 1;
+            return true;
         }
-     return 0;
+     return false;
 
     }
 }
