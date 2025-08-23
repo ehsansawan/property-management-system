@@ -104,7 +104,7 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class]
             Route::get('upgradeToPremium/{id}','upgradeToPremium')->name('upgradeToPremium')
                 ->middleware('can:user.upgradeToPremium');
             Route::post('assignUserRole','assignUserRole')->name('assignUserRole');
-           // ->middleware('can:user.assignUserRole');
+             //   ->middleware('can:user.assignUserRole');
         });
 
 

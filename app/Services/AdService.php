@@ -133,16 +133,16 @@ class AdService
     {
 
          $user=auth()->user();
-         $adsCount=Ad::query()->where('is_active',true)->count();
+         $adsCount=$user->ads()->where('is_active',true)->count();
 
 
          if($user->hasRole('client') && $adsCount>=3)
          {
-             return ['ad'=>[],'message'=>'you have to upgrade your acount to have +3 ads activated','code'=>403];
+             return ['ad'=>'error','message'=>'you have to upgrade your acount to have +3 ads activated','code'=>403];
          }
          else if($user->hasRole('premium_client') && $adsCount>=25)
          {
-             return ['ad'=>[],'messsage'=>'u cant have +25 ads activated','code'=>403];
+             return ['ad'=>'error','messsage'=>'u cant have +25 ads activated','code'=>403];
          }
 
         $start_date=Carbon::now();
@@ -236,7 +236,7 @@ class AdService
             $user=auth('api')->user();
         if(!$user)
         {
-            return ['ads'=>null,'message'=>'enter user id or token','code'=>404];
+            return ['ads'=>'error','message'=>'enter user id or token','code'=>404];
         }
 
      $all=$request['all']??null;

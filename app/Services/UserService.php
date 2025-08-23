@@ -47,7 +47,6 @@ class UserService
         'code' => 200
     ];
 }
-
     public function get_users():array
     {
         $users = User::with('profile')->get();
@@ -104,7 +103,11 @@ class UserService
         //very important
         // load the user's roles and permissions (research about this method)
         $user->load('roles','permissions');
-
+        if(!$user->hasRole('client'))
+        {
+            $user->has_active_subscription=true;
+            $user->save();
+        }
         //Reload the user instant to get updated roles and permissions
         $user=User::query()->find($user->id);
        // $user=$this->appendRolesAndPermissions($user);
@@ -221,6 +224,12 @@ class UserService
         $permissions=$Role->permissions()->pluck('name')->toArray();
         $user->givePermissionTo($permissions);
 
+        if(!$user->hasRole('client'))
+        {
+            $user->has_active_subscription=true;
+            $user->save();
+        }
+
     $user=User::query()->with(['roles','permissions'])->find($id);
 
         return ['user'=>$user,'message'=>'user permissions assigned successfully','code'=>200];
@@ -251,6 +260,17 @@ class UserService
         //Assign permissions for user
         $permissions=$Role->permissions()->pluck('name')->toArray();
         $user->givePermissionTo($permissions);
+
+        if(!$user->hasRole('client'))
+        {
+            $user->has_active_subscription=true;
+            $user->save();
+        }
+        else
+        {
+            $user->has_active_subscription=false;
+            $user->save();
+        }
         $user=User::query()->with(['roles','permissions'])->find($user->id);
 
         return ['user'=>$user,'message'=>'user permissions assigned successfully','code'=>200];
