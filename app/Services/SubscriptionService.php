@@ -41,7 +41,7 @@ class SubscriptionService
     
     public function index() : array
     {
-        $subs = Subscription::all();
+        $subs = Subscription::with(['user.profile', 'plan'])->get();
         $message = "Subscriptions retrieved successfully"; 
         return ['subscription' => $subs,'message' => $message, 'code' => 200];
     }
