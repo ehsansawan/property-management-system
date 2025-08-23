@@ -114,5 +114,33 @@
 "ok": "تم بنجاح",
 "ads not found": "الإعلانات غير موجودة",
 "similar ads": "إعلانات مشابهة"
+},
+"auth": {
+"something went wrong,try again later": "حدث خطأ ما، حاول مرة أخرى لاحقاً",
+"user registered successfully": "تم تسجيل المستخدم بنجاح",
+"your email or password is wrong": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+"User logged in successfully": "تم تسجيل الدخول بنجاح",
+"user logged out successfully": "تم تسجيل الخروج بنجاح",
+"invalid token": "رمز الدخول غير صالح",
+"Token not provided": "لم يتم تقديم رمز الدخول",
+"User Token refreshed successfully": "تم تحديث رمز الدخول بنجاح",
+"Token invalid or expired": "رمز الدخول غير صالح أو منتهي الصلاحية",
+"we send you an email,check your mails": "لقد أرسلنا لك بريداً إلكترونياً، تحقق من بريدك",
+"code has expired": "انتهت صلاحية الكود",
+"code is valid": "الكود صالح",
+"email not found": "البريد الإلكتروني غير موجود",
+"password reset successfully": "تمت إعادة تعيين كلمة المرور بنجاح"
+},
+"properties": {
+"Property not found": "العقار غير موجود",
+"property retrieved successfully": "تم جلب العقار بنجاح",
+"User not found": "المستخدم غير موجود",
+"properties retrieved successfully": "تم جلب العقارات بنجاح",
+"property created successfully": "تم إنشاء العقار بنجاح",
+"Property type is not compatible with the type u send": "نوع العقار غير متوافق مع النوع المُرسل",
+"Property updated successfully": "تم تحديث العقار بنجاح",
+"property not found": "العقار غير موجود",
+"Property deleted successfully": "تم حذف العقار بنجاح",
+"data retired successfully": "تم جلب البيانات بنجاح"
 }
 }

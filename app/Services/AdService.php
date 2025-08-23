@@ -138,11 +138,11 @@ class AdService
 
          if($user->hasRole('client') && $adsCount>=3)
          {
-             return ['ad'=>'error','message'=>'you have to upgrade your acount to have +3 ads activated','code'=>403];
+             return ['ad'=>null,'message'=>'you have to upgrade your acount to have +3 ads activated','code'=>403];
          }
          else if($user->hasRole('premium_client') && $adsCount>=25)
          {
-             return ['ad'=>'error','messsage'=>'u cant have +25 ads activated','code'=>403];
+             return ['ad'=>null,'messsage'=>'u cant have +25 ads activated','code'=>403];
          }
 
         $start_date=Carbon::now();
