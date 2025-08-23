@@ -145,8 +145,10 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
     Route::controller(BlockController::class)->prefix('block')
         ->name('block.')
         ->group(function () {
-           Route::post('/create', 'create')->name('block')->middleware('can:block.create');
-           Route::delete('/unblock/{id}', 'unblock')->name('unblock')->middleware('can:block.delete');
+           Route::post('/create', 'block')->name('block')->middleware('can:block.block');
+           Route::delete('/unblock/{id}', 'unblock')->name('unblock')->middleware('can:block.unblock');
+           Route::get('index','index')->name('index');
+               //->middleware('can:block.index');
         });
     //report
     Route::controller(ReportController::class)->prefix('report')

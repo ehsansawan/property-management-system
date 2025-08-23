@@ -94,6 +94,7 @@ $permissions = [
     // block
     'block.block',
     'block.unblock',
+    'block.index',
 
     // report
     'report.index',
@@ -123,6 +124,7 @@ $permissions = [
     'reviews.destroy',
     'reviews.client_destroy',
     'reviews.ad.index',
+    'reviews.user.ad.index',
 
     // plans
     'plans.yearlyPlans',
@@ -156,6 +158,7 @@ $adminpermissions=[
 //    'auth.checkCode',
 
     // profile
+    'profile.get_my_profile',
     'profile.create',
     'profile.show',
     'profile.update',
@@ -188,6 +191,7 @@ $adminpermissions=[
     // block
     'block.block',
     'block.unblock',
+    'block.index',
 
     // report
     'report.index',
@@ -210,6 +214,7 @@ $adminpermissions=[
     'reviews.destroy',
     'reviews.client_destroy',
     'reviews.ad.index',
+    'reviews.user.ad.index',
 
     // plans
     'plans.yearlyPlans',
@@ -236,6 +241,7 @@ $clientpermissions=[
 //    'auth.checkCode',
 
     // profile
+    'profile.get_my_profile',
     'profile.create',
     'profile.show',
     'profile.update',
@@ -285,6 +291,8 @@ $clientpermissions=[
     'reviews.update',
     'reviews.client_destroy',
     'reviews.ad.index',
+    'reviews.user.ad.index',
+    'reviews.destroy',
 
     // plans
     'plans.yearlyPlans',
@@ -316,6 +324,7 @@ $premiumClientPermissions=[
 //            'auth.checkCode',
 
             // profile
+    'profile.get_my_profile',
             'profile.create',
             'profile.show',
             'profile.update',
@@ -365,6 +374,8 @@ $premiumClientPermissions=[
             'reviews.update',
             'reviews.client_destroy',
             'reviews.ad.index',
+    'reviews.destroy',
+    'reviews.user.ad.index',
 
             // plans
             'plans.yearlyPlans',
