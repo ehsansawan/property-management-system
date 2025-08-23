@@ -103,8 +103,10 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class]
             Route::delete('/delete/{id}', 'delete')->name('delete')->middleware('can:user.delete');
             Route::get('upgradeToPremium/{id}','upgradeToPremium')->name('upgradeToPremium')
                 ->middleware('can:user.upgradeToPremium');
-            Route::post('assignUserRole','assignUserRole')->name('assignUserRole');
-             //   ->middleware('can:user.assignUserRole');
+            Route::post('assignUserRole','assignUserRole')->name('assignUserRole')
+                ->middleware('can:user.assignUserRole');
+            Route::get('upgrade','upgrade')->name('upgrade');
+            Route::get('downgrade','downgrade')->name('downgrade');
         });
 
 
@@ -134,7 +136,8 @@ Route::controller(\App\Http\Controllers\PropertyController::class)->prefix('prop
             Route::post('getAdsByPropertyType','getAdsByPropertyType')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('getAdsByPropertyType');
             Route::post('getUserAds','getUserAds')->name('getUserAds')->middleware('can:ad.getUserAds');
-            Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds');
+            Route::post('activateSelectedAds','activateSelectedAds')->name('activateSelectedAds')
+                ->middleware('can:ad.activateSelectedAds');
             Route::delete('delete/{id}','delete')->name('delete')->middleware('can:ad.delete'); // 2 types
             Route::post('nearToYou','nearToYou')
                 ->withoutMiddleware([VerifiedEmail::class,JwtMiddleware::class,BlockedUser::class])->name('nearToYou');

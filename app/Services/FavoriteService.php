@@ -17,6 +17,12 @@ class FavoriteService
         $user = Auth::guard('api')->user();
         $data = $user->favorites()->with(['ad.property.propertyable','ad.property.images'])
             ->paginate($request->query('num')??10);
+
+        foreach ($data as $favorite) {
+            $favorite['ad']['property']['type']=
+                strtolower(class_basename($favorite['ad']['property']['propertyable_type']));
+        }
+
         $message = "Favorites retrieved successfully";
         $code = 200;
         return [ 'data' => $data, 'message' => $message, 'code' => $code ];

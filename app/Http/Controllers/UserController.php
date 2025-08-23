@@ -139,6 +139,33 @@ class UserController extends Controller
         }
     }
 
+    public function upgrade()
+    {
+        $data=[];
+
+        try {
+            $data=$this->userService->upgrade();
+            return Response::Success($data['user'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+    public function downgrade()
+    {
+        $data=[];
+
+        try {
+            $data=$this->userService->downgrade();
+            return Response::Success($data['user'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
+
 
 
 

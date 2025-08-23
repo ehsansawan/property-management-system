@@ -232,7 +232,7 @@ class UserService
 
     $user=User::query()->with(['roles','permissions'])->find($id);
 
-        return ['user'=>$user,'message'=>'user permissions assigned successfully','code'=>200];
+        return ['user'=>$user,'message'=>'user update to premium','code'=>200];
     }
     public function assignUserRole($request) // for super admin
     {
@@ -274,6 +274,79 @@ class UserService
         $user=User::query()->with(['roles','permissions'])->find($user->id);
 
         return ['user'=>$user,'message'=>'user permissions assigned successfully','code'=>200];
+    }
+    public function upgrade()
+    {
+        $user=auth('api')->user();
+
+        if(!$user->hasAnyRole(['super_admin','admin','client','premium_client']))
+        {
+            return ['user'=>$user,'message'=>'this user does not have any roles yet ','code'=>403];
+        }
+
+        if(!$user->hasRole('client') )
+        {
+            return ['user'=>$user,'message'=>'you are not allowed to do this action','code'=>403];
+        }
+
+
+        //  $role = Role::where('name', $request['role_id'])->firstOrFail();
+
+
+        $user->syncRoles([]);
+        $user->syncPermissions([]);
+
+        $Role=Role::query()->where('name',$this->rolesType[3])->first();
+        $user->assignRole($Role);
+
+        //Assign permissions for user
+        $permissions=$Role->permissions()->pluck('name')->toArray();
+        $user->givePermissionTo($permissions);
+
+        if(!$user->hasRole('client'))
+        {
+            $user->has_active_subscription=true;
+            $user->save();
+        }
+
+        return ['user'=>$user,'message'=>'user upgrade to premium ','code'=>200];
+
+    }
+    public function downgrade()
+    {
+        $user=auth('api')->user();
+
+        if(!$user->hasAnyRole(['super_admin','admin','client','premium_client']))
+        {
+            return ['user'=>$user,'message'=>'this user does not have any roles yet ','code'=>403];
+        }
+
+        if(!$user->hasRole('premium_client') )
+        {
+            return ['user'=>$user,'message'=>'you are not allowed to do this action','code'=>403];
+        }
+
+
+        //  $role = Role::where('name', $request['role_id'])->firstOrFail();
+
+
+        $user->syncRoles([]);
+        $user->syncPermissions([]);
+
+        $Role=Role::query()->where('name',$this->rolesType[2])->first();
+        $user->assignRole($Role);
+
+        //Assign permissions for user
+        $permissions=$Role->permissions()->pluck('name')->toArray();
+        $user->givePermissionTo($permissions);
+
+        if($user->hasRole('client'))
+        {
+            $user->has_active_subscription=false;
+            $user->save();
+        }
+
+        return ['user'=>$user,'message'=>'user downgrade from premium client to client ','code'=>200];
     }
 
 
