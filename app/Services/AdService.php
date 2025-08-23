@@ -100,8 +100,9 @@ class AdService
             return ['ads'=>null,'message'=>'user not found','code'=>404];
         }
 
-        $ads=Ad::query()->join('properties','properties.id','=','ads.property_id')
-            ->where('user_id',$user->id)->with(['property.images','property.propertyable'])->get();
+//        $ads=Ad::query()->join('properties','properties.id','=','ads.property_id')
+//            ->where('user_id',$user->id)->with(['property.images','property.propertyable'])->select('ads.*');
+        $ads=$user->ads()->with(['property.propertyable','property.images'])->get();
         $ads=$this->format($ads);
 
         $message='user ads list';

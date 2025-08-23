@@ -420,6 +420,7 @@ $premiumClientPermissions=[
                 'password' => Hash::make('password' ),
                 'email'=>    'adminexample@gmail'.$x.'com',
                 'email_verified_at'=>Carbon::now(),
+                'has_active_subscription'=>true
             ]);
 
             $adminUser->assignRole($adminRole);
@@ -457,6 +458,7 @@ $premiumClientPermissions=[
                 'password' => Hash::make('password' ),
                 'email'=>    'premium_clientexample@gmail'.$x.'com',
                 'email_verified_at'=>Carbon::now(),
+                'has_active_subscription'=>true
             ]);
 
             $premiumClientUser->assignRole($premiumClientRole);
@@ -475,6 +477,7 @@ $premiumClientPermissions=[
                 'password' => Hash::make('Aa@98765' ),
                 'email'=>    'moalqrfan2003@gmail.com',
                 'email_verified_at'=>Carbon::now(),
+                'has_active_subscription'=>true
             ]);
 
             $superAdminUser->assignRole($superAdminRole);

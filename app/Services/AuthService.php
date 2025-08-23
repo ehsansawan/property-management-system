@@ -48,7 +48,7 @@ class AuthService
 
         // for email verification
         //this function send email the $request['email']
-        event(new Registered($user));
+       // event(new Registered($user));
 
         Profile::query()->create([
             "user_id"=>$user->id,

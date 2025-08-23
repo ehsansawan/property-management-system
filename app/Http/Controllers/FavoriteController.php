@@ -16,12 +16,12 @@ class FavoriteController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $data=[];
-        try 
+        try
         {
-            $data = $this->service->index();
+            $data = $this->service->index($request);
             return Response::Success($data['data'], $data['message'], $data['code']);
         }
         catch (Throwable $th)
@@ -34,7 +34,7 @@ class FavoriteController extends Controller
     public function add($ad_id)
     {
         $data = [];
-        try 
+        try
         {
             $data = $this->service->add($ad_id);
             return Response::Success($data['data'], $data['message'], $data['code']);
@@ -49,7 +49,7 @@ class FavoriteController extends Controller
     public function remove($ad_id)
     {
         $data = [];
-        try 
+        try
         {
             $data = $this->service->remove($ad_id);
             return Response::Success($data['data'], $data['message'], $data['code']);
@@ -64,7 +64,7 @@ class FavoriteController extends Controller
     public function IsInFavorites($ad_id)
     {
         $data = [];
-        try 
+        try
         {
             $data = $this->service->IsInFavorites($ad_id);
             return Response::Success($data['data'], $data['message'], $data['code']);

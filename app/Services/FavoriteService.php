@@ -12,10 +12,11 @@ class FavoriteService
     {
     }
 
-    public function index() : array
+    public function index($request) : array
     {
         $user = Auth::guard('api')->user();
-        $data = $user->favorites;
+        $data = $user->favorites()->with(['ad.property.propertyable','ad.property.images'])
+            ->paginate($request->query('num')??10);
         $message = "Favorites retrieved successfully";
         $code = 200;
         return [ 'data' => $data, 'message' => $message, 'code' => $code ];
