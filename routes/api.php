@@ -100,8 +100,10 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class]
             Route::get('/show/{id}', 'show')->name('show')->middleware('can:user.show');
             Route::post('update/{id}', 'update')->name('update')->middleware('can:user.update');
             Route::delete('/delete/{id}', 'delete')->name('delete')->middleware('can:user.delete');
-            Route::get('upgradeToPremium/{id}','upgradeToPremium')->name('upgradeToPremium');
-            Route::post('assignUserRole','assignUserRole')->name('assignUserRole');
+            Route::get('upgradeToPremium/{id}','upgradeToPremium')->name('upgradeToPremium')
+                ->middleware('can:user.upgradeToPremium');
+            Route::post('assignUserRole','assignUserRole')->name('assignUserRole')
+            ->middleware('can:user.assignUserRole');
         });
 
 

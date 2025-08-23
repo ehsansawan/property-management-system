@@ -69,6 +69,8 @@ $permissions = [
     'user.show',
     'user.update',
     'user.delete',
+    'user.assignUserRole',
+    'user.upgradeToPremium',
 
     // property
     'property.getProperty',
@@ -171,6 +173,7 @@ $adminpermissions=[
     'user.show',
     'user.update',
     'user.delete',
+    'user.upgradeToPremium',
 
     // property
     'property.getProperty',
