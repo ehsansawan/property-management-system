@@ -1,24 +1,25 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BlockController;
+use App\Models\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\LocationController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\UserController;
 use App\Http\Middleware\BlockedUser;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\VerifiedEmail;
-use App\Models\User;
-use Illuminate\Auth\Events\Verified;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\BlockController;
 use Illuminate\Container\Attributes\Auth;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
 //    return $request->user();
@@ -228,7 +229,7 @@ Route::controller(ReviewController::class)
 });
 
 Route::middleware(JwtMiddleware::class)
-     ->controller(\App\Http\Controllers\PlanController::class)
+     ->controller(PlanController::class)
                                                                     ->name('plans.')
      ->group(function () {
 
