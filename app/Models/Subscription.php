@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Subscription extends Model
 {
     //
     use HasFactory;
-    protected $fillable=['user_id',  'plan_id', 'start_date', 'end_date', 'status'];
+    protected $fillable=['user_id', 'plan_id', 'start_date', 'end_date', 'status'];
 
     public function user()
     {
@@ -19,6 +20,27 @@ class Subscription extends Model
     public function plan()
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    protected static function booted()
+    {
+        // كل مرة ينحفظ subscription (إنشاء أو تعديل)
+        static::saved(function ($subscription) {
+            $subscription->user->update([
+                'has_active_subscription' => $subscription->user->subscriptions()
+                    ->where('status', 'active')
+                    ->exists(),
+            ]); 
+        });
+
+        // كل مرة ينحذف subscription
+        static::deleted(function ($subscription) {
+            $subscription->user->update([
+                'has_active_subscription' => $subscription->user->subscriptions()
+                    ->where('status', 'active')
+                    ->exists(),
+            ]);
+        });
     }
 
 }
