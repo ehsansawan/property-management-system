@@ -85,7 +85,10 @@ class FavoriteService
     }
     public function IsFavorite($ad_id)
     {
+
         $user = Auth::guard('api')->user();
+        if(!$user)
+            return false;
         if($user->favorites->where('ad_id', $ad_id)->first() != null)
         {
             return true;

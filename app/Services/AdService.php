@@ -63,7 +63,6 @@ class AdService
         {
             $ads=$this->DamascusTime($ads);
             $ads['property']['type']=strtolower(class_basename($ads['property']['propertyable_type']));
-
            $ads['Is_favorite']=$this->favoriteService->IsFavorite($ads['id']);
         }
         return $ads;
@@ -132,7 +131,21 @@ class AdService
     }
     public function create($request) :array
     {
-       $start_date=Carbon::now();
+
+         $user=auth()->user();
+         $adsCount=Ad::query()->where('is_active',true)->count();
+
+
+         if($user->hasRole('client') && $adsCount>=3)
+         {
+             return ['ad'=>[],'message'=>'you have to upgrade your acount to have +3 ads activated','code'=>403];
+         }
+         else if($user->hasRole('premium_client') && $adsCount>=25)
+         {
+             return ['ad'=>[],'messsage'=>'u cant have +25 ads activated','code'=>403];
+         }
+
+        $start_date=Carbon::now();
        $end_date=now()->addDays(3);
 
        $ad=Ad::query()->create([
@@ -153,6 +166,7 @@ class AdService
     public function activate($id ):array
     {
         $ad=Ad::query()->find($id);
+        $user=auth('api')->user();
 
         if(!$ad)
         {
@@ -160,6 +174,19 @@ class AdService
             $code=404;
             return ['ad'=>$ad,'message'=>$message,'code'=>$code];
         }
+
+        $cnt=$user->ads()->where('is_active',true)->count();
+        $ad_to_active=Ad::query()->where('is_active',true)
+            ->where('id',$ad->id)->value('is_active');
+        if(!$ad_to_active)
+            $cnt =$cnt+1;
+
+        if($cnt>3 && $user->hasRole('client'))
+            return ['ad'=>$ad,'message'=>'u have to upgrade your acount to have +3 ads activated','code'=>403];
+        else if($user->hasRole('premium_client') && $cnt >25)
+            return ['ad'=>$ad,'message'=>'u cant have +25 ads activated','code'=>403];
+
+
         $ad->start_date=Carbon::now();
         $ad->end_date=now()->addDays(3);
         $ad->is_active=true;
@@ -222,6 +249,10 @@ class AdService
 //             return ['ads'=>[],'message'=>'you have to upgrade your acount to have +3 ads activated'];
 //         }
 
+            if($user->ads()->count()>3 && $user->hasRole('client'))
+                return ['ads'=>null,'message'=>'u have to upgrade your acount to have +3 ads activated','code'=>403];
+            else if($user->ads()->count()>25 && $user->hasRole('premium_client'))
+                return ['ads'=>null,'message'=>'u cant have +25 ads activated','code'=>403];
          //updating the ads
          $user->ads()->update(['is_active'=>true,
          'start_date'=>Carbon::now(),'end_date'=>Carbon::now()->addDays(3)]);
@@ -234,24 +265,27 @@ class AdService
 
         $ids_to_activate=$request['ads']??[];
 
-//        $currentActivateCount=$user->ads()->where('is_active',true)->count();
-//        $ads_to_activate=$user->ads()->whereIn('id',$ids_to_activate)->get();
-//
-//        $inactivateAdsToActivate=$ads_to_activate->filter(function ($ad)
-//        {
-//            return $ad->is_active == false;
-//        });
-//
-//        if($inactivateAdsToActivate->count()+$currentActivateCount>3)
-//        {
-//            return ['ads'=>null,'message'=>'u have to upgrade your acount to have +3 ads activated','code'=>404];
-//        }
+        $currentActivateCount=$user->ads()->where('is_active',true)->count();
+        $ads_to_activate=$user->ads()->whereIn('ads.id',$ids_to_activate)->get();
+
+        $inactivateAdsToActivate=$ads_to_activate->filter(function ($ad)
+        {
+            return $ad->is_active == false;
+        });
+
+
+        if($inactivateAdsToActivate->count()+$currentActivateCount>3  && $user->hasRole('client'))
+        {
+            return ['ads'=>null,'message'=>'u have to upgrade your acount to have +3 ads activated','code'=>403];
+        }
+        else if($inactivateAdsToActivate->count()+$currentActivateCount>25  && $user->hasRole('premium_client'))
+        {
+            return ['ads'=>null,'message'=>'u cant have +25 ads activated','code'=>403];
+        }
 
         // here u have to check the number of ads
         //first u have ot check the number of activated ads
         //then check the $ids if its similar and more than 3 the total of the selected ads and the activated you have to throw an error
-
-
 
         foreach($ids_to_activate as $id)
         {
@@ -382,6 +416,8 @@ class AdService
 
         $query=Ad::query()->where('is_active',true)
             ->join('properties', 'ads.property_id', '=', 'properties.id')
+            ->join('users','users.id','=','properties.user_id')
+            ->orderBy('has_active_subscription','desc')
             ->select('ads.*');
 
 
@@ -422,6 +458,7 @@ class AdService
 
       // u have to do a join with premuim user and order by it
 
+
         return $query;
     }
     public function search ($request):array
@@ -430,6 +467,7 @@ class AdService
 
         $ads=$query->with('property.propertyable','property.images')
             ->paginate($request['num']??10);
+
 
         $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
@@ -441,7 +479,6 @@ class AdService
                'filters'=>$request
             ]);
         }
-
 
         return['ads'=>$ads,'message'=>'Search results found','code'=>200];
     }
