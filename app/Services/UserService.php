@@ -188,7 +188,12 @@ class UserService
 
         $user = User::query()->with(['roles','permissions'])->find($id);
 
-        if(!$user->hasRole('client'))
+        if(!$user->hasAnyRole(['super_admin','admin','client','premium_client']))
+        {
+            return ['user'=>$user,'message'=>'this user does not have any roles yet ','code'=>403];
+        }
+
+        if(!$user->hasRole('client') )
         {
             return ['user'=>$user,'message'=>'you are not allowed to do this action','code'=>403];
         }
@@ -211,7 +216,7 @@ class UserService
 
         return ['user'=>$user,'message'=>'user permissions assigned successfully','code'=>200];
     }
-    public function assingUserRole($request) // for super admin
+    public function assignUserRole($request) // for super admin
     {
         $vaild=Validator::make($request->all(),[
             'user_id'=>'required|exists:users,id',
