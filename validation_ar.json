@@ -1,0 +1,30 @@
+{
+    "required": ":attribute مطلوب",
+    "string": "يجب أن يكون :attribute نصاً",
+    "max": "يجب ألا يتجاوز :attribute :max محارف",
+    "min": "يجب ألا يقل :attribute عن :min",
+    "email": "يجب أن يكون :attribute بريداً إلكترونياً صالحاً",
+    "unique": ":attribute مستخدم بالفعل",
+    "confirmed": "تأكيد :attribute غير متطابق",
+    "regex": "تنسيق :attribute غير صالح",
+
+    "integer": "يجب أن يكون :attribute عدداً صحيحاً",
+    "boolean": "يجب أن تكون قيمة :attribute إما صح أو خطأ",
+    "array": "يجب أن يكون :attribute مصفوفة",
+    "numeric": "يجب أن يكون :attribute رقماً",
+    "in": ":attribute المحدد غير صالح",
+    "exists": ":attribute غير موجود",
+    "nullable": "يمكن أن يكون :attribute فارغاً",
+    "sometimes": ":attribute اختياري",
+    "json": "يجب أن يكون :attribute نص JSON صالحاً",
+
+    "date": "يجب أن يكون :attribute تاريخاً صالحاً",
+    "after": "يجب أن يكون :attribute تاريخاً بعد :date",
+    "before": "يجب أن يكون :attribute تاريخاً قبل :date",
+
+    "mimes": "يجب أن يكون :attribute من نوع: :values",
+    "image": "يجب أن يكون :attribute صورة",
+    "between": "حقل :attribute يجب أن يكون بين :min و :max"
+
+
+}

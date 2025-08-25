@@ -27,4 +27,5 @@ class UserSearchesRequest extends FormRequest
             'filters'=>'json|nullable',
         ];
     }
+
 }

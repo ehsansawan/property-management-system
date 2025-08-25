@@ -20,8 +20,17 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
         $exceptions->renderable(function (\Illuminate\Validation\ValidationException $e,$request) {
+
+            $validator = $e->validator;
+
+            // نمرّ على كل الحقول والـ rules اللي عليهم
+            $errors = collect($validator->failed())->map(function ($rules, $field) {
+                // $rules بيكون Array [ 'Required' => [], 'Min' => [10] ... ]
+                return array_map('strtolower', array_keys($rules));
+            });
+
             return Response::Validation(
-                $e->errors(),'Validation Error.');
+                $errors,'Validation Error.');
         });
 
         $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e,$request) {

@@ -1,0 +1,28 @@
+{
+    "required": ":attribute is required",
+    "string": ":attribute must be a string",
+    "max": ":attribute must not exceed :max characters",
+    "min": ":attribute must be at least :min",
+    "email": ":attribute must be a valid email address",
+    "unique": ":attribute has already been taken",
+    "confirmed": ":attribute confirmation does not match",
+    "regex": ":attribute format is invalid",
+
+    "integer": ":attribute must be an integer",
+    "boolean": ":attribute must be true or false",
+    "array": ":attribute must be an array",
+    "numeric": ":attribute must be a number",
+    "in": "The selected :attribute is invalid",
+    "exists": ":attribute does not exist",
+    "nullable": ":attribute may be empty",
+    "sometimes": ":attribute is optional",
+    "json": ":attribute must be a valid JSON string",
+
+    "date": ":attribute must be a valid date",
+    "after": ":attribute must be a date after :date",
+    "before": ":attribute must be a date before :date",
+
+    "mimes": ":attribute must be a file of type: :values",
+    "image": ":attribute must be an image",
+    "between": ":attribute must be between :min and :max"
+}
