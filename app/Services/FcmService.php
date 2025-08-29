@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Http\Responses\Response;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\MessagingException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
@@ -27,6 +31,17 @@ class FcmService
             ->withNotification($notification)
             ->withData($data);
 
-        return $this->messaging->send($message);
+        try {
+            return $this->messaging->send($message);
+        }
+        catch (MessagingException $e) {
+            Log::error('Failed to send notification: ' . $e->getMessage());
+            return Response::error('Failed to send notification: ' ,$e->getMessage(),500);
+        }
+        catch (FirebaseException $e) {
+            Log::error('Firebase error: ' . $e->getMessage());
+            return Response::error('Firebase error: '  ,$e->getMessage(),500);
+        }
+
     }
 }

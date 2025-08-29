@@ -56,15 +56,21 @@ class UserService
         }
 
         $activeUsers=User::query()->where('has_active_subscription',true)->count();
+        $numberOfUsers=User::query()->count();
 
         $message='users retrieved successfully';
         $code=200;
-        return ['users'=>['Active_users_number'=>$activeUsers,'users'=>$users],'message'=>$message,'code'=>$code];
+        $extra_data=
+            [
+                'number of users'=>$numberOfUsers,
+                'Active_users_number'=>$activeUsers
+            ];
+
+        return ['users'=>['extra_data'=>$extra_data,'users'=>$users],'message'=>$message,'code'=>$code];
     }
     public function show($id):array
     {
         $user=User::query()->find($id);
-
 
         if(is_null($user))
         {

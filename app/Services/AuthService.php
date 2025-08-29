@@ -100,16 +100,15 @@ class AuthService
             $code=401;
         }
 
-
-        else
-        {
             $user = Auth('api')->user();
+            $user->fcm_token=$request['fcm_token']??$user->fcm_token;
+            $user->save();
             $user['token']=  $token;
             $user['token_type']=  'Bearer';
             $message = 'User logged in successfully';
             $code=200;
             event(new Registered($user));
-        }
+
 
 
         return ['user'=>$user,'message'=>$message,'code'=>$code];
@@ -250,6 +249,8 @@ class AuthService
 
         // update user password
         $user->update(['password'=>bcrypt($input['password'])]);
+        $user->fcm_token=$request['fcm_token']??$user->fcm_token;
+        $user->save();
 
 
         //delete current code
