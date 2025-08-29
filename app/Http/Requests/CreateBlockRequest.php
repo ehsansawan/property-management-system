@@ -23,9 +23,8 @@ class CreateBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
-//            'blocked_id' => ['required','exists:users,id'
-//                ,Rule::unique('blocks', 'blocked_id')->whereNull('deleted_at')],
-            'email'=>'required|email|exists:users,email',
+           'blocked_id' => ['required','exists:users,id'
+                ,Rule::unique('blocks', 'blocked_id')->whereNull('deleted_at')],
             'reason' => 'nullable|string',
             'days'=>'integer|nullable',
 
