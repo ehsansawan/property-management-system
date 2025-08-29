@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\VerifiedEmail;
+use App\Http\Controllers\FcmController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
@@ -265,6 +266,35 @@ Route::middleware(JwtMiddleware::class)
     Route::delete('/{id}', 'remove')                                ->name('remove')->middleware('can:favorite.remove');
     Route::get('/{id}', 'IsInFavorites')                            ->name('check')->middleware('can:favorite.check');
 });
+
+
+// ***                    notification here                     *** //
+Route::controller(FcmController::class)
+    ->name('fcm.')
+    ->group(function () {
+
+    Route::group(['middleware' => JwtMiddleware::class], function () {
+
+        // إرسال إشعار لجهاز واحد
+        Route::post('/fcm/send', 'sendNotification')->name('send');
+
+        // إرسال إشعار لجميع المستخدمين
+        Route::post('/fcm/send-all', 'sendNotificationToAll')->name('send_all');
+
+        // جلب كل الإشعارات للمستخدم الحالي
+        Route::get('/fcm/notifications', 'index')->name('index');
+
+        // جلب الإشعارات المقروءة
+        Route::get('/fcm/notifications/read', 'readIndex')->name('read_index');
+
+        // جلب الإشعارات غير المقروءة
+        Route::get('/fcm/notifications/unread', 'unreadIndex')->name('unread_index');
+
+        // جلب عدد الإشعارات غير المقروءة
+        Route::get('/fcm/notifications/unread-count', 'unreadCount')->name('unread_count');
+    });
+});
+
 
 /*****************************  end here  ****************************/
 

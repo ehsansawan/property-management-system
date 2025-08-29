@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @mixin IdeHelperSubscription
+ */
 class Subscription extends Model
 {
     //
