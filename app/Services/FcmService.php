@@ -81,9 +81,10 @@ class FcmService
         return ['notifications' => $notifications, 'message' => $message, 'code' => $code];
     }
 
-    public function readIndex()
+    public function readIndex($request)
     {
-        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)->where('is_read',true)->get();
+        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)->where('is_read',true)
+                        ->paginate($request->query('num')??null);
 
         foreach ($notifications as $notification) {
             $notification->is_read = true;
@@ -94,9 +95,10 @@ class FcmService
         return ['notifications' => $notifications, 'message' => $message, 'code' => $code];
     }
 
-    public function unreadIndex()
+    public function unreadIndex($request)
     {
-        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)->where('is_read',false)->get();
+        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)->where('is_read',false)
+                        ->paginate($request->query('num')??null);
 
         foreach ($notifications as $notification) {
             $notification->is_read = true;

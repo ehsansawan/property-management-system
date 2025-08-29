@@ -74,11 +74,11 @@ class FcmController extends Controller
     /**
      * استرجاع الإشعارات المقروءة
      */
-    public function readIndex()
+    public function readIndex(Request $req)
     {
         $data = [];
         try {
-            $data = $this->service->readIndex();
+            $data = $this->service->readIndex($req);
             return Response::Success($data['notifications'], $data['message'], $data['code']);
         } catch (Throwable $th) {
             return Response::Error($data, $th->getMessage());
@@ -88,11 +88,11 @@ class FcmController extends Controller
     /**
      * استرجاع الإشعارات غير المقروءة
      */
-    public function unreadIndex()
+    public function unreadIndex(Request $req)
     {
         $data = [];
         try {
-            $data = $this->service->unreadIndex();
+            $data = $this->service->unreadIndex($req);
             return Response::Success($data['notifications'], $data['message'], $data['code']);
         } catch (Throwable $th) {
             return Response::Error($data, $th->getMessage());
