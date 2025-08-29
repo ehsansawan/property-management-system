@@ -24,7 +24,7 @@ class FcmService
         $this->messaging = $firebase->createMessaging();
     }
 
-    public function sendNotification(?string $deviceToken, string $title, string $body, array $data = []): bool
+    public function sendNotification(?string $deviceToken, string $title, string $body, array $data = [], $ad_id): bool
     {
         try {
 
@@ -42,6 +42,7 @@ class FcmService
                 'title' => $title,
                 'body' => $body,
                 'is_read' => false,
+                'ad_id' => $ad_id,
             ]);
 
             $message = CloudMessage::new()
@@ -109,12 +110,12 @@ class FcmService
         return ['notifications' => $notifications, 'message' => $message, 'code' => $code];
     }
 
-    public function sendNotificationToAll(string $title, string $body, array $data = []): void
+    public function sendNotificationToAll(string $title, string $body, array $data = [], $ad_id): void
     {
         $users = User::all();
 
         foreach ($users as $user) {
-            $this->sendNotification($user->device_token, $title, $body, $data);
+            $this->sendNotification($user->device_token, $title, $body, $data, $ad_id);
         }
     }
 }

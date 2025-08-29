@@ -27,8 +27,9 @@ class FcmController extends Controller
             $title = $request->input('title');
             $body = $request->input('body');
             $extraData = $request->input('data', []);
+            $ad_id = $request->input('ad_id');
 
-            $success = $this->service->sendNotification($deviceToken, $title, $body, $extraData);
+            $success = $this->service->sendNotification($deviceToken, $title, $body, $extraData, $ad_id);
 
             return $success
                 ? Response::Success([], 'Notification sent successfully', 200)
@@ -48,8 +49,9 @@ class FcmController extends Controller
             $title = $request->input('title');
             $body = $request->input('body');
             $extraData = $request->input('data', []);
+            $ad_id = $request->input('ad_id');
 
-            $this->service->sendNotificationToAll($title, $body, $extraData);
+            $this->service->sendNotificationToAll($title, $body, $extraData, $ad_id);
 
             return Response::Success([], 'Notifications sent to all users', 200);
         } catch (Throwable $th) {
