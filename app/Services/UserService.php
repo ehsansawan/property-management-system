@@ -40,6 +40,7 @@ class UserService
     }
 
     $user = User::with('profile')->where('email', $request->email)->first();
+    $user['role_name']=$user->getRoleNames();
 
     return [
         'user' => $user,
@@ -50,13 +51,20 @@ class UserService
     public function get_users():array
     {
         $users = User::with('profile')->get();
+        foreach ($users as $user) {
+            $user['role_name']=$user->getRoleNames();
+        }
+
+        $activeUsers=User::query()->where('has_active_subscription',true)->count();
+
         $message='users retrieved successfully';
         $code=200;
-        return ['users'=>$users,'message'=>$message,'code'=>$code];
+        return ['users'=>['Active_users_number'=>$activeUsers,'users'=>$users],'message'=>$message,'code'=>$code];
     }
     public function show($id):array
     {
         $user=User::query()->find($id);
+
 
         if(is_null($user))
         {
@@ -64,6 +72,8 @@ class UserService
             $code=404;
             return ['user'=>$user,'message'=>$message,'code'=>$code];
         }
+
+        $user['role_name']=$user->getRoleNames();
 
         $message='user retrieved successfully';
         $code=200;
