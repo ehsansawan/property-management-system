@@ -98,6 +98,7 @@ class AuthService
             $user=null;
             $message = 'your email or password is wrong';
             $code=401;
+            return ['user'=>$user,'message'=>$message,'code'=>$code];
         }
 
             $user = Auth('api')->user();
