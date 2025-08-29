@@ -25,7 +25,16 @@ class BlockService
     public function block($request)
     {
         $user=auth()->user();
-        $user_to_block=User::find($request['blocked_id']);
+        $user_to_block=User::query()->where('email',$request['email'])->first();
+
+        $check=Block::query()->where('blocked_id',$user_to_block->id)
+            ->whereNull('deleted_at')->first();
+
+        if($check)
+        {
+            return ['block'=>null,'message'=>'this user is blocked','code'=>422];
+        }
+
 
         if($user->hasRole('super_admin'))
         {
@@ -45,7 +54,7 @@ class BlockService
 
         $block=Block::query()->create([
             'blocker_id'=>auth('api')->id(),
-            'blocked_id'=>$request['blocked_id'],
+            'blocked_id'=>$user_to_block->id,
             'start_date'=>Carbon::now(),
             'end_date'=>Carbon::now()->addDays((integer)$request['days']??7),
             'reason'=>$request['reason']??null,
