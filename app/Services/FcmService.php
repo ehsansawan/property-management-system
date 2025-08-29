@@ -67,8 +67,8 @@ class FcmService
     public function index($request)
     {
          // استرجاع الإشعارات الخاصة بالمستخدم الحالي
-        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id);
-        $notifications->paginate($request->query('num')??null);
+        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)
+                        ->paginate($request->query('num')??null);
 
          // تحديث حالة الإشعارات إلى "تمت القراءة
         foreach ($notifications as $notification) {
