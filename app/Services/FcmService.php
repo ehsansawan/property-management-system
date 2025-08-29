@@ -22,26 +22,34 @@ class FcmService
         $this->messaging = $firebase->createMessaging();
     }
 
-    public function sendNotification($deviceToken, $title, $body, array $data = [])
+    public function sendNotification(?string $deviceToken, string $title, string $body, array $data = []): bool
     {
-        $notification = Notification::create($title, $body);
-
-        $message = CloudMessage::new()
-            ->toToken($deviceToken)
-            ->withNotification($notification)
-            ->withData($data);
-
         try {
-            return $this->messaging->send($message);
-        }
-        catch (MessagingException $e) {
-            Log::error('Failed to send notification: ' . $e->getMessage());
-            return Response::error('Failed to send notification: ' ,$e->getMessage(),500);
-        }
-        catch (FirebaseException $e) {
-            Log::error('Firebase error: ' . $e->getMessage());
-            return Response::error('Firebase error: '  ,$e->getMessage(),500);
-        }
 
+            if (empty($deviceToken)) {
+                Log::warning('FCM: device token is empty/null, skipping send.');
+                return false;
+            }
+
+//            // 2) FCM data لازم قيمها تكون strings
+//            $payload = [];
+//            foreach ($data as $k => $v) {
+//                $payload[$k] = is_scalar($v) ? (string) $v : json_encode($v);
+//            }
+
+
+            $notification = Notification::create($title, $body);
+
+            $message = CloudMessage::new()
+                ->toToken($deviceToken)
+                ->withNotification($notification)
+                ->withData($data);
+
+            $this->messaging->send($message);
+            return true;
+        } catch (MessagingException|FirebaseException|\Throwable $e) {
+            Log::error('FCM send failed: '.$e->getMessage());
+            return false;
+        }
     }
 }
