@@ -367,9 +367,9 @@ class UserService
         $code=200;
         $extra_data=
             [
-                'number of users'=>$numberOfUsers,
+                'number_of_users'=>$numberOfUsers,
                 'Active_users_number'=>$activeUsers,
-                'active ads number'=>$activeAdsNum,
+                'active_ads_number'=>$activeAdsNum,
             ];
         return ['extra_info'=>$extra_data,'message'=>$message,'code'=>$code];
     }
