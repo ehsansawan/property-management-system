@@ -63,7 +63,7 @@ class UserService
     }
     public function show($id):array
     {
-        $user=User::query()->find($id);
+        $user=User::with('profile')->find($id);
 
         if(is_null($user))
         {
