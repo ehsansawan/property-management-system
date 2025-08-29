@@ -107,6 +107,7 @@ Route::middleware([JwtMiddleware::class,VerifiedEmail::class,BlockedUser::class]
                 ->middleware('can:user.assignUserRole');
             Route::get('upgrade','upgrade')->name('upgrade');
             Route::get('downgrade','downgrade')->name('downgrade');
+            Route::get('extra_info','extra_info')->name('extra_info');
         });
 
 

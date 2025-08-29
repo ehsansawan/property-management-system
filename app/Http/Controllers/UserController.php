@@ -165,6 +165,19 @@ class UserController extends Controller
             return Response::Error($data,$message);
         }
     }
+    public function extra_info()
+    {
+        $data=[];
+
+        try {
+            $data=$this->userService->extra_info();
+            return Response::Success($data['extra_info'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
 
 
 

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\SendCodeResetPassword;
+use App\Models\Ad;
 use App\Models\Profile;
 use App\Models\ResetCodePassword;
 use App\Models\User;
@@ -55,18 +56,10 @@ class UserService
             $user['role_name']=$user->getRoleNames();
         }
 
-        $activeUsers=User::query()->where('has_active_subscription',true)->count();
-        $numberOfUsers=User::query()->count();
-
         $message='users retrieved successfully';
         $code=200;
-        $extra_data=
-            [
-                'number of users'=>$numberOfUsers,
-                'Active_users_number'=>$activeUsers
-            ];
 
-        return ['users'=>['extra_data'=>$extra_data,'users'=>$users],'message'=>$message,'code'=>$code];
+        return ['users'=>$users,'message'=>$message,'code'=>$code];
     }
     public function show($id):array
     {
@@ -363,6 +356,22 @@ class UserService
         }
 
         return ['user'=>$user,'message'=>'user downgrade from premium client to client ','code'=>200];
+    }
+    public function extra_info()
+    {
+        $activeAdsNum=Ad::query()->where('is_active',true)->count();
+        $activeUsers=User::query()->where('has_active_subscription',true)->count();
+        $numberOfUsers=User::query()->count();
+
+        $message='extra info retrieved successfully';
+        $code=200;
+        $extra_data=
+            [
+                'number of users'=>$numberOfUsers,
+                'Active_users_number'=>$activeUsers,
+                'active ads number'=>$activeAdsNum,
+            ];
+        return ['extra_info'=>$extra_data,'message'=>$message,'code'=>$code];
     }
 
 

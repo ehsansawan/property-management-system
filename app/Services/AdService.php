@@ -85,8 +85,8 @@ class AdService
         $code=200;
 
         $ads->getCollection()->transform(fn($ad) => $this->format($ad));
-        $activeAdsNum=Ad::query()->where('is_active',true)->count();
-        return ['ads'=>['Active Ads Number'=>$activeAdsNum,'ads'=>$ads],'message'=>$message,'code'=>$code];
+
+        return ['ads'=>$ads,'message'=>$message,'code'=>$code];
     }
     public function getUserAds( $request) : array
     {
