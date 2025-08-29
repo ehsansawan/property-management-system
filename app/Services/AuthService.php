@@ -121,6 +121,8 @@ class AuthService
         if(!is_null($user))
         {
             auth('api')->logout();
+            $user->fcm_token=null;
+            $user->save();
             $message='user logged out successfully';
             $code=200;
         }

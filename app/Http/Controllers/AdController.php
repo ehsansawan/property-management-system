@@ -188,6 +188,19 @@ class AdController extends Controller
             return Response::Error($data,$message);
         }
     }
+    public function notifyme(SearchAdRequest $request)
+    {
+        $data=[];
+
+        try {
+            $data=$this->adservice->notifyme($request->validated());
+            return Response::Success($data['notifyme'],$data['message'],$data['code']);
+        }
+        catch (Throwable $th){
+            $message=$th->getMessage();
+            return Response::Error($data,$message);
+        }
+    }
 
 
 

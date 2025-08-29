@@ -1,5 +1,6 @@
 <?php
 
+use App\Tasks\CleanNotifyMeTable;
 use App\Tasks\DeactivateExpiredAds;
 use App\Tasks\UnblockUsers;
 use Illuminate\Foundation\Inspiring;
@@ -12,3 +13,4 @@ Artisan::command('inspire', function () {
 
 Schedule::call(new DeactivateExpiredAds)->everyThirtyMinutes();
 Schedule::call(new UnblockUsers())->everyFourMinutes();
+Schedule::call(new CleanNotifyMeTable())->everySixHours();

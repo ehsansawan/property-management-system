@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Jobs\CheckNotifyMeJob;
 use App\Models\Ad;
 use App\Models\Apartment;
 use App\Models\Land;
+use App\Models\NotifyMe;
 use App\Models\User;
 use App\Models\UserSearches;
 use App\Services\Property\ApartmentService;
@@ -32,8 +34,10 @@ class AdService
     protected OfficeService $officeService;
     protected ShopService $shopService;
     protected FavoriteService $favoriteService;
+
     public function __construct(ApartmentService $apartmentService, LandService $landService,
-                                OfficeService $officeService, ShopService $shopService,FavoriteService $favoriteService
+                                OfficeService $officeService, ShopService $shopService,FavoriteService $favoriteService,
+
     )
     {
         $this->apartmentService = $apartmentService;
@@ -41,6 +45,7 @@ class AdService
         $this->officeService = $officeService;
         $this->shopService = $shopService;
         $this->favoriteService = $favoriteService;
+    //    $this->fcmService = $fcmService;
     }
 
     public function DamascusTime($ad)
@@ -159,6 +164,10 @@ class AdService
        $ad=Ad::query()->with(['property.images','property.propertyable'])->find($ad->id);
 
        $ad=$this->format($ad);
+
+       //CheckNotifyMeJob::dispatch();
+        $this->sendfornotifyme();
+
        $message='ad created successfully';
        $code=200;
        return ['ad'=>$ad,'message'=>$message,'code'=>$code];
@@ -632,6 +641,32 @@ class AdService
         $ads->getCollection()->transform(fn($ad) => $this->format($ad));
 
         return ['ads'=>$ads,'message'=>'similar ads','code'=>200];
+
+    }
+    public function notifyme($request)
+    {
+      $not=NotifyMe::query()->create(['user_id'=>auth('api')->id(),
+          'filters'=>$request
+      ]);
+      return ['notifyme'=>$not,'message'=>'ok','code'=>200];
+    }
+    public function sendfornotifyme()
+    {
+      $nots=NotifyMe::query()->get();
+
+      foreach($nots as $not)
+      {
+          $res=$this->querySearch($not->filters)->get();
+          if($res)
+          {
+              $user=User::query()->find($not->user_id);
+              // ارسل ايميل
+              $fcm=new FcmService();
+              $fcm->sendNotification($user->fcm_token,'new notification','ad that you we looking for ',[
+                  'ad'=>json_encode($res),
+              ]);
+          }
+      }
 
     }
 
