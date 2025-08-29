@@ -56,12 +56,12 @@ class ReportService
         if(count($request['reason']??[])>0)
         {
             $reports=Report::query()->whereIn('reason',$request['reason']);
-            $reports=$reports->with(['user','ad','user.profile'])->paginate($request['num']??10);
+            $reports=$reports->with(['user','ad.property.user','user.profile'])->paginate($request['num']??10);
         }
         else
         {
             //check if the user role is admin
-            $reports=Report::query()->with(['user','ad','user.profile'])->paginate($request['num']??10);
+            $reports=Report::query()->with(['user','ad.property.user','user.profile'])->paginate($request['num']??10);
         }
 
         $message='reports sent successfully';

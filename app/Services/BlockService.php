@@ -25,8 +25,7 @@ class BlockService
     public function block($request)
     {
         $user=auth()->user();
-        $user_to_block=User::query()->where('email',$request['email'])->first();
-
+        $user_to_block=User::find($request['blocked_id']);
         $check=Block::query()->where('blocked_id',$user_to_block->id)
             ->whereNull('deleted_at')->first();
 
