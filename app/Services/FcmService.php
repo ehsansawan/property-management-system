@@ -64,10 +64,11 @@ class FcmService
             ->count();
     }
 
-    public function index()
+    public function index($request)
     {
          // استرجاع الإشعارات الخاصة بالمستخدم الحالي
-        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)->get();
+        $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id);
+        $notifications->paginate($request->query('num')??null);
 
          // تحديث حالة الإشعارات إلى "تمت القراءة
         foreach ($notifications as $notification) {
@@ -91,7 +92,7 @@ class FcmService
         $code = 200;
         return ['notifications' => $notifications, 'message' => $message, 'code' => $code];
     }
-    
+
     public function unreadIndex()
     {
         $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)->where('is_read',false)->get();

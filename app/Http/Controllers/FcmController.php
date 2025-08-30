@@ -60,11 +60,11 @@ class FcmController extends Controller
     /**
      * استرجاع كل الإشعارات للمستخدم الحالي
      */
-    public function index()
+    public function index(Request $request)
     {
         $data = [];
         try {
-            $data = $this->service->index();
+            $data = $this->service->index($request);
             return Response::Success($data['notifications'], $data['message'], $data['code']);
         } catch (Throwable $th) {
             return Response::Error($data, $th->getMessage());
