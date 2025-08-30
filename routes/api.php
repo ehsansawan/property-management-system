@@ -214,7 +214,8 @@ Route::middleware(JwtMiddleware::class)
 Route::controller(ReviewController::class)
                                                                     ->name('reviews.')
     ->group(function() {
-    Route::get('/ad/{ad_id}/reviews', 'ad_index')                   ->name('ad.index');
+    Route::get('/ad/{ad_id}/reviews', 'ad_index')
+        ->withoutMiddleware(JwtMiddleware::class)->name('ad.index');
         //->middleware('can:reviews.ad.index');
     Route::group(['middleware' => JwtMiddleware::class], function () {
         Route::get('/reviews', 'index')                                 ->name('index')
