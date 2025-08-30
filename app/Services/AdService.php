@@ -657,14 +657,15 @@ class AdService
 
       foreach($nots as $not)
       {
-          $res=$this->querySearch($not->filters)->first();
+          $res=$this->querySearch($not->filters)->latest()->first();
 
           if($res)
           {
               $user=User::query()->find($not->user_id);
               // ارسل ايميل
               $fcm=new FcmService();
-              $fcm->sendNotification($user->fcm_token,'New property matches your search','Some one added a property that matches your previous search.',[
+              $fcm->sendNotification($user->fcm_token,'New property matches your search',
+                  'Some one added a property that matches your previous search.',[
                   'ad'=>json_encode($res),
               ],$res->id,$not->user_id);
           }
