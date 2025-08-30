@@ -87,7 +87,7 @@ class BlockService
     }
     public function index()
     {
-        $blocks=Block::query()->with(['blocker','blocked'])->paginate(10);
+        $blocks=Block::query()->with(['blocker.profile','blocked.profile'])->paginate(10);
         return ['blocks'=>$blocks,'message'=>'blocks retrieved successfully','code'=>200];
     }
 
