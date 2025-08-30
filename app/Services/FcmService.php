@@ -80,6 +80,7 @@ class FcmService
     {
          // استرجاع الإشعارات الخاصة بالمستخدم الحالي
         $notifications = Notification::query()->where('user_id',Auth::guard('api')->user()->id)
+                        ->orderBy('created_at','desc')
                         ->paginate($request->query('num')??null);
 
          // تحديث حالة الإشعارات إلى "تمت القراءة
