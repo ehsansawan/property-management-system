@@ -37,8 +37,15 @@ class FcmService
             // foreach ($data as $k => $v) {
             //     $payload[$k] = is_scalar($v) ? (string) $v : json_encode($v);
             // }
+
+            $user = User::where('device_token', $deviceToken)->first();
+
+            if ($user) {
+                $userId = $user->id;
+            }
+
             Notification::create([
-                'user_id' => Auth::guard('api')->user()->id,
+                'user_id' => $userId,
                 'title' => $title,
                 'body' => $body,
                 'type' => 'ad',
