@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::dropIfExists('reports');
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('ad_id')->constrained('ads');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('ad_id')->constrained('ads')->cascadeOnDelete();
             $table->enum('reason', [
                 'sexual_content',
                 'harassment',
