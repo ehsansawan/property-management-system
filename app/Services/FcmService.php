@@ -24,7 +24,7 @@ class FcmService
         $this->messaging = $firebase->createMessaging();
     }
 
-    public function sendNotification(?string $deviceToken, string $title, string $body, array $data = [], $ad_id): bool
+    public function sendNotification(?string $deviceToken, string $title, string $body, array $data = [], $ad_id,$userId): bool
     {
         try {
 
@@ -38,11 +38,11 @@ class FcmService
             //     $payload[$k] = is_scalar($v) ? (string) $v : json_encode($v);
             // }
 
-            $user = User::where('device_token', $deviceToken)->first();
-
-            if ($user) {
-                $userId = $user->id;
-            }
+//            $user = User::where('device_token', $deviceToken)->first();
+//
+//            if ($user) {
+//                $userId = $user->id;
+//            }
 
             Notification::create([
                 'user_id' => $userId,

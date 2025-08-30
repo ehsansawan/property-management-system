@@ -667,7 +667,7 @@ class AdService
               $fcm=new FcmService();
               $fcm->sendNotification($user->fcm_token,'new notification','ad that you we looking for ',[
                   'ad'=>json_encode($res),
-              ],$res->id);
+              ],$res->id,$not->user_id);
           }
       }
 
