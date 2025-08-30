@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use Throwable;
 use App\Services\FcmService;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class FcmController extends Controller
                 ? Response::Success([], 'Notification sent successfully', 200)
                 : Response::Error([], 'Failed to send notification');
         } catch (Throwable $th) {
-            return Response::Error($data, $th->getMessage());
+            Log::error('Firebase error: ' . $th->getMessage());
         }
     }
 
@@ -55,7 +56,7 @@ class FcmController extends Controller
 
             return Response::Success([], 'Notifications sent to all users', 200);
         } catch (Throwable $th) {
-            return Response::Error($data, $th->getMessage());
+            Log::error('Firebase error: ' . $th->getMessage());
         }
     }
 
