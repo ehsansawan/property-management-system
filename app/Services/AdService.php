@@ -657,7 +657,8 @@ class AdService
 
       foreach($nots as $not)
       {
-          $res=$this->querySearch($not->filters)->get();
+          $res=$this->querySearch($not->filters)->first();
+
           if($res)
           {
               $user=User::query()->find($not->user_id);
@@ -666,7 +667,7 @@ class AdService
               $fcm=new FcmService();
               $fcm->sendNotification($user->fcm_token,'new notification','ad that you we looking for ',[
                   'ad'=>json_encode($res),
-              ]);
+              ],$res->id);
           }
       }
 
