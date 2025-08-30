@@ -22,7 +22,7 @@ class Response
 
         if (!is_array($data) || empty($data)) {
             if (is_null($data)) {
-                $data = ['error'=>null];
+                $data = [];
             } else {
                 $data= ['erorr'=>[$data]];
             }
