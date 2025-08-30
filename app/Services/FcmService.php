@@ -37,13 +37,17 @@ class FcmService
             // foreach ($data as $k => $v) {
             //     $payload[$k] = is_scalar($v) ? (string) $v : json_encode($v);
             // }
-            $notification = Notification::create([
+            Notification::create([
                 'user_id' => Auth::guard('api')->user()->id,
                 'title' => $title,
                 'body' => $body,
+                'type' => 'ad',
                 'is_read' => false,
                 'ad_id' => $ad_id,
             ]);
+
+            $notification = \Kreait\Firebase\Messaging\Notification::create($title, $body);
+
 
             $message = CloudMessage::new()
                 ->toToken($deviceToken)
