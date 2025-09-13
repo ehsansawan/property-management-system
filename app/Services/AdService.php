@@ -654,17 +654,20 @@ class AdService
     public function sendfornotifyme()
     {
       $nots=NotifyMe::query()->get();
-
+      $ad=Ad::query()->latest()->first();
+      $user_id_by_auth=auth('api')->id();
       foreach($nots as $not)
       {
           $res=$this->querySearch($not->filters)->latest()->first();
+          $user_id=$res->property->user_id;
 
-          if($res)
+          if($res  && $res->id == $ad->id && $user_id !=$user_id_by_auth )
           {
               $user=User::query()->find($not->user_id);
               // ارسل ايميل
+              dd($user_id);
               $fcm=new FcmService();
-              $fcm->sendNotification($user->fcm_token,'New property matches your search',
+              $fcm->sendNotification($user->fcm_token,'New property matches your search',
                   'Some one added a property that matches your previous search.',[
                   'ad'=>json_encode($res),
               ],$res->id,$not->user_id);
