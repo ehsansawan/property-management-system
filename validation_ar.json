@@ -24,7 +24,8 @@
 
     "mimes": "يجب أن يكون :attribute من نوع: :values",
     "image": "يجب أن يكون :attribute صورة",
-    "between": "حقل :attribute يجب أن يكون بين :min و :max"
+    "between": "حقل :attribute يجب أن يكون بين :min و :max",
+    "lessthanfield": ":attribute يجب أن يكون أصغر من الأكبر"
 
 
 }

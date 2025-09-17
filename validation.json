@@ -24,5 +24,6 @@
 
     "mimes": ":attribute must be a file of type: :values",
     "image": ":attribute must be an image",
-    "between": ":attribute must be between :min and :max"
+    "between": ":attribute must be between :min and :max",
+    "lessthanfield": ":attribute must be less than the max"
 }
